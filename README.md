@@ -13,3 +13,8 @@ pnpm install
 cd frontend
 pnpm install
 ```
+
+## To run the back end :
+```
+pnpm dev
+```
