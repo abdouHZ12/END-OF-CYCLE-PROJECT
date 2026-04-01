@@ -54,7 +54,7 @@ model Structure {
 model Role {
   id          Int       @id @default(autoincrement())
   name        String
-  type        RoleType  @unique
+  type        RoleType  
   permissions String
 
   employees   Employee[] @relation("RoleEmployees")
