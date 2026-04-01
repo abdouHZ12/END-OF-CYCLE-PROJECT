@@ -12,91 +12,106 @@ datasource db {
   provider = "postgresql"
 }
 
+enum RoleType {
+  ADMIN
+  MANAGER
+  WORKER
+  AGENT
+}
+
+enum DocumentType {
+  MISSION_ORDER
+  ABSENCE_AUTH
+  EXIT_SLIP
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Employee {
-  Id              Int    @id @default(autoincrement())
-  Name            String
-  Username        String @unique
-  Password        String
+  id               Int        @id @default(autoincrement()) 
+  name             String
+  username         String     @unique
+  password         String
 
-  Role            Role @relation(fields: [RoleId] , references: [Id]) 
-  RoleId          Int
-  
-  Documents       Document[]
+  roleId           Int
+  role             Role       @relation("RoleEmployees", fields: [roleId], references: [id])
 
-  Structure       Structure @relation(fields: [StructureId] , references: [Id])
-  StructureId     Int
+  structureId      Int
+  structure        Structure  @relation(fields: [structureId], references: [id])
+
+  issuedDocuments  Document[] @relation("IssuedDocuments")
+  decidedDocuments Document[] @relation("DecidedDocuments")
 }
 
 model Structure {
-  Id              Int @id @default(autoincrement())
-  Name            String 
+  id        Int         @id @default(autoincrement())
+  name      String
 
-  Children        Structure[] @relation(name: "ChildrenParent") 
-  // - this relation represents one to many on self
+  parentId  Int?
+  parent    Structure?  @relation("StructureHierarchy", fields: [parentId], references: [id])
+  children  Structure[] @relation("StructureHierarchy")
 
-  // - Children field is the oppsite side in this one to many relation 
-  //Note : structure has a lot of children and have one parent or none
-
-  Parent          Structure? @relation(name: "ChildrenParent", fields: [ParentId] , references: [Id])
-  ParentId        Int?  // parent with ? to express that the parent might be null
-  // the children have unique parent it has to be at application level 
-
-
-          
-
-  Employees       Employee[]
+  employees Employee[]
 }
 
 model Role {
-  Id              Int @id @default(autoincrement())
-  Name            String 
-  Permissions     String 
-  Employees       Employee[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  type        RoleType  
+  permissions String
+
+  employees   Employee[] @relation("RoleEmployees")
 }
 
 model Document {
-  Id              Int @id @default(autoincrement())
-  Status          String 
-  CreatedAT       DateTime @default(now())
-  QrCode          String
-  AuthIssuedAt    DateTime?
+  id               Int          @id @default(autoincrement())
+  status           Status       @default(PENDING)
+  createdAt        DateTime     @default(now())
+  qrCode           String
+  authIssuedAt     DateTime?
+  type             DocumentType
 
-  MissionOrder     MissionOrder?
-  AbsenceAuth      AbsenceAuth?
-  ExitSlip         ExitSlip?
+  issuedById       Int
+  employee         Employee     @relation("IssuedDocuments", fields: [issuedById], references: [id])
 
-  Employee         Employee @relation(fields: [EmployeeId] , references: [Id])
-  EmployeeId       Int
+  decisionMadeById Int?
+  decisionMadeBy   Employee?    @relation("DecidedDocuments", fields: [decisionMadeById], references: [id])
 
+  missionOrder     MissionOrder?
+  absenceAuth      AbsenceAuth?
+  exitSlip         ExitSlip?
 }
 
 model MissionOrder {
-  Id              Int @id @default(autoincrement())
-  Destination     String
-  Duration        Int
-  Purpose         String
-  
-  Document        Document @relation(fields: [DocumentId] , references: [Id])
-  DocumentId      Int @unique
+  id          Int       @id @default(autoincrement())
+  destination String
+  duration    Int
+  purpose     String
+
+  documentId  Int       @unique
+  document    Document  @relation(fields: [documentId], references: [id])
 }
 
-
 model AbsenceAuth {
-  Id              Int @id @default(autoincrement())
-  StartDate       DateTime
-  EndDate         DateTime
-  Reason          String
+  id          Int       @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
 
-  Document        Document @relation(fields: [DocumentId] , references: [Id])
-  DocumentId      Int @unique
+  documentId  Int       @unique
+  document    Document  @relation(fields: [documentId], references: [id])
 }
 
 model ExitSlip {
-  Id              Int @id @default(autoincrement())
-  ExitTime        DateTime
-  ReturnTime      DateTime
-  Gate            String
+  id          Int       @id @default(autoincrement())
+  exitTime    DateTime
+  returnTime  DateTime
+  gate        String
 
-  Document        Document @relation(fields: [DocumentId] , references: [Id])
-  DocumentId      Int @unique
+  documentId  Int       @unique
+  document    Document  @relation(fields: [documentId], references: [id])
 }
