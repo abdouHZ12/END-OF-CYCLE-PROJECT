@@ -32,18 +32,19 @@ enum Status {
 }
 
 model Employee {
-  id           Int        @id @default(autoincrement())
-  name         String
-  username     String     @unique
-  password     String
+  id               Int        @id @default(autoincrement()) 
+  name             String
+  username         String     @unique
+  password         String
 
-  roleId       Int
-  role         Role       @relation("RoleEmployees", fields: [roleId], references: [id])
+  roleId           Int
+  role             Role       @relation("RoleEmployees", fields: [roleId], references: [id])
 
-  structureId  Int
-  structure    Structure  @relation(fields: [structureId], references: [id])
+  structureId      Int
+  structure        Structure  @relation(fields: [structureId], references: [id])
 
-  documents    Document[]
+  issuedDocuments  Document[] @relation("IssuedDocuments")
+  decidedDocuments Document[] @relation("DecidedDocuments")
 }
 
 model Structure {
@@ -67,19 +68,22 @@ model Role {
 }
 
 model Document {
-  id            Int          @id @default(autoincrement())
-  status        String 
-  createdAt     DateTime     @default(now())
-  qrCode        String
-  authIssuedAt  DateTime?
-  type          DocumentType
+  id               Int          @id @default(autoincrement())
+  status           Status       @default(PENDING)
+  createdAt        DateTime     @default(now())
+  qrCode           String
+  authIssuedAt     DateTime?
+  type             DocumentType
 
-  employeeId    Int
-  employee      Employee     @relation(fields: [employeeId], references: [id])
+  issuedById       Int
+  employee         Employee     @relation("IssuedDocuments", fields: [issuedById], references: [id])
 
-  missionOrder  MissionOrder?
-  absenceAuth   AbsenceAuth?
-  exitSlip      ExitSlip?
+  decisionMadeById Int?
+  decisionMadeBy   Employee?    @relation("DecidedDocuments", fields: [decisionMadeById], references: [id])
+
+  missionOrder     MissionOrder?
+  absenceAuth      AbsenceAuth?
+  exitSlip         ExitSlip?
 }
 
 model MissionOrder {
