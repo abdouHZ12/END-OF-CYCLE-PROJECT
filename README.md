@@ -18,3 +18,14 @@ pnpm install
 ```
 pnpm dev
 ```
+---
+
+## Prisma
+#### Migration 
+```
+pnpm dlx prisma migrate dev --name init   
+```
+#### prisma studio (DB diagram)
+```
+npx prisma studio
+```
