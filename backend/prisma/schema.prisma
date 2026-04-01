@@ -25,6 +25,12 @@ enum DocumentType {
   EXIT_SLIP
 }
 
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Employee {
   id           Int        @id @default(autoincrement())
   name         String
@@ -62,7 +68,7 @@ model Role {
 
 model Document {
   id            Int          @id @default(autoincrement())
-  status        String
+  status        String 
   createdAt     DateTime     @default(now())
   qrCode        String
   authIssuedAt  DateTime?
