@@ -1,14 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+type JwtExpires = `${number}${"s" | "m" | "h" | "d"}`;
+
 export const config = {
   port: process.env.PORT || 3000,
 
+  
   jwt: {
-    accessSecret: process.env.JWT_ACCESS_SECRET as string,
+    accessSecret: process.env.JWT_ACCESS_SECRET!,
     refreshSecret: process.env.JWT_REFRESH_SECRET as string,
-    accessExpires: process.env.JWT_ACCESS_EXPIRES || '15m',
-    refreshExpires: process.env.JWT_REFRESH_EXPIRES || '7d',
+    accessExpires: (process.env.JWT_ACCESS_EXPIRES || '15m') as JwtExpires,
+    refreshExpires: (process.env.JWT_REFRESH_EXPIRES || '7d') as JwtExpires,
   },
 
   host: process.env.SMTP_HOST as string,
