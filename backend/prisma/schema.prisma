@@ -45,6 +45,23 @@ model Employee {
 
   issuedDocuments  Document[] @relation("IssuedDocuments")
   decidedDocuments Document[] @relation("DecidedDocuments")
+
+  refreshToken     String?
+  passwordResets   PasswordReset[]
+}
+
+model PasswordReset {
+  id          Int         @id @default(autoincrement())
+
+  token       String    
+  expiresAt   DateTime
+
+  employeeId  Int
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+
+  createdAt   DateTime  @default(now()) 
+
+  @@index([employeeId])
 }
 
 model Structure {
