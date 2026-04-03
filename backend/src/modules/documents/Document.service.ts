@@ -1,0 +1,265 @@
+import { prisma } from '../../../lib/prisma.js'
+
+
+//Creation Part
+// FOR NOW I AM RETREIVING ALL DATA FROM REQ.BODY
+
+export const CreateExitSlip = async (data : any ) => {
+    const {Qrcode , Type , EmployeeId,  exitTime , returnTime , gate} = data ; 
+    const ExitSlip = await prisma.document.create({
+        data : {
+            qrCode: Qrcode ,
+            type : Type , 
+            issuedById : EmployeeId , 
+            exitSlip : {
+                create : {
+                        exitTime , 
+                        returnTime ,
+                        gate ,
+                }
+            }
+        } 
+})
+    return ExitSlip ; 
+}
+
+export const CreateAbsenceAuth = async (data : any ) =>{
+    const {Qrcode , Type , EmployeeId , startDate , endDate , reason}  = data ;
+    const AbsenceAuth = prisma.document.create({
+        data : { 
+            qrCode: Qrcode ,
+            type : Type , 
+            issuedById : EmployeeId , 
+            absenceAuth : {
+                create : { 
+                        startDate , 
+                        endDate , 
+                        reason , 
+                }
+            }
+        }
+    }) 
+    return  AbsenceAuth ; 
+}
+
+
+
+export const CreateMissionOrder = async (data : any ) => {
+    const {Qrcode , Type , EmployeeId , destination , duration , purpose } = data ;
+    const MissionOrder = prisma.document.create({
+        data : { 
+            qrCode: Qrcode ,
+            type : Type , 
+            issuedById : EmployeeId , 
+            missionOrder : {
+                create : { 
+                        destination ,
+                        duration , 
+                        purpose 
+                }
+            }
+        }
+    })  
+    return MissionOrder ; 
+}
+
+
+//Read Part 
+
+
+// all THESE READS CONCERN ONE EMPLOYEE ONLY 
+
+
+export const ReadAllDocuments = async (data :any) => {
+    const {EmployeeId} = data ; 
+    const Documents = await prisma.document.findMany({
+        where : {
+            issuedById : EmployeeId
+        } ,
+        include : {
+            missionOrder  : true ,
+            absenceAuth : true , 
+            exitSlip : true
+         }
+    })
+    return Documents ; 
+}
+
+export const ReadAllDocumentByState = async (data : any ) => {
+    const { state , EmployeeId } = data ; 
+    const Documents = await prisma.document.findMany({
+        where : {
+            issuedById : EmployeeId , 
+            status : state
+    } , 
+        include : {
+            missionOrder  : true ,
+            absenceAuth : true , 
+            exitSlip : true
+         }
+    })
+    return Documents ; 
+}
+
+
+export const ReadDocumentById = async (data : any , id : any ) => {
+    const DocumentId = parseInt(id) ; 
+    const { EmployeeId} = data ; 
+    const Document = await prisma.document.findUnique({
+        where : {
+            issuedById : EmployeeId ,
+            id : DocumentId   
+        } , 
+        include : {
+            missionOrder  : true ,
+            bsenceAuth : true , 
+            exitSlip : true
+         }
+    })
+    return Document ; 
+}
+
+
+export const ReadAllDocumentByType = async (data : any ) => {
+    const { type , EmployeeId } = data ; 
+    const Documents = await prisma.document.findMany({
+        where : {
+            issuedById : EmployeeId , 
+            type : type
+        } ,
+        include : {
+            missionOrder  : true ,
+            bsenceAuth : true , 
+            exitSlip : true
+         }
+    
+    })
+    return Documents ; 
+}
+
+
+
+export const ReadAllDocumentByStatusAndType = async (data : any ) => {
+    const { state , type , EmployeeId } = data ; 
+    const Documents = await prisma.document.findMany({
+        where : {
+            issuedById : EmployeeId , 
+            type : type,
+            status : state
+    } ,
+        include : {
+            missionOrder  : true ,
+            bsenceAuth : true , 
+            exitSlip : true
+         }
+    })
+    return Documents ; 
+}
+
+
+// Update 
+
+// Disclaimer : 
+ // i dont know how to deal with QR code case 
+ // and how and when it's gonna be updated will be left for later 
+
+
+export const UpdateDocumentState = async (data : any , id : any ) => { 
+    const DocumentId = parseInt(id) ; 
+    const { state  , ManagerId } = data ; 
+    const document = await prisma.document.update({
+        where : { 
+            id : DocumentId 
+        } , 
+        data : { 
+            status : state , 
+            decisionMadeBy : ManagerId 
+         }
+    })
+    return document ;
+}
+
+// i need to think of how i can redirect each type specefic change to it's specefic function and where 
+// => i will implement it 
+
+
+export const UpdateWholeExitSlip = async (data : any , id : any) =>{
+    const DocumentId = parseInt(id) ; 
+    const {Qrcode , Type ,  exitTime , returnTime , gate} = data ; 
+    const ExitSlip = prisma.document.update({
+        where : {
+            id: DocumentId
+        } ,
+        data : { 
+            qrCode: Qrcode ,
+            type : Type , 
+            exitSlip : {
+                update : { 
+                        exitTime , 
+                        returnTime , 
+                        gate
+                }
+            }
+        }
+    }) 
+    return  ExitSlip ; 
+
+}
+
+export const UpdateWholeAbsenceAuth = async (data : any , id : any) =>{
+    const DocumentId = parseInt(id) ; 
+    const {Qrcode , Type , startDate , endDate , reason}  = data ;
+    const AbsenceAuth = prisma.document.update({
+        where : {
+            id: DocumentId
+        } ,
+        data : { 
+            qrCode: Qrcode ,
+            type : Type , 
+            absenceAuth : {
+                update : { 
+                        startDate , 
+                        endDate , 
+                        reason , 
+                }
+            }
+        }
+    }) 
+    return  AbsenceAuth ; 
+}
+
+export const UpdateWholeMissionOrder = async (data : any , id : any) =>{
+    const DocumentId = parseInt(id) ; 
+    const {Qrcode , Type , destination , duration , purpose } = data ;
+    const MissionOrder = prisma.document.update({
+        where : {
+            id: DocumentId
+        } ,
+        data : { 
+            qrCode: Qrcode ,
+            type : Type , 
+            missionOrder : {
+                update : { 
+                        destination ,
+                        duration , 
+                        purpose 
+                }
+            }
+        }
+    }) 
+    return  MissionOrder ; 
+}
+
+ // i dont have any other ideas about this update part 
+ // suspended unitl further notice 
+
+
+ // DELETE PART 
+
+export const DeleteDocumentById = async (data : any ) => {
+    const DocumentId = parseInt(data) ; 
+    const deletedDocument = await prisma.document.delete({
+        where : { id : DocumentId}
+    })
+    return deletedDocument ;
+}

@@ -111,7 +111,7 @@ model MissionOrder {
   purpose     String
 
   documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id])
+  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
 }
 
 model AbsenceAuth {
@@ -121,7 +121,7 @@ model AbsenceAuth {
   reason      String
 
   documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id])
+  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
 }
 
 model ExitSlip {
@@ -131,5 +131,5 @@ model ExitSlip {
   gate        String
 
   documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id])
+  document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }
