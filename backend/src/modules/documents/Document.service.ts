@@ -104,7 +104,7 @@ export const ReadAllDocumentByState = async (data : any ) => {
 
 export const ReadDocumentById = async (data : any , id : any ) => {
     const DocumentId = parseInt(id) ; 
-    const { EmployeeId} = data ; 
+    const { EmployeeId } = data ; 
     const Document = await prisma.document.findUnique({
         where : {
             issuedById : EmployeeId ,
@@ -112,7 +112,7 @@ export const ReadDocumentById = async (data : any , id : any ) => {
         } , 
         include : {
             missionOrder  : true ,
-            bsenceAuth : true , 
+            absenceAuth : true , 
             exitSlip : true
          }
     })
@@ -121,15 +121,15 @@ export const ReadDocumentById = async (data : any , id : any ) => {
 
 
 export const ReadAllDocumentByType = async (data : any ) => {
-    const { type , EmployeeId } = data ; 
+    const { Type , EmployeeId } = data ; 
     const Documents = await prisma.document.findMany({
         where : {
             issuedById : EmployeeId , 
-            type : type
+            type : Type
         } ,
         include : {
             missionOrder  : true ,
-            bsenceAuth : true , 
+            absenceAuth : true , 
             exitSlip : true
          }
     
@@ -140,16 +140,16 @@ export const ReadAllDocumentByType = async (data : any ) => {
 
 
 export const ReadAllDocumentByStatusAndType = async (data : any ) => {
-    const { state , type , EmployeeId } = data ; 
+    const { state , Type , EmployeeId } = data ; 
     const Documents = await prisma.document.findMany({
         where : {
             issuedById : EmployeeId , 
-            type : type,
+            type : Type,
             status : state
     } ,
         include : {
             missionOrder  : true ,
-            bsenceAuth : true , 
+            absenceAuth : true , 
             exitSlip : true
          }
     })
@@ -173,7 +173,7 @@ export const UpdateDocumentState = async (data : any , id : any ) => {
         } , 
         data : { 
             status : state , 
-            decisionMadeBy : ManagerId 
+            decisionMadeById : ManagerId 
          }
     })
     return document ;
