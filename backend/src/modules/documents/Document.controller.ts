@@ -8,7 +8,8 @@ export const CreateExitSlip = async (req: Request , res: Response) => {
         const newExitSlip = await DocumentService.CreateExitSlip( req.body );
         res.status(201).json(newExitSlip);
     } catch (error) {
-        res.status(500).json({error:"failed to create exit slip"})
+        console.error(error);
+        res.status(500).json({error , message :"failed to create exit slip"})
     }
 }
 
@@ -43,7 +44,8 @@ export const ReadAllDocuments = async (req: Request , res: Response) => {
         const Documents = await DocumentService.ReadAllDocuments(req.body) ; 
         res.status(201).json(Documents);
     } catch (error) {
-        res.status(500).json({error:"failed to fetch All documents"})
+        console.error(error);
+        res.status(500).json({error, message:"failed to fetch All documents"})
     }
 }
 
@@ -52,16 +54,18 @@ export const ReadAllDocumentByState = async (req: Request , res: Response) => {
         const Documents = await DocumentService.ReadAllDocumentByState(req.body) ; 
         res.status(201).json(Documents);
     } catch (error) {
-        res.status(500).json({error:"failed to fetch All documents By State"})
+        console.error(error);
+        res.status(500).json({error , message :"failed to fetch All documents By State"});
     }
 }
 
 export const ReadDocumentById = async (req: Request , res: Response) => {
     try {
-        const Document = await DocumentService.ReadDocumentById(req.body , req.params.DocumentId) ; 
+        const Document = await DocumentService.ReadDocumentById(req.body , req.params.id) ; 
         res.status(201).json(Document);
     } catch (error) {
-        res.status(500).json({error:`failed to fetch document id : ${req.body.type}`})
+        res.status(500).json({error:`failed to fetch document id : ${req.params.id}`})
+        console.error(error);
     }
 }
 
@@ -72,7 +76,8 @@ export const ReadAllDocumentByType = async (req: Request , res: Response) => {
         res.status(201).json(Documents);
     } catch (error) {
         res.status(500).json({error:`failed to fetch All documents By type ${req.body.type}`})
-    }
+        console.log(error);
+    }   
 }
 
 export const ReadAllDocumentByStatusAndType = async (req: Request , res: Response) => {
@@ -81,6 +86,7 @@ export const ReadAllDocumentByStatusAndType = async (req: Request , res: Respons
         res.status(201).json(Documents);
     } catch (error) {
         res.status(500).json({error:`failed to fetch documents with status : ${req.body.status} , Type : ${req.body.type}`})
+        console.log(error);
     }
 }
 
@@ -88,38 +94,42 @@ export const ReadAllDocumentByStatusAndType = async (req: Request , res: Respons
 
 export const UpdateDocumentState = async (req: Request , res: Response) => {
     try {
-        const Document = await DocumentService.UpdateDocumentState(req.body , req.params.DocumentId) ; 
+        const Document = await DocumentService.UpdateDocumentState(req.body , req.params.id) ; 
         res.status(201).json(Document);
     } catch (error) {
         res.status(500).json({error:"failed to update state of this document"})
+        console.log(error);
     }
 }
 
 
 export const UpdateWholeExitSlip = async (req: Request , res: Response) => {
     try {
-        const ExitSlip = await DocumentService.UpdateWholeExitSlip(req.body , req.params.DocumentId) ; 
+        const ExitSlip = await DocumentService.UpdateWholeExitSlip(req.body , req.params.id) ; 
         res.status(201).json(ExitSlip);
     } catch (error) {
         res.status(500).json({error:"failed to update this ExitSlip Document"})
+        console.log(error);
     }
 }
 
 export const UpdateWholeAbsenceAuth = async (req: Request , res: Response) => {
     try {
-        const AbsenceAuth = await DocumentService.UpdateWholeAbsenceAuth(req.body , req.params.DocumentId) ; 
+        const AbsenceAuth = await DocumentService.UpdateWholeAbsenceAuth(req.body , req.params.id) ; 
         res.status(201).json(AbsenceAuth);
     } catch (error) {
         res.status(500).json({error:"failed to update this AbsenceAuth Document"})
+        console.log(error);
     }
 }
 
 export const UpdateWholeMissionOrder = async (req: Request , res: Response) => {
     try {
-        const MissionOrder = await DocumentService.UpdateWholeMissionOrder(req.body , req.params.DocumentId) ; 
+        const MissionOrder = await DocumentService.UpdateWholeMissionOrder(req.body , req.params.id) ; 
         res.status(201).json(MissionOrder);
     } catch (error) {
         res.status(500).json({error:"failed to update this MissionOrder Document"})
+        console.log(error);
     }
 }
 
@@ -128,9 +138,10 @@ export const UpdateWholeMissionOrder = async (req: Request , res: Response) => {
 
 export const DeleteDocumentById = async (req: Request , res: Response) => {
     try {
-        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.DocumentId) ; 
+        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.id) ; 
         res.status(201).json(deletedDocument);
     } catch (error) {
         res.status(500).json({error:"failed to delete this Document"})
+        console.log(error);
     }
 }

@@ -13,14 +13,14 @@ router.post("/documents/AbsenceAuth" ,DocumentController.CreateAbsenceAuth);
 router.post("/documents/MissionOrder" ,DocumentController.CreateMissionOrder);
 
 
-router.get("/documents/dAll",DocumentController.ReadAllDocuments);
+router.get("/dAll/documents",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);
 router.get("/document/:id",DocumentController.ReadDocumentById);
 router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
-router.get("/documents/AllByTypeAndType",DocumentController.ReadAllDocumentByStatusAndType);
+router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByStatusAndType);
 
 
-router.put("/document/State/:id",DocumentController.UpdateWholeExitSlip);
+router.put("/document/State/:id",DocumentController.UpdateDocumentState);
 router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);
 router.put("/document/AbsenceAuth/:id",DocumentController.UpdateWholeAbsenceAuth);
 router.put("/document/MissionOrder/:id",DocumentController.UpdateWholeMissionOrder);

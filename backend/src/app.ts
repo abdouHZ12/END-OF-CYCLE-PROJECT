@@ -1,13 +1,14 @@
 import express, {type Express} from 'express';
 import { errorHandler } from "./middlewares/errorHandler.js";
-import DocumentRouter from './routes/DocumentRoute.js'
+import mainRouter from './routes/index.route.js';
+
 const app: Express = express();
 
 app.use(express.json());
 
 // Routes
+app.use('/api', mainRouter);
 
-app.use('/',DocumentRouter)
 // Global error handler (should be after routes)
 app.use(errorHandler);
 
