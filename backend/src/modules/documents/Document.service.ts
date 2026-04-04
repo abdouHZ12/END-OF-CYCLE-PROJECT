@@ -45,7 +45,7 @@ export const CreateAbsenceAuth = async (data : any ) =>{
 
 
 export const CreateMissionOrder = async (data : any ) => {
-    const {Qrcode , Type , EmployeeId , destination , duration , purpose } = data ;
+    const {Qrcode , Type , EmployeeId , destination , duration , purpose , travelMethod } = data ;
     const MissionOrder = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
@@ -53,6 +53,7 @@ export const CreateMissionOrder = async (data : any ) => {
             issuedById : EmployeeId , 
             missionOrder : {
                 create : { 
+                        travelMethod ,
                         destination ,
                         duration , 
                         purpose 
@@ -166,12 +167,14 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
 
 export const UpdateDocumentState = async (data : any , id : any ) => { 
     const DocumentId = parseInt(id) ; 
+    const IssueDate : Date = new Date() ;
     const { state  , ManagerId } = data ; 
     const document = await prisma.document.update({
         where : { 
             id : DocumentId 
         } , 
         data : { 
+            authIssuedAt : IssueDate ,
             status : state , 
             decisionMadeById : ManagerId 
          }
@@ -230,16 +233,18 @@ export const UpdateWholeAbsenceAuth = async (data : any , id : any) =>{
 
 export const UpdateWholeMissionOrder = async (data : any , id : any) =>{
     const DocumentId = parseInt(id) ; 
-    const {Qrcode , Type , destination , duration , purpose } = data ;
+    const {Qrcode , Type , destination , duration , purpose , travelMethod } = data ;
     const MissionOrder = prisma.document.update({
         where : {
             id: DocumentId
         } ,
         data : { 
+
             qrCode: Qrcode ,
             type : Type , 
             missionOrder : {
                 update : { 
+                        travelMethod ,
                         destination ,
                         duration , 
                         purpose 

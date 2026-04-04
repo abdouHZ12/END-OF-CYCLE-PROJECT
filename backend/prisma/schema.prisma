@@ -12,6 +12,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TravelMethodType {
+  PERSONAL 
+  COMPANY 
+  AIRPLANE
+}
+
 enum RoleType {
   ADMIN
   MANAGER
@@ -105,10 +111,11 @@ model Document {
 }
 
 model MissionOrder {
-  id          Int       @id @default(autoincrement())
-  destination String
-  duration    Int
-  purpose     String
+  id               Int       @id @default(autoincrement())
+  destination      String
+  duration         Int
+  purpose          String
+  travelMethod  TravelMethodType @default(PERSONAL)
 
   documentId  Int       @unique
   document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
