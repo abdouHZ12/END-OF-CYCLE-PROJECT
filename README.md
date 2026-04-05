@@ -25,7 +25,8 @@ pnpm dev
 DATABASE_URL="YOUR DB"
 
 # Server
-PORT=3000
+# Use 3001 locally so it doesn't collide with Next.js (3000)
+PORT=3001
 
 # JWT
 JWT_ACCESS_SECRET= create key secret search for token generator
@@ -42,6 +43,10 @@ SMTP_FROM="Exit System <naftalpfc01@gmail.com>"
 
 # Frontend URL (for reset password links)
 CLIENT_URL=http://localhost:3000
+
+# Frontend -> API
+# Create `frontend/.env.local` and set:
+# NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
 ---
@@ -54,4 +59,8 @@ pnpm dlx prisma migrate dev --name init
 #### prisma studio (DB diagram)
 ```
 npx prisma studio
+```
+#### Seed file 
+```
+pnpm prisma db seed
 ```

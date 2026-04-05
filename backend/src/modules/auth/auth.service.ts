@@ -80,7 +80,7 @@ export const authService = {
         await prisma.passwordReset.create({
         data: {
             token: hashedToken,
-            expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+            expiresAt: new Date(Date.now() + 30 * 60 * 1000),
             employeeId: employee.id,
         },
         });
