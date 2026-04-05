@@ -43,7 +43,7 @@ const resetPasswordTemplate = (
       Reset Password
     </a>
 
-    <p>This link expires in <b>1 hour</b>.</p>
+    <p>This link expires in <b>30 minutes</b>.</p>
 
     <p>If you didn't request this, ignore this email.</p>
 
