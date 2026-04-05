@@ -4,8 +4,7 @@ dotenv.config();
 type JwtExpires = `${number}${"s" | "m" | "h" | "d"}`;
 
 export const config = {
-  port: process.env.PORT || 3000,
-
+  port: Number(process.env.PORT) || 3001,
   
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET!,
