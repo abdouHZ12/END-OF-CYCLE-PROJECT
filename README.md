@@ -14,7 +14,7 @@ cd frontend
 pnpm install
 ```
 
-## To run the back end :
+## To run the backend and frontend :
 ```
 pnpm dev
 ```
