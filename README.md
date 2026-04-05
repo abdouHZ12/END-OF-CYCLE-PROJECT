@@ -55,6 +55,7 @@ pnpm dlx prisma migrate dev --name init
 ```
 npx prisma studio
 ```
+#### Seed file 
 ```
 pnpm prisma db seed
 ```
