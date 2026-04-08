@@ -4,7 +4,11 @@ export type ApiError = {
 };
 
 function getApiBaseUrl() {
-  return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/$/, "");
+  // Default matches backend/.env PORT=5000 for local dev.
+  return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
+    /\/$/,
+    ""
+  );
 }
 
 export async function apiPost<TResponse>(
@@ -36,11 +40,13 @@ export async function apiPost<TResponse>(
   }
 
   if (!res.ok) {
-// ✅ After
-   const message =
-     (data && typeof data === 'object' && 'message' in data && typeof (data as Record<string, unknown>).message === 'string'
-      ? (data as Record<string, unknown>).message as string
-      : `Request failed with status ${res.status}`);
+    const message =
+      data &&
+      typeof data === "object" &&
+      "message" in data &&
+      typeof (data as Record<string, unknown>).message === "string"
+        ? ((data as Record<string, unknown>).message as string)
+        : `Request failed with status ${res.status}`;
     const err: ApiError = { status: res.status, message };
     throw err;
   }
