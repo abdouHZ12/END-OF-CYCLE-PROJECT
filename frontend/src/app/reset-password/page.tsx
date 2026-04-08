@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
         token,
         newPassword,
       });
-      router.push("/?reset=success");
+		router.push("/auth?reset=success");
     } catch (err: unknown) {
       const apiErr = err as ApiError;
       if (apiErr?.status === 400) {
@@ -76,7 +76,7 @@ export default function ResetPasswordPage() {
       <div className="mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-md items-center">
         <div className="w-full rounded-2xl border border-slate-800/80 bg-slate-900/70 p-8 shadow-2xl shadow-black/50 backdrop-blur">
           <Link
-            href="/"
+			href="/auth"
             className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-slate-100"
           >
             <ArrowLeftIcon className="h-4 w-4" />
