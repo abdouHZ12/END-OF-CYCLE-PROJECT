@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
               </div>
               <button
                 type="button"
-                onClick={() => router.push("/")}
+				onClick={() => router.push("/auth")}
                 className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-amber-400 px-4 py-3 font-semibold text-slate-950"
               >
                 Retour à la connexion
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
               className="w-full rounded-2xl border border-slate-800/80 bg-slate-900/70 p-8 shadow-2xl shadow-black/50 backdrop-blur"
             >
               <Link
-                href="/"
+				href="/auth"
                 className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-slate-100"
               >
                 <ArrowLeftIcon className="h-4 w-4" />
