@@ -152,98 +152,8 @@ export default function Dashboard({ list }: DashboardProps) {
 
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          height: "70px",
-          backgroundColor: "#20314E",
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <div style={{ marginRight: "20px" }}>
-              <Badge
-                badgeContent={3}
-                color="warning"
-                sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: "#ffa500", // your orange
-                    color: "#222", // dark text for contrast
-                    fontWeight: "bold",
-                    fontSize: "15px",
-                    width: 18,
-                    height: 18,
-                    minWidth: 18,
-                    top: 5,
-                    right: 5,
-                  },
-                }}
-              >
-                <NotificationsNoneIcon
-                  sx={{ fontSize: "30px", color: "#fff" }}
-                />
-              </Badge>
-            </div>
 
-            <Avatar
-              sx={{
-                bgcolor: "darkorange",
-                color: "#222",
-                width: 40,
-                height: 40,
-                border: "none",
-                boxShadow: "none",
-                fontSize: "16px",
-                fontWeight: "bold",
-                marginRight: "10px",
-              }}
-            >
-              ED
-            </Avatar>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: "auto",
-              }}
-            >
-              <p style={{ fontSize: "15px", fontWeight: "bold" }}>
-                Employe Dupont
-              </p>
-              <p
-                style={{
-                  fontSize: "11px",
-                  fontWeight: "normal",
-                  color: "lightgray",
-                }}
-              >
-                Employee
-              </p>
-            </div>
-          </div>
-        </Toolbar>
-      </AppBar>
       <Box
         component="nav"
         sx={{
@@ -288,15 +198,5 @@ export default function Dashboard({ list }: DashboardProps) {
           {drawer}
         </Drawer>
       </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-      </Box>
-    </Box>
   );
 }
