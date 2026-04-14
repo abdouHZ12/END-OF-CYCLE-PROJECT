@@ -11,8 +11,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
+import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
 import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { useLogout } from "@/hooks/useLogout";
