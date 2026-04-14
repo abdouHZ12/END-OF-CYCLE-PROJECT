@@ -17,6 +17,7 @@ import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
+import { useLogout } from "@/hooks/useLogout";
 
 const drawerWidth = 256;
 
@@ -41,6 +42,7 @@ export default function Dashboard({
 }: DashboardProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const { logout, isLoggingOut } = useLogout();
 
   const defaultUser: DashboardUser = {
     initials: "ED",
@@ -181,6 +183,8 @@ export default function Dashboard({
 
         <ListItem disablePadding>
           <ListItemButton
+            onClick={logout}
+            disabled={isLoggingOut}
             sx={{
               marginLeft: "3px",
               borderRadius: "10px",

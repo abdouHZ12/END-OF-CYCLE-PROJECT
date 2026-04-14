@@ -6,7 +6,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Typography from "@mui/material/Typography";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
@@ -156,7 +155,7 @@ export default function Page() {
           gap: 2,
         }}
       >
-        <Typography color="white">Hello from main content</Typography>
+        
       </Box>
     </Dashboard>
   );
