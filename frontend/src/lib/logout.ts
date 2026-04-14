@@ -10,7 +10,6 @@ const AUTH_STORAGE_KEYS = [
 function clearAuthStorage() {
   if (typeof window === "undefined") return;
 
-  // Remove known keys first
   for (const key of AUTH_STORAGE_KEYS) {
     try {
       window.localStorage.removeItem(key);
@@ -19,7 +18,6 @@ function clearAuthStorage() {
     }
   }
 
-  // Also remove any other app keys under the same prefix
   try {
     for (let i = window.localStorage.length - 1; i >= 0; i -= 1) {
       const key = window.localStorage.key(i);
@@ -37,7 +35,6 @@ export async function logout(): Promise<void> {
 
   const refreshToken = window.localStorage.getItem("naftal.refreshToken");
 
-  // Best-effort API signout; always clear local state.
   if (refreshToken) {
     try {
       await apiPost<{ message: string }>("/api/auth/signout", { refreshToken });
