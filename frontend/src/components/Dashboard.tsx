@@ -1,8 +1,6 @@
 "use client";
 
-import { div } from "framer-motion/client";
 import * as React from "react";
-import { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,18 +15,41 @@ import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
+import { useLogout } from "@/hooks/useLogout";
 
 const drawerWidth = 256;
 
+type DashboardUser = {
+  initials: string;
+  name: string;
+  role: string;
+};
+
 interface DashboardProps {
   list: React.ReactNode;
+  children?: React.ReactNode;
+  user?: DashboardUser;
+  notificationsCount?: number;
 }
 
-
-export default function Dashboard({ list }: DashboardProps) {
+export default function Dashboard({
+  list,
+  children,
+  user: userProp,
+  notificationsCount = 3,
+}: DashboardProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const { logout, isLoggingOut } = useLogout();
+
+  const defaultUser: DashboardUser = {
+    initials: "ED",
+    name: "Employe Dupont",
+    role: "Employee",
+  };
+
+  const user = userProp ?? defaultUser;
+
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
@@ -44,10 +65,16 @@ export default function Dashboard({ list }: DashboardProps) {
     }
   };
 
-
-// the container of the nav bar and side bar with list passed as a props
+  // the container of the nav bar and side bar with list passed as a props
   const drawer = (
-    <div style={{ backgroundColor: "#1a2742", height: "100vh" }}>
+    <div
+      style={{
+        backgroundColor: "#1a2742",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <div style={{ marginBottom: "20px" }}>
         <p
           style={{
@@ -73,16 +100,47 @@ export default function Dashboard({ list }: DashboardProps) {
         ></div>
       </div>
 
-      <Divider style={{ backgroundColor: "#d3d3d3", height: "0.01mm" }} />
-      <div>
+      <div
+        style={{
+          width: "100%",
+          height: "1px",
+          backgroundColor: "rgba(255,255,255,0.12)",
+        }}
+      />
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          "& .MuiListItemButton-root:hover": {
+            backgroundColor: "#ffa500 !important",
+            color: "#222 !important",
+          },
+          "& .MuiListItemButton-root:hover .MuiListItemIcon-root": {
+            color: "#222 !important",
+          },
+        }}
+      >
         {list}
-      </div>
+      </Box>
 
       <Divider />
 
-      <div style={{ display: "flex",flexDirection: "column", alignItems: "center", marginRight: "70px", marginTop: "210px", }}>
-        
-          <Avatar
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          marginTop: "auto",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginRight: "70px",
+          }}
+        >
+        <Avatar
           sx={{
             bgcolor: "darkorange",
             color: "#222",
@@ -96,16 +154,19 @@ export default function Dashboard({ list }: DashboardProps) {
             marginBottom: "-40px",
           }}
         >
-          ED
+          {user.initials}
         </Avatar>
 
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            marginLeft: "auto",}}
+            marginLeft: "auto",
+          }}
         >
-          <p style={{ fontSize: "15px", fontWeight: "bold" , color:"white"}}>Employe Dupont</p>
+          <p style={{ fontSize: "15px", fontWeight: "bold", color: "white" }}>
+            {user.name}
+          </p>
           <p
             style={{
               fontSize: "11px",
@@ -113,45 +174,142 @@ export default function Dashboard({ list }: DashboardProps) {
               color: "lightgray",
             }}
           >
-            Employee
+            {user.role}
           </p>
         </div>
+        </div>
 
-      </div>
-                <ListItem disablePadding>
-            <ListItemButton
-              sx={{
-                marginLeft:"3px",
-                borderRadius: "10px",
-                color: "#ffa500", // default text/icon color
-                broderRadius:"1px 1px 1px 1px",
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={logout}
+            disabled={isLoggingOut}
+            sx={{
+              marginLeft: "3px",
+              borderRadius: "10px",
+              color: "#ef4444",
+              "& .MuiListItemIcon-root": {
+                color: "#ef4444",
+              },
+              "&:hover": {
+                backgroundColor: "rgba(239, 68, 68, 0.14)",
+                color: "#fff",
                 "& .MuiListItemIcon-root": {
-                  color: "#ffa500", // default icon color
+                  color: "#fff",
                 },
-                "&:hover": {
-                  backgroundColor: "rgba(211,211,211,0.12)", // thin gray overlay
-                  color: "#fff", // text color on hover
-                  "& .MuiListItemIcon-root": {
-                    color: "#fff", // icon color on hover
-                  },
-                },
-              }}
-            >
-              <ListItemIcon>
-                <TextSnippetOutlinedIcon sx={{ fontSize: "25px" }} />
-              </ListItemIcon>
-              <ListItemText primary="Deconnexion" sx={{ paddingLeft:"10px"}} />
-            </ListItemButton>
-          </ListItem>
+              },
+            }}
+          >
+            <ListItemIcon>
+              <TextSnippetOutlinedIcon sx={{ fontSize: "25px" }} />
+            </ListItemIcon>
+            <ListItemText primary="Deconnexion" sx={{ paddingLeft: "10px" }} />
+          </ListItemButton>
+        </ListItem>
+      </div>
 
     </div>
   );
 
-
-
   return (
+    <Box
+      sx={{
+        display: "flex",
+        height: "100dvh",
+        overflow: "hidden",
+        bgcolor: "#12213a",
+      }}
+    >
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          height: "70px",
+          backgroundColor: "#20314E",
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
 
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginLeft: "auto",
+            }}
+          >
+            <div style={{ marginRight: "20px" }}>
+              <Badge
+                badgeContent={notificationsCount}
+                color="warning"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "#ffa500", 
+                    color: "#222",
+                    fontWeight: "bold",
+                    fontSize: "15px",
+                    width: 18,
+                    height: 18,
+                    minWidth: 18,
+                    top: 5,
+                    right: 5,
+                  },
+                }}
+              >
+                <NotificationsNoneIcon
+                  sx={{ fontSize: "30px", color: "#fff" }}
+                />
+              </Badge>
+            </div>
 
+            <Avatar
+              sx={{
+                bgcolor: "darkorange",
+                color: "#222",
+                width: 40,
+                height: 40,
+                border: "none",
+                boxShadow: "none",
+                fontSize: "16px",
+                fontWeight: "bold",
+                marginRight: "10px",
+              }}
+            >
+              {user.initials}
+            </Avatar>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: "auto",
+              }}
+            >
+              <p style={{ fontSize: "15px", fontWeight: "bold" }}>
+                {user.name}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  fontWeight: "normal",
+                  color: "lightgray",
+                }}
+              >
+                {user.role}
+              </p>
+            </div>
+          </div>
+        </Toolbar>
+      </AppBar>
       <Box
         component="nav"
         sx={{
@@ -161,7 +319,7 @@ export default function Dashboard({ list }: DashboardProps) {
         }}
         aria-label="mailbox folders"
       >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -172,6 +330,7 @@ export default function Dashboard({ list }: DashboardProps) {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
+              backgroundColor: "#1a2742",
             },
           }}
           slotProps={{
@@ -189,6 +348,7 @@ export default function Dashboard({ list }: DashboardProps) {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
+              backgroundColor: "#1a2742",
             },
           }}
           open
@@ -196,5 +356,22 @@ export default function Dashboard({ list }: DashboardProps) {
           {drawer}
         </Drawer>
       </Box>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          px: 3,
+          pb: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          pt: "calc(70px + 24px)",
+          bgcolor: "#12213a",
+          height: "100dvh",
+          minHeight: 0,
+          overflow: "auto",
+        }}
+      >
+        {children}
+      </Box>
+    </Box>
   );
 }
