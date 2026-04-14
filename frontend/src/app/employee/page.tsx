@@ -12,14 +12,20 @@ import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Dashboard from "../../components/Dashboard";
-
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
 
+  const pathname = usePathname();
+
+
+
   const list = (
-        <List sx={{ color: "#fff", marginLeft: "16px", marginTop: "30px" }}>
-          <ListItem disablePadding>
+    <List sx={{ color: "#fff", marginLeft: "16px", marginTop: "30px" }}>
+      <ListItem disablePadding>
             <ListItemButton
+              component={Link} href={"/employee/dashboard"}
               sx={{
                 marginRight: "16px",
                 borderRadius: "10px",
@@ -45,6 +51,7 @@ export default function Page() {
 
       <ListItem disablePadding>
         <ListItemButton
+          component={Link} href={"/employee/fill-request"}
           sx={{
             marginRight: "16px",
             borderRadius: "10px",
@@ -70,6 +77,7 @@ export default function Page() {
 
       <ListItem disablePadding>
         <ListItemButton
+        component={Link} href={"/employee/myrequests"}
           sx={{
             marginRight: "16px",
             borderRadius: "10px",
@@ -95,6 +103,7 @@ export default function Page() {
 
       <ListItem disablePadding>
         <ListItemButton
+          component={Link} href={"/employee/history"}
           sx={{
             marginRight: "16px",
             borderRadius: "10px",
@@ -120,6 +129,7 @@ export default function Page() {
 
           <ListItem disablePadding>
             <ListItemButton
+              component={Link} href={"/employee/downloadAuthorization"}
               sx={{
                 marginRight: "16px",
                 borderRadius: "10px",
@@ -154,8 +164,7 @@ export default function Page() {
           gridTemplateColumns: "1fr 1fr",
           gap: 2,
         }}
-      >
-        
+      >        
       </Box>
     </Dashboard>
   );

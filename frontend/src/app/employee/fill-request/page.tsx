@@ -38,7 +38,7 @@ export default function Page() {
           }}
         >
           <Box sx={{width:"100%"}}>
-            <h1 style={{ fontSize: "35px", fontWeight: "bold" }}>
+            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
               New Request
             </h1>
             <p
@@ -151,7 +151,9 @@ export default function Page() {
                   >
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">Leave Hour *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>
+                          Leave Hour *
+                        </label>
                         <input
                           type="datetime-local"
                           style={{
@@ -165,12 +167,14 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "110px",
+                            color: "#fff"
+                            
                           }}
                         />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">Return Hour *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Return Hour *</label>
                         <input
                           type="datetime-local"
                           style={{
@@ -184,12 +188,13 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "110px",
+                            color:"#fff"
                           }}
                         />
                       </Grid>
                     </Grid>
 
-                    <label htmlFor="">Gate  of leave *</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>Gate  of leave *</label>
                     <br />
                     <input
                       type="text"
@@ -201,8 +206,9 @@ export default function Page() {
                         fontSize: "16px ",
                         marginTop: "2px",
                         marginBottom: "10px",
-                        paddingTop: "2px",
+                        paddingTop: "5px",
                         paddingBottom: "8px",
+                        color:"#fff"
                       }}
                     />
 
@@ -272,7 +278,7 @@ export default function Page() {
                   >
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">Start Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Start Date *</label>
                         <input
                           type="date"
                           style={{
@@ -286,12 +292,13 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "190px",
+                            color: "#fff"
                           }}
                         />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">End Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>End Date *</label>
                         <input
                           type="date"
                           style={{
@@ -305,12 +312,13 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "190px",
+                            color:"#fff"
                           }}
                         />
                       </Grid>
                     </Grid>
 
-                    <label htmlFor="">Absence Reason *</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>Absence Reason *</label>
                     <br />
                     <input
                       type="text"
@@ -325,6 +333,7 @@ export default function Page() {
                         paddingTop: "8px",
                         paddingBottom: "60px",
                         paddingLeft: "8px",
+                        color:"#fff"
                       }}
                     />
 
@@ -393,7 +402,7 @@ export default function Page() {
                       width: "100%",
                     }}
                   >
-                    <label htmlFor="">Desination *</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>Desination *</label>
                     <br />
                     <input
                       type="text"
@@ -407,11 +416,12 @@ export default function Page() {
                         marginBottom: "10px",
                         paddingTop: "2px",
                         paddingBottom: "8px",
+                        color:"#fff"
                       }}
                     />
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">Start Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Start Date *</label>
                         <input
                           type="date"
                           style={{
@@ -425,12 +435,13 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "190px",
+                            color: "#fff"
                           }}
                         />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="">End Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>End Date *</label>
                         <input
                           type="date"
                           style={{
@@ -444,12 +455,13 @@ export default function Page() {
                             paddingBottom: "8px",
                             paddingLeft: "8px",
                             paddingRight: "190px",
+                            color: "#fff"
                           }}
                         />
                       </Grid>
                     </Grid>
 
-                    <label htmlFor="">Travel Method</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>Travel Method</label>
                     <select
                       id="travel-method"
                       style={{
