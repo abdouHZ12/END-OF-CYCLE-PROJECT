@@ -209,7 +209,14 @@ export default function Dashboard({
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#12213a" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100dvh",
+        overflow: "hidden",
+        bgcolor: "#12213a",
+      }}
+    >
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -351,11 +358,14 @@ export default function Dashboard({
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          px: 3,
+          pb: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: "70px",
+          pt: "calc(70px + 24px)",
           bgcolor: "#12213a",
-          minHeight: "100vh",
+          height: "100dvh",
+          minHeight: 0,
+          overflow: "auto",
         }}
       >
         {children}
