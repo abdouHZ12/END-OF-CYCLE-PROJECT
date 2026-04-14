@@ -13,6 +13,14 @@ function meetsRules(password: string) {
 }
 
 export default function ResetPasswordPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <ResetPasswordPageInner />
+    </React.Suspense>
+  );
+}
+
+function ResetPasswordPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";

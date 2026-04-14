@@ -1,27 +1,12 @@
 "use client";
 
-import { div } from "framer-motion/client";
-import * as React from "react";
-import { useState, useEffect } from "react";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
-import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import Badge from "@mui/material/Badge";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
@@ -30,24 +15,9 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Dashboard from "../../components/Dashboard";
 
 
-const drawerWidth = 256;
-
-
-
-
 export default function Page() {
 
-  const [isSelected, setIsSelected] = useState(false);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen((prev) => !prev); // Toggle the drawer state
-  };
-
-
-// the list of the sidebar
-
-const list =(
+  const list = (
         <List sx={{ color: "#fff", marginLeft: "16px", marginTop: "30px" }}>
           <ListItem disablePadding>
             <ListItemButton
@@ -174,115 +144,20 @@ const list =(
             </ListItemButton>
           </ListItem>
         </List>
-)
 
-const header = (
-        <AppBar
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          height: "70px",
-          backgroundColor: "#20314E",
-        }}
-      >
-      
-
-        <Toolbar>
-
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <div style={{ marginRight: "20px" }}>
-              <Badge
-                badgeContent={3}
-                color="warning"
-                sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: "#ffa500", // your orange
-                    color: "#222", // dark text for contrast
-                    fontWeight: "bold",
-                    fontSize: "15px",
-                    width: 18,
-                    height: 18,
-                    minWidth: 18,
-                    top: 5,
-                    right: 5,
-                  },
-                }}
-              >
-                <NotificationsNoneIcon
-                  sx={{ fontSize: "30px", color: "#fff" }}
-                />
-              </Badge>
-            </div>
-
-            <Avatar
-              sx={{
-                bgcolor: "darkorange",
-                color: "#222",
-                width: 40,
-                height: 40,
-                border: "none",
-                boxShadow: "none",
-                fontSize: "16px",
-                fontWeight: "bold",
-                marginRight: "10px",
-              }}
-            >
-              ED
-            </Avatar>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: "auto",
-              }}
-            >
-              <p style={{ fontSize: "15px", fontWeight: "bold" }}>
-                Employe Dupont
-              </p>
-              <p
-                style={{
-                  fontSize: "11px",
-                  fontWeight: "normal",
-                  color: "lightgray",
-                }}
-              >
-                Employee
-              </p>
-            </div>
-          </div>
-        </Toolbar>
-      </AppBar>
-)
+  );
 
   return (
-    <Box style={{ display: "flex",height: "100vh" }}>
-      <Dashboard         
-        list={list}/>
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        {header}
-        <Box
-          sx={{
-            flexGrow: 1,
-            mt: "70px", // push below navbar
-            backgroundColor: "blue",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-          }}
-        >
-          <Typography color="white">
-            Hello from main content
-          </Typography>
-        </Box>
-
+    <Dashboard list={list}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 2,
+        }}
+      >
+        <Typography color="white">Hello from main content</Typography>
       </Box>
-    </Box>
+    </Dashboard>
   );
 }

@@ -38,7 +38,26 @@ async function main() {
     },
   });
 
-  console.log('✅ Seed complete:', employee);
+	const kasbadji = await prisma.employee.upsert({
+		where: { username: 'kasbadji' },
+		update: {
+			name: 'kasbadji',
+			email: 'kasbadjihalim01@gmail.com',
+			password: hashedPassword,
+			roleId: role.id,
+			structureId: structure.id,
+		},
+		create: {
+			name: 'kasbadji',
+			username: 'kasbadji',
+			email: 'kasbadjihalim01@gmail.com',
+			password: hashedPassword,
+			roleId: role.id,
+			structureId: structure.id,
+		},
+	});
+
+	console.log('✅ Seed complete:', { employee, kasbadji });
 }
 
 main()

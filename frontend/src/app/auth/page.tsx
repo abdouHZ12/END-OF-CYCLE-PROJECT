@@ -22,6 +22,14 @@ type SignInResponse = {
 };
 
 export default function LoginPage() {
+	return (
+		<React.Suspense fallback={null}>
+			<LoginPageInner />
+		</React.Suspense>
+	);
+}
+
+function LoginPageInner() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
