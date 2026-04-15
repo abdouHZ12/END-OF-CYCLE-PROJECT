@@ -9,7 +9,7 @@ import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import DashboardE from "@/components/DashboardE";
+import Dashboard from "@/components/Dashboard";
 export default function EmployeeLayout({
   children,
 }: {
@@ -45,8 +45,8 @@ export default function EmployeeLayout({
   ];
 
   return (
-    <DashboardE items={items}>
+    <Dashboard items={items}>
       {children}
-    </DashboardE>
+    </Dashboard>
   );
 }

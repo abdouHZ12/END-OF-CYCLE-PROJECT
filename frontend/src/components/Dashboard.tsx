@@ -18,8 +18,12 @@ import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { useLogout } from "@/hooks/useLogout";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import List from "@mui/material/List";
 
 const drawerWidth = 256;
+
 
 type DashboardUser = {
   initials: string;
@@ -28,18 +32,25 @@ type DashboardUser = {
 };
 
 interface DashboardProps {
-  list: React.ReactNode;
+  list?: React.ReactNode;
   children?: React.ReactNode;
   user?: DashboardUser;
   notificationsCount?: number;
+  items: {
+    label: string;
+    href: string;
+    icon: React.ReactNode;
+  }[];  
 }
 
 export default function Dashboard({
-  list,
+  items,
   children,
   user: userProp,
   notificationsCount = 3,
 }: DashboardProps) {
+
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const { logout, isLoggingOut } = useLogout();
@@ -122,7 +133,35 @@ export default function Dashboard({
           },
         }}
       >
-        {list}
+          <List sx={{ color: "#fff", marginLeft: "16px", marginTop: "30px" }}>
+            {items.map((item) => (
+                <ListItem disablePadding key={item.href}>
+                <ListItemButton
+                    component={Link}
+                    href={item.href}
+                    selected={pathname === item.href}
+                    sx={{
+                        marginRight: "16px",
+                        borderRadius: "10px",
+                        color: "lightgray", // default text/icon color
+                        "& .MuiListItemIcon-root": {
+                        color: "lightgray", // default icon color
+                        },
+                        "&:hover": {
+                        backgroundColor: "rgba(211,211,211,0.12)", // thin gray overlay
+                        color: "#fff", // text color on hover
+                        "& .MuiListItemIcon-root": {
+                            color: "#fff", // icon color on hover
+                        },
+                        },
+                    }}
+                >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.label} />
+                </ListItemButton>
+                </ListItem>
+            ))}
+            </List>      
       </Box>
 
       <Divider />
@@ -358,22 +397,8 @@ export default function Dashboard({
           {drawer}
         </Drawer>
       </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          px: 3,
-          pb: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          pt: "calc(70px + 24px)",
-          bgcolor: "#12213a",
-          height: "100dvh",
-          minHeight: 0,
-          overflow: "auto",
-        }}
-      >
         {children}
-      </Box>
     </Box>
   );
 }
+
