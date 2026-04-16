@@ -78,8 +78,15 @@ function LoginPageInner() {
 			localStorage.setItem("naftal.refreshToken", res.refreshToken);
 			localStorage.setItem("naftal.employee", JSON.stringify(res.employee));
 
-			// No dashboard screen specified yet; keep user on the same page.
-			showToast("Connexion réussie", 2500);
+			if (res.employee.role === "MANAGER") {
+				router.push("/manager");
+			} 
+			else if (res.employee.role === "ADMIN") {
+				router.push("/admin");
+			} 
+			else {
+				router.push("/employee");
+			}
 		} catch (err: unknown) {
 			const apiErr = err as ApiError;
 			setError(

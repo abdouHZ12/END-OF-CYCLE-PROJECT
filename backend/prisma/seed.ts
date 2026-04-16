@@ -8,7 +8,7 @@ async function main() {
       data: { name: 'Head Office' },
     }));
 
-  const role =
+  const adminRole =
     (await prisma.role.findFirst({ where: { type: 'ADMIN' } })) ??
     (await prisma.role.create({
       data: {
@@ -18,46 +18,90 @@ async function main() {
       },
     }));
 
-  const hashedPassword = await bcrypt.hash('password123', 10);
-  const employee = await prisma.employee.upsert({
-    where: { username: 'john.doe' },
+  const managerRole =
+    (await prisma.role.findFirst({ where: { type: 'MANAGER' } })) ??
+    (await prisma.role.create({
+      data: {
+        name: 'Manager',
+        type: 'MANAGER',
+        permissions: '*',
+      },
+    }));
+
+  const employeeRole =
+    (await prisma.role.findFirst({ where: { type: 'WORKER' } })) ??
+    (await prisma.role.create({
+      data: {
+        name: 'Employee',
+        type: 'WORKER',
+        permissions: '*',
+      },
+    }));
+
+  const [adminPassword, managerPassword, employeePassword] = await Promise.all([
+    bcrypt.hash('admin', 10),
+    bcrypt.hash('manager', 10),
+    bcrypt.hash('employee', 10),
+  ]);
+
+  const admin = await prisma.employee.upsert({
+    where: { username: 'admin' },
     update: {
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: hashedPassword,
-      roleId: role.id,
+      name: 'Admin',
+      email: 'admin@example.com',
+      password: adminPassword,
+      roleId: adminRole.id,
       structureId: structure.id,
     },
     create: {
-      name: 'John Doe',
-      username: 'john.doe',
-      email: 'john@example.com',
-      password: hashedPassword,
-      roleId: role.id,
+      name: 'Admin',
+      username: 'admin',
+      email: 'admin@example.com',
+      password: adminPassword,
+      roleId: adminRole.id,
       structureId: structure.id,
     },
   });
 
-	const kasbadji = await prisma.employee.upsert({
-		where: { username: 'kasbadji' },
-		update: {
-			name: 'kasbadji',
-			email: 'kasbadjihalim01@gmail.com',
-			password: hashedPassword,
-			roleId: role.id,
-			structureId: structure.id,
-		},
-		create: {
-			name: 'kasbadji',
-			username: 'kasbadji',
-			email: 'kasbadjihalim01@gmail.com',
-			password: hashedPassword,
-			roleId: role.id,
-			structureId: structure.id,
-		},
-	});
+  const manager = await prisma.employee.upsert({
+    where: { username: 'manager' },
+    update: {
+      name: 'Manager',
+      email: 'manager@example.com',
+      password: managerPassword,
+      roleId: managerRole.id,
+      structureId: structure.id,
+    },
+    create: {
+      name: 'Manager',
+      username: 'manager',
+      email: 'manager@example.com',
+      password: managerPassword,
+      roleId: managerRole.id,
+      structureId: structure.id,
+    },
+  });
 
-	console.log('✅ Seed complete:', { employee, kasbadji });
+  const employee = await prisma.employee.upsert({
+    where: { username: 'employee' },
+    update: {
+      name: 'Employee',
+      email: 'employee@example.com',
+      password: employeePassword,
+      roleId: employeeRole.id,
+      structureId: structure.id,
+    },
+    create: {
+      name: 'Employee',
+      username: 'employee',
+      email: 'employee@example.com',
+      password: employeePassword,
+      roleId: employeeRole.id,
+      structureId: structure.id,
+    },
+  });
+
+  console.log('✅ Seed complete:', { admin, manager, employee });
 }
 
 main()
