@@ -30,6 +30,7 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
         const newMissionOrder = await DocumentService.CreateMissionOrder(req.body);
         res.status(201).json(newMissionOrder);
     } catch (error) {
+        console.error(error);
         res.status(500).json({error:"failed to create Mission Order"})
     }
 }
@@ -41,7 +42,7 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
 
 export const ReadAllDocuments = async (req: Request , res: Response) => {
     try {
-        const Documents = await DocumentService.ReadAllDocuments(req.body) ; 
+        const Documents = await DocumentService.ReadAllDocuments(req.params.id) ; 
         res.status(201).json(Documents);
     } catch (error) {
         console.error(error);

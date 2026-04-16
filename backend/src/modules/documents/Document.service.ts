@@ -71,8 +71,9 @@ export const CreateMissionOrder = async (data : any ) => {
 // all THESE READS CONCERN ONE EMPLOYEE ONLY 
 
 
-export const ReadAllDocuments = async (data :any) => {
-    const {EmployeeId} = data ; 
+export const ReadAllDocuments = async (id :any) => {
+    const DocumentId = parseInt(id) ;
+    const EmployeeId = DocumentId ; 
     const Documents = await prisma.document.findMany({
         where : {
             issuedById : EmployeeId

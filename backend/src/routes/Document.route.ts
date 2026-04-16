@@ -13,7 +13,7 @@ router.post("/documents/AbsenceAuth" ,DocumentController.CreateAbsenceAuth);
 router.post("/documents/MissionOrder" ,DocumentController.CreateMissionOrder);
 
 
-router.get("/dAll/documents",DocumentController.ReadAllDocuments);
+router.get("/dAll/documents/:id",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);
 router.get("/document/:id",DocumentController.ReadDocumentById);
 router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
