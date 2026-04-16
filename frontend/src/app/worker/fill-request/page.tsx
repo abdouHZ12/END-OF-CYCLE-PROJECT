@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { apiPost, type ApiError } from "@/lib/api";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {useRouter} from "next/navigation" ;
 
 
@@ -41,18 +42,25 @@ export default function Page() {
 
       const [isSelected, setIsSelected] = useState("ExitSlip");
 
+      const user = useCurrentUser();
+      const employeeId = user ? Number(user.id) : null;
+
 
 
       async function handleExitSlipSubmit (e:React.FormEvent) {
         e.preventDefault() ;
+        if (!employeeId) {
+          setError("Please sign in");
+          return;
+        }
         setIsLoading(true) ;
         setError(null) ;
 
         try {
-          const res = await apiPost<DocumentResponse>("/api/documents/ExitSlip" , {
+          await apiPost<DocumentResponse>("/api/documents/ExitSlip" , {
             Qrcode : "123456789" ,
             Type : "EXIT_SLIP" , 
-            EmployeeId : 1 ,
+            EmployeeId : employeeId ,
             exitTime : new Date(exitTime) ,
             returnTime : new Date(returnTime) ,
             gate
@@ -75,14 +83,18 @@ export default function Page() {
 
       async function handleAbsenceAuthorizationSubmit (e:React.FormEvent){
         e.preventDefault() ;
+        if (!employeeId) {
+          setError("Please sign in");
+          return;
+        }
         setIsLoading(true) ;
         setError(null) ;
 
           try {
-          const res = await apiPost<DocumentResponse>("/api/documents/AbsenceAuth" , {
+          await apiPost<DocumentResponse>("/api/documents/AbsenceAuth" , {
             Qrcode : "123456789" ,
             Type : "ABSENCE_AUTH" , 
-            EmployeeId : 1 ,
+            EmployeeId : employeeId ,
             startDate : new Date(startDate) ,
             endDate : new Date(endDate) ,
             reason
@@ -109,13 +121,17 @@ export default function Page() {
 
       async function handleMissionOrderSubmit (e:React.FormEvent) {
         e.preventDefault() ;
+        if (!employeeId) {
+          setError("Please sign in");
+          return;
+        }
         setIsLoading(true) ;
         setError(null) ;
           try {
-          const res = await apiPost<DocumentResponse>("/api/documents/MissionOrder" , {
+          await apiPost<DocumentResponse>("/api/documents/MissionOrder" , {
             Qrcode : "123456789" ,
             Type : "MISSION_ORDER" , 
-            EmployeeId : 1 ,
+            EmployeeId : employeeId ,
             destination , 
             duration : parseInt(duration) , 
             purpose , 
@@ -139,7 +155,7 @@ export default function Page() {
 
       const router = useRouter() ;
       const handleCancel = () => {
-        router.push("/employee") ;
+        router.push("/worker") ;
         console.log("Request Cancelled");
       }
 

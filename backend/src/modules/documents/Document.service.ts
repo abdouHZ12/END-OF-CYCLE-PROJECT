@@ -158,6 +158,104 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
     return Documents ; 
 }
 
+export const ReadPendingDocumentsForManager = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const Documents = await prisma.document.findMany({
+    where: {
+      status: "PENDING",
+      issuedById: { not: ManagerId }, 
+      employee: {
+        structureId: manager.structureId, 
+      },
+    },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      employee: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+  });
+
+  return Documents;
+};
+
+export const ReadEmployeesHistoryForManager = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const employees = await prisma.employee.findMany({
+    where: {
+      structureId: manager.structureId,
+      id: { not: ManagerId }, // exclude manager himself
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      issuedDocuments: {
+        include: {
+          missionOrder: true,
+          absenceAuth: true,
+          exitSlip: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  return employees;
+};
+
+export const ReadManagerDashboardStats = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const teamDocs = await prisma.document.findMany({
+    where: {
+      issuedById: { not: ManagerId },
+      employee: { structureId: manager.structureId },
+    },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      employee: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const total    = teamDocs.length;
+  const pending  = teamDocs.filter((d) => d.status === "PENDING").length;
+  const approved = teamDocs.filter((d) => d.status === "APPROVED").length;
+  const rejected = teamDocs.filter((d) => d.status === "REJECTED").length;
+  const recentDocuments = teamDocs.slice(0, 5);
+
+  return { total, pending, approved, rejected, recentDocuments };
+};
 
 // Update 
 
