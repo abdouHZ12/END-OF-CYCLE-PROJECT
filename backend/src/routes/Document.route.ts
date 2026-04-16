@@ -20,6 +20,7 @@ router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
 router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByStatusAndType);
 router.post("/manager/pending-documents", DocumentController.ReadPendingDocumentsForManager);
 router.post("/manager/employees-history", DocumentController.ReadEmployeesHistoryForManager);
+router.post("/manager/dashboard-stats", DocumentController.ReadManagerDashboardStats);
 
 router.put("/document/State/:id",DocumentController.UpdateDocumentState);
 router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);
