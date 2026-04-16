@@ -36,6 +36,7 @@ interface DashboardProps {
   children?: React.ReactNode;
   user?: DashboardUser;
   notificationsCount?: number;
+  viewToggle?: React.ReactNode;
   items: {
     label: string;
     href: string;
@@ -48,6 +49,7 @@ export default function Dashboard({
   children,
   user: userProp,
   notificationsCount = 3,
+  viewToggle,
 }: DashboardProps) {
 
   const pathname = usePathname();
@@ -120,6 +122,11 @@ export default function Dashboard({
           backgroundColor: "rgba(255,255,255,0.12)",
         }}
       />
+      {viewToggle && (
+        <div style={{ margin: "10px 16px" }}>
+          {viewToggle}
+        </div>
+      )}
       <Box
         sx={{
           flex: 1,
