@@ -85,7 +85,7 @@ function LoginPageInner() {
 				router.push("/admin");
 			} 
 			else {
-				router.push("/employee");
+				router.push("/worker");
 			}
 		} catch (err: unknown) {
 			const apiErr = err as ApiError;

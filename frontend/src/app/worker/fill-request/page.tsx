@@ -139,7 +139,7 @@ export default function Page() {
 
       const router = useRouter() ;
       const handleCancel = () => {
-        router.push("/employee") ;
+        router.push("/worker") ;
         console.log("Request Cancelled");
       }
 
