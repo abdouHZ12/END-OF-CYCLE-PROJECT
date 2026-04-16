@@ -38,10 +38,11 @@ export default function Page() {
       const [isLoading, setIsLoading] = useState(false) ;
       const [error, setError] = useState<string | null>(null) ;
       const [toast , setToast] = useState<string | null>(null) ;
-      const toastTimerRef = useRef<number | null>(null) ;
-
       const [isSelected, setIsSelected] = useState("ExitSlip");
 
+      const toastTimerRef = useRef<number | null>(null) ;
+      
+      
       const user = useCurrentUser();
       const employeeId = user ? Number(user.id) : null;
 

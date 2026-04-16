@@ -12,7 +12,6 @@ import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { apiGet , type ApiError} from "@/lib/api";
 import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
 
@@ -26,17 +25,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Typography,
-  Chip
 } from "@mui/material";
 
 
 export function getDate(time : string){
     return time.split("T")[0].replace(/-/g , "/")
 }
-export function getFullDate(time: string){
-    return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1]
+export function getFullDate(time: string | undefined){
+    return time ? time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1] : "N/A"
 }
 
 

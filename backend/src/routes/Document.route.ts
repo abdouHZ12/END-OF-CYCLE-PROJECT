@@ -15,7 +15,7 @@ router.post("/documents/MissionOrder" ,DocumentController.CreateMissionOrder);
 
 router.get("/dAll/documents/:id",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);
-router.get("/document/:id",DocumentController.ReadDocumentById);
+router.get("/employee/:employeeId/document/:id",DocumentController.ReadDocumentById);
 router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
 router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByStatusAndType);
 router.post("/manager/pending-documents", DocumentController.ReadPendingDocumentsForManager);
@@ -27,7 +27,7 @@ router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);
 router.put("/document/AbsenceAuth/:id",DocumentController.UpdateWholeAbsenceAuth);
 router.put("/document/MissionOrder/:id",DocumentController.UpdateWholeMissionOrder);
 
-router.delete("/document/:id",DocumentController.DeleteDocumentById);
+router.delete("/employee/:employeeId/document/:id",DocumentController.DeleteDocumentById);
 
 
 

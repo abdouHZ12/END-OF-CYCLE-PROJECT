@@ -33,10 +33,11 @@ import {
 
 
 export type Document = {
-  id: string;
+  id: number;
   type : string;
   createdAt : string ;
   status : string ;
+  qrCode? : string ;
   issuedById? : number;
   authIssuedAt? : string;
   decisionMadeById?: number ;
@@ -54,6 +55,7 @@ export type Document = {
     duration :number;
     destination : string ;
     purpose : string ;
+    travelMethod : string ;
   } ;
 }
 

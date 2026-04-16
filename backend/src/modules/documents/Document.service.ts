@@ -1,3 +1,4 @@
+import { parse } from 'node:path';
 import { prisma } from '../../../lib/prisma.js'
 
 
@@ -104,9 +105,9 @@ export const ReadAllDocumentByState = async (data : any ) => {
 }
 
 
-export const ReadDocumentById = async (data : any , id : any ) => {
+export const ReadDocumentById = async (data : any , id : any , employeeId : any ) => {
     const DocumentId = parseInt(id) ; 
-    const { EmployeeId } = data ; 
+    const  EmployeeId  = parseInt(employeeId) ; 
     const Document = await prisma.document.findUnique({
         where : {
             issuedById : EmployeeId ,
@@ -360,10 +361,11 @@ export const UpdateWholeMissionOrder = async (data : any , id : any) =>{
 
  // DELETE PART 
 
-export const DeleteDocumentById = async (data : any ) => {
+export const DeleteDocumentById = async (data : any  , employeeId : any) => {
     const DocumentId = parseInt(data) ; 
+    const EmployeeId = parseInt(employeeId) ;
     const deletedDocument = await prisma.document.delete({
-        where : { id : DocumentId}
+        where : { id : DocumentId, issuedById: EmployeeId }
     })
     return deletedDocument ;
 }
