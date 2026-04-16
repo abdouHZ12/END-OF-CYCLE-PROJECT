@@ -1,27 +1,161 @@
 "use client"
 
 import * as React from "react";
-import { useState , useEffect } from "react";
+import { useState  } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { motion } from "framer-motion";
+import { useRef } from "react";
+import { apiPost, type ApiError } from "@/lib/api";
+import {useRouter} from "next/navigation" ;
 
+
+type DocumentResponse ={
+	message?: string;
+  document :{
+    id : number ;
+    type : string ;
+    status : string ;
+  }
+};
 export default function Page() {
 
-    const [destination , setDestination] = React.useState<string>("") ;
-    const [duration , setDuration] = React.useState<string>("") ;
-    const [purpose , setPurpose] = React.useState<string>("") ;
-    const [travelMethod , setTravelMethod] = React.useState<string>("") ;
-    const [startDate , setStartDate] = React.useState<string>("") ;
-    const [endDate , setEndDate] = React.useState<string>("") ;
-    const [reason , setReason] = React.useState<string>("") ;
-    const [returnTime , setReturnTime] = React.useState<string>("") ;
-    const [exitTime , setExitTime] = React.useState<string>("") ;
-    const [gate , setGate] = React.useState<string>("") ;
-    const [isSelected, setIsSelected] = useState("ExitSlip");
+      const [destination , setDestination] = React.useState<string>("") ;
+      const [duration , setDuration] = React.useState<string>("") ;
+      const [purpose , setPurpose] = React.useState<string>("") ;
+      const [travelMethod , setTravelMethod] = React.useState<string>("") ;
 
-    const [selected , setSelected] = React.useState<string>("exitSlip");
+      const [startDate , setStartDate] = React.useState<string>("") ;
+      const [endDate , setEndDate] = React.useState<string>("") ;
+      const [reason , setReason] = React.useState<string>("") ;
+
+      const [returnTime , setReturnTime] = React.useState<string>("") ;
+      const [exitTime , setExitTime] = React.useState<string>("") ;
+      const [gate , setGate] = React.useState<string>("") ;
+
+      const [isLoading, setIsLoading] = useState(false) ;
+      const [error, setError] = useState<string | null>(null) ;
+      const [toast , setToast] = useState<string | null>(null) ;
+      const toastTimerRef = useRef<number | null>(null) ;
+
+      const [isSelected, setIsSelected] = useState("ExitSlip");
+
+
+
+      async function handleExitSlipSubmit (e:React.FormEvent) {
+        e.preventDefault() ;
+        setIsLoading(true) ;
+        setError(null) ;
+
+        try {
+          const res = await apiPost<DocumentResponse>("/api/documents/ExitSlip" , {
+            Qrcode : "123456789" ,
+            Type : "EXIT_SLIP" , 
+            EmployeeId : 1 ,
+            exitTime : new Date(exitTime) ,
+            returnTime : new Date(returnTime) ,
+            gate
+        }) ; 
+
+        showToast("Exit Slip created succefully" , 2500) ;
+
+        setExitTime("");
+        setReturnTime("");
+        setGate("");
+      } catch (err :unknown) {
+        const apiErr = err as ApiError ;
+        setError(
+          apiErr?.message || "An error occurred while submitting the exit slip" ) ;
+
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+      async function handleAbsenceAuthorizationSubmit (e:React.FormEvent){
+        e.preventDefault() ;
+        setIsLoading(true) ;
+        setError(null) ;
+
+          try {
+          const res = await apiPost<DocumentResponse>("/api/documents/AbsenceAuth" , {
+            Qrcode : "123456789" ,
+            Type : "ABSENCE_AUTH" , 
+            EmployeeId : 1 ,
+            startDate : new Date(startDate) ,
+            endDate : new Date(endDate) ,
+            reason
+        }) ; 
+
+        showToast("Absence Authorization created succefully" , 2500) ;
+
+        setStartDate("");
+        setEndDate("");
+        setReason("");
+
+      } catch (err :unknown) {
+        const apiErr = err as ApiError ;
+        setError(
+          apiErr?.message || "An error occurred while submitting the absence authorization" ) ;
+
+      } finally {
+        setIsLoading(false);
+      }
+
+      }
+
+
+
+      async function handleMissionOrderSubmit (e:React.FormEvent) {
+        e.preventDefault() ;
+        setIsLoading(true) ;
+        setError(null) ;
+          try {
+          const res = await apiPost<DocumentResponse>("/api/documents/MissionOrder" , {
+            Qrcode : "123456789" ,
+            Type : "MISSION_ORDER" , 
+            EmployeeId : 1 ,
+            destination , 
+            duration : parseInt(duration) , 
+            purpose , 
+            travelMethod
+        }) ; 
+
+        showToast("Mission Order created succefully" , 2500) ;
+        setDestination("");
+        setDuration("");
+        setPurpose("");
+        setTravelMethod("");
+
+
+      } catch (err :unknown) {
+        const apiErr = err as ApiError ;
+        setError(
+          apiErr?.message || "An error occurred while submitting the mission order" ) ;
+      } finally {
+        setIsLoading(false);
+      } }
+
+      const router = useRouter() ;
+      const handleCancel = () => {
+        router.push("/employee") ;
+        console.log("Request Cancelled");
+      }
+
+      
+
+      function showToast(message: string, durationMs: number) {
+        if (toastTimerRef.current) {
+          window.clearTimeout(toastTimerRef.current);
+          toastTimerRef.current = null;
+        }
+        setToast(message);
+        toastTimerRef.current = window.setTimeout(() => {
+          setToast(null);
+          toastTimerRef.current = null;
+        }, durationMs);
+      }
 
 
 
@@ -34,7 +168,10 @@ export default function Page() {
             backgroundColor: "rgb(10, 22, 40)",
             display: "grid",
             gridTemplateRows: "1fr auto",
-            padding: "20px",
+            pt: "20px",
+            pb: "20px",
+            pr:{md:"20px" , lg:"350px"},
+            pl:{md:"20px" , lg:"350px"},
           }}
         >
           <Box sx={{width:"100%"}}>
@@ -56,7 +193,7 @@ export default function Page() {
               spacing={{ md: 1, lg: 1 }}
               columns={{ md: 12, lg: 12 }}
             >
-              <Grid key={1} size={{ xs: 2, sm: 4, md: 4 }}>
+              <Grid key={1} size={{ md: 4 , lg:4 }}>
                 <Button
                   fullWidth
                   onClick={() => setIsSelected("ExitSlip")}
@@ -141,6 +278,7 @@ export default function Page() {
                 >
                   <Box
                     component="form"
+                    onSubmit={handleExitSlipSubmit}
                     sx={{
                       padding: "24px",
                       backgroundColor: "#20314E",
@@ -149,6 +287,17 @@ export default function Page() {
                       width: "100%",
                     }}
                   >
+                    {toast ? (
+                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {toast}
+                      </div>
+                    ) : null}
+
+                    {error ? (
+                      <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                        {error}
+                      </div>
+                    ) : null}                    
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <label htmlFor="" style={{ color: "#fff" }}>
@@ -156,6 +305,9 @@ export default function Page() {
                         </label>
                         <input
                           type="datetime-local"
+                          required
+                          value ={exitTime}
+                          onChange={(e) => setExitTime(e.target.value)}
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -177,6 +329,9 @@ export default function Page() {
                         <label htmlFor="" style={{ color: "#fff" }}>Return Hour *</label>
                         <input
                           type="datetime-local"
+                          required
+                          value ={returnTime}
+                          onChange={(e) => setReturnTime(e.target.value)}
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -199,6 +354,9 @@ export default function Page() {
                     <input
                       type="text"
                       placeholder="    Gate"
+                      required
+                      value ={gate}
+                      onChange={(e) => setGate(e.target.value)}
                       style={{
                         width: "100%",
                         backgroundColor: "rgb(10, 22, 40)",
@@ -215,6 +373,7 @@ export default function Page() {
                     <Grid container spacing={2} sx={{ marginTop: "20px" }}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          disabled={isLoading}
                           type="submit"
                           sx={{
                             backgroundColor: "#ffa500",
@@ -229,12 +388,13 @@ export default function Page() {
                             },
                           }}
                         >
-                          Soumettre la demande
+                          {isLoading ? "Submitting..." : "Submit Request"}
                         </Button>
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          onClick={handleCancel}
                           sx={{
                             backgroundColor: "transparent",
                             color: "white",
@@ -268,6 +428,7 @@ export default function Page() {
                 >
                   <Box
                     component="form"
+                    onSubmit={handleAbsenceAuthorizationSubmit}
                     sx={{
                       padding: "24px",
                       backgroundColor: "#20314E",
@@ -276,11 +437,25 @@ export default function Page() {
                       width: "100%",
                     }}
                   >
+                    {toast ? (
+                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {toast}
+                      </div>
+                    ) : null}
+
+                    {error ? (
+                      <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                        {error}
+                      </div>
+                    ) : null}
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <label htmlFor="" style={{ color: "#fff" }}>Start Date *</label>
                         <input
                           type="date"
+                          required
+                          value ={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -301,6 +476,9 @@ export default function Page() {
                         <label htmlFor="" style={{ color: "#fff" }}>End Date *</label>
                         <input
                           type="date"
+                          required
+                          value ={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -323,6 +501,9 @@ export default function Page() {
                     <input
                       type="text"
                       placeholder="Please describe the Absence Reason"
+                      required
+                      value ={reason}
+                      onChange={(e) => setReason(e.target.value)}
                       style={{
                         width: "100%",
                         backgroundColor: "rgb(10, 22, 40)",
@@ -340,6 +521,7 @@ export default function Page() {
                     <Grid container spacing={2} sx={{ marginTop: "20px" }}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          disabled={isLoading}
                           type="submit"
                           sx={{
                             backgroundColor: "#ffa500",
@@ -354,12 +536,13 @@ export default function Page() {
                             },
                           }}
                         >
-                          Soumettre la demande
+                          {isLoading ? "Submitting..." : "Submit Request"}
                         </Button>
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          onClick={handleCancel}
                           sx={{
                             backgroundColor: "transparent",
                             color: "white",
@@ -394,6 +577,7 @@ export default function Page() {
                   >
                   <Box
                     component="form"
+                    onSubmit={handleMissionOrderSubmit}
                     sx={{
                       padding: "24px",
                       backgroundColor: "#20314E",
@@ -402,11 +586,25 @@ export default function Page() {
                       width: "100%",
                     }}
                   >
+                    {toast ? (
+                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {toast}
+                      </div>
+                    ) : null}
+
+                    {error ? (
+                      <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                        {error}
+                      </div>
+                    ) : null}
                     <label htmlFor="" style={{ color: "#fff" }}>Desination *</label>
                     <br />
                     <input
                       type="text"
                       placeholder="    Ex : Alger"
+                      required
+                      value ={destination}
+                      onChange={(e) => setDestination(e.target.value)}
                       style={{
                         width: "100%",
                         backgroundColor: "rgb(10, 22, 40)",
@@ -421,9 +619,13 @@ export default function Page() {
                     />
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>Start Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Duration *</label>
                         <input
-                          type="date"
+                          type="number"
+                          required
+                          value ={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                          placeholder="Duration in days"
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -434,16 +636,20 @@ export default function Page() {
                             paddingTop: "2px",
                             paddingBottom: "8px",
                             paddingLeft: "8px",
-                            paddingRight: "190px",
+                            paddingRight: "10px",
                             color: "#fff"
                           }}
                         />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>End Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}> Purpose *</label>
                         <input
-                          type="date"
+                          type="text"
+                          required
+                          value ={purpose}
+                          onChange={(e) => setPurpose(e.target.value)}
+                          placeholder="Purpose of the mission"
                           style={{
                             width: "100%",
                             backgroundColor: "rgb(10, 22, 40)",
@@ -464,6 +670,9 @@ export default function Page() {
                     <label htmlFor="" style={{ color: "#fff" }}>Travel Method</label>
                     <select
                       id="travel-method"
+                      value={travelMethod}
+                      onChange={(e) => setTravelMethod(e.target.value)}
+                      required
                       style={{
                         width: "100%",
                         padding: "12px",
@@ -472,15 +681,16 @@ export default function Page() {
                         color: "gray",
                       }}
                     >
-                      <option value="">Sélectionner un moyen de transport</option>
-                      <option value="car">Voiture</option>
-                      <option value="train">Train</option>
-                      <option value="plane">Avion</option>
+                      <option value="" disabled>Select Travel Method</option>
+                      <option value="PERSONNAL">Personnel</option>
+                      <option value="COMPANY">Company</option>
+                      <option value="AIRPLANE">Airplane</option>
                     </select>
                     <br />
                     <Grid container spacing={2} sx={{ marginTop: "20px" }}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          disabled={isLoading}
                           type="submit"
                           sx={{
                             backgroundColor: "#ffa500",
@@ -495,12 +705,13 @@ export default function Page() {
                             },
                           }}
                         >
-                          Soumettre la demande
+                          {isLoading ? "Submitting..." : "Submit Request"}
                         </Button>
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Button
+                          onClick={handleCancel}
                           sx={{
                             backgroundColor: "transparent",
                             color: "white",
