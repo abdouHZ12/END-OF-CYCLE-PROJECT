@@ -186,7 +186,17 @@ export default function Page() {
                                     {error}
                                 </Typography>) 
                             : empty ? ( 
-                                <div>No documents found</div> ) 
+                                <Box sx={{
+                                    backgroundColor: "#1a2942",
+                                    borderRadius: "12px",
+                                    padding: "30px 20px",
+                                    }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
+                                            No documents found
+                                        </Typography>
+                                    </Box>
+                                 </Box>   ) 
                         : ( 
                                   <TableContainer
                                   component={Paper}
