@@ -2,21 +2,14 @@
 
 import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import Stack from "@mui/material/Stack";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
-import {useMediaQuery , useTheme} from "@mui/material";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
 
@@ -42,6 +35,9 @@ export function getDate(time : string){
 export function getFullDate(time: string){
     return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1]
 }
+
+
+
 export default function Page() {
 
   const [Rows , setRows] = useState<Document[]>([]);
@@ -179,7 +175,7 @@ export default function Page() {
 
                 </Grid>
             </Box>
-
+            
             <Box sx={{mt:4}}>
                     {isLoading ? (
                                   <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
