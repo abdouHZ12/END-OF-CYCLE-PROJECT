@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { apiPost } from "@/lib/api";
+import { apiPost, apiPut } from "@/lib/api";
 
 type Employee = { id: number; name: string; username: string };
 
@@ -54,7 +54,7 @@ export default function PendingPage() {
     setActionLoading(documentId);
     try {
       const managerId = getManagerId();
-      await apiPost(`/api/document/State/${documentId}`, {
+      await apiPut(`/api/document/State/${documentId}`, {
         state: decision,
         ManagerId: managerId,
       });
