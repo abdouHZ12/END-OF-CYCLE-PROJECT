@@ -114,6 +114,19 @@ export const ReadEmployeesHistoryForManager = async (req: Request, res: Response
   }
 };
 
+export const ReadManagerDashboardStats = async (req: Request, res: Response) => {
+  try {
+    const result = await DocumentService.ReadManagerDashboardStats(req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "failed to fetch dashboard stats",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
 //UPDATE PART 
 
 export const UpdateDocumentState = async (req: Request , res: Response) => {
