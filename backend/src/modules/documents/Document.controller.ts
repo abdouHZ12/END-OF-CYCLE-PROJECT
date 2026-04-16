@@ -91,6 +91,16 @@ export const ReadAllDocumentByStatusAndType = async (req: Request , res: Respons
     }
 }
 
+export const ReadPendingDocumentsForManager = async (req: Request, res: Response) => {
+  try {
+    const Documents = await DocumentService.ReadPendingDocumentsForManager(req.body);
+    res.status(200).json(Documents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error, message: "failed to fetch pending documents for manager" });
+  }
+};
+
 //UPDATE PART 
 
 export const UpdateDocumentState = async (req: Request , res: Response) => {

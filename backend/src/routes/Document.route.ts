@@ -18,7 +18,7 @@ router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);
 router.get("/document/:id",DocumentController.ReadDocumentById);
 router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
 router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByStatusAndType);
-
+router.get("/manager/pending-documents", DocumentController.ReadPendingDocumentsForManager);
 
 router.put("/document/State/:id",DocumentController.UpdateDocumentState);
 router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);
