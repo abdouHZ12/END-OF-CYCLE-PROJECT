@@ -62,7 +62,7 @@ export const ReadAllDocumentByState = async (req: Request , res: Response) => {
 
 export const ReadDocumentById = async (req: Request , res: Response) => {
     try {
-        const Document = await DocumentService.ReadDocumentById(req.body , req.params.id) ; 
+        const Document = await DocumentService.ReadDocumentById(req.body , req.params.id , req.params.employeeId) ; 
         res.status(201).json(Document);
     } catch (error) {
         res.status(500).json({error:`failed to fetch document id : ${req.params.id}`})
@@ -175,10 +175,10 @@ export const UpdateWholeMissionOrder = async (req: Request , res: Response) => {
 
 export const DeleteDocumentById = async (req: Request , res: Response) => {
     try {
-        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.id) ; 
+        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.id , req.params.employeeId) ; 
         res.status(201).json(deletedDocument);
     } catch (error) {
-        res.status(500).json({error:"failed to delete this Document"})
+        res.status(500).json({error , message: "failed to delete this Document"})
         console.log(error);
     }
 }

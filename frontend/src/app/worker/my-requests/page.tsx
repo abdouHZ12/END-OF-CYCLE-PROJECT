@@ -5,13 +5,13 @@ import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { apiGet , type ApiError} from "@/lib/api";
+import { apiGet ,apiDelete, type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
+import { useRef } from "react";
+
 
 import {
   Box,
@@ -22,9 +22,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Typography,
-  Chip
 } from "@mui/material";
 
 
@@ -32,8 +30,8 @@ import {
 export function getDate(time : string){
     return time.split("T")[0].replace(/-/g , "/")
 }
-export function getFullDate(time: string){
-    return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1]
+export function getFullDate(time: string ) {
+    return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1] 
 }
 
 
@@ -46,7 +44,11 @@ export default function Page() {
   const [empty , setEmpty] = useState(false);
   const [sort , setSort] = useState<string>("");
   const [status , setStatus] = useState<string >("");
+  const [toast , setToast] = useState<string | null>(null) ;
 
+  const router = useRouter();
+
+  const toastTimerRef = useRef<number | null>(null) ;
 
   useEffect(() => {
 
@@ -54,6 +56,33 @@ export default function Page() {
     fetchDocuments();
   }, [status]);
 
+
+  const handleDelete = async (id: number) => {
+    try {
+      const raw = localStorage.getItem("naftal.employee");
+      const employeeId = raw ? JSON.parse(raw).id : null;
+      await apiDelete(`/api/employee/${employeeId}/document/${id}`);
+      setRows(prevRows => prevRows.filter(row => row.id !== id));
+      showToast("Document deleted successfully" , 2500) ;
+
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      setError(apiErr.message || "An error occurred while deleting the document.");
+    }
+  };
+
+
+  function showToast(message: string, durationMs: number) {
+        if (toastTimerRef.current) {
+          window.clearTimeout(toastTimerRef.current);
+          toastTimerRef.current = null;
+        }
+        setToast(message);
+        toastTimerRef.current = window.setTimeout(() => {
+          setToast(null);
+          toastTimerRef.current = null;
+        }, durationMs);
+      }
 
   async function fetchDocuments() {
       setIsLoading(true);
@@ -102,6 +131,12 @@ export default function Page() {
           }}
         >
         <Box sx={{width:"100% ", height: "100%"}}>
+                    {toast ? (
+                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {toast}
+                      </div>
+                    ) : null}
+
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
               Dashboard
             </h1>
@@ -250,11 +285,11 @@ export default function Page() {
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
-                                                <Avatar sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
+                                                <Avatar onClick={() => {router.push(`/worker/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
                                                     <VisibilityOutlinedIcon />
                                                 </Avatar>
 
-                                                <Avatar sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
+                                                <Avatar onClick={() => {handleDelete(row.id)}} sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
                                                     <CancelOutlinedIcon sx={{ color: "#f44336" }} />
                                                 </Avatar>
                                             </Box>
@@ -270,6 +305,6 @@ export default function Page() {
 
         </Box>
 
-        </Box>
+    </Box>
   );
-}
+} 
