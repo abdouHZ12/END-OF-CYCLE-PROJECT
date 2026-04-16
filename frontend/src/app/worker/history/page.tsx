@@ -52,7 +52,7 @@ export default function Page() {
   const [year , setYear] = useState<string>("");
   const [type , setType] = useState<string >("");
   const [Rows1 , setRows1] = useState<Document[]>([]);
-
+  const [month , setMonth] = useState<string>(""); 
   
 
   useEffect(() => {
@@ -69,6 +69,14 @@ export default function Page() {
 
   }, [year] );
 
+
+  useEffect(() => {
+
+
+    fetchDocuments();
+
+  }, [month] );
+
   async function fetchDocuments() {
       setIsLoading(true);
       setError(null);
@@ -77,9 +85,7 @@ export default function Page() {
         const employeeId = raw ? JSON.parse(raw).id : null;
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         let documentsArray = Object.values(res);
-        if (documentsArray.length === 0) {
-          setEmpty(true);
-        } else {
+          setEmpty(false);
           setRows1(documentsArray);
           if(type!== "")  {
             documentsArray = documentsArray.filter(doc => doc.type === type);
@@ -87,8 +93,13 @@ export default function Page() {
           if(year!==""){
             documentsArray = documentsArray.filter(doc => getDate(doc.createdAt).split("/")[0] === year);
           }
+          if(month!==""){
+            documentsArray = documentsArray.filter(doc => getDate(doc.createdAt).split("/")[1] === month);
+          }
+          if(documentsArray.length === 0) {
+            setEmpty(true);
+          }
             setRows(documentsArray);
-        }
  } catch (err:unknown) {
         const apiErr = err as ApiError;
         setError(apiErr.message || "An error occurred while fetching documents.");
@@ -273,9 +284,9 @@ export default function Page() {
                         Filter
                     </Typography>
                 </Box>
-                <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
+                <Grid container spacing={{ sm :3 ,md: 2, lg: 3 }} columns={{ sm : 8 , md:12, lg: 12 }}>
 
-                    <Grid key={1} size={{ md: 6 , lg:8 }}>
+                    <Grid key={1} size={{ md: 6 , lg:4 }}>
                         <label htmlFor="" style={{color:"lightgray" }}>Sort By Type</label>
                         <select
                             id="sort"
@@ -297,7 +308,7 @@ export default function Page() {
                         </select>
                     </Grid>
 
-                    <Grid key={2} size={{ md: 6 , lg:8 }}>
+                    <Grid key={2} size={{ md: 6 , lg:4 }}>
                         <label htmlFor="" style={{color:"lightgray"}}>Sort By Year</label>
                         <select
                             id="sort"
@@ -321,6 +332,38 @@ export default function Page() {
                         </select>
 
                     </Grid>
+                    <Grid key={3} size={{ md: 6 , lg:4 }}>
+                        <label htmlFor="" style={{color:"lightgray"}}>Sort By Month</label>
+                        <select
+                            id="month"
+                            value={month}
+                            onChange={(e) => setMonth(e.target.value)}
+                            style={{
+                                marginTop:"10px",
+                                width: "100%",
+                                padding: "12px",
+                                borderRadius: "5px",
+                                backgroundColor: "rgb(10, 22, 40)",
+                                color: "white",
+                        }}
+                        >
+                        <option value="">All months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+
+                        </select>
+
+                    </Grid>                    
 
                 </Grid>
             </Box>
@@ -335,7 +378,17 @@ export default function Page() {
                                     {error}
                                 </Typography>) 
                             : empty ? ( 
-                                <div>No documents found</div> ) 
+                                <Box sx={{
+                                    backgroundColor: "#1a2942",
+                                    borderRadius: "12px",
+                                    padding: "30px 20px",
+                                    }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
+                                            No documents found
+                                        </Typography>
+                                    </Box>
+                                 </Box>   ) 
                         : ( 
                                   <TableContainer
                                   component={Paper}
