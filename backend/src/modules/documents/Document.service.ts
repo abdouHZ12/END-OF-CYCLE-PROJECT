@@ -160,10 +160,21 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
 
 export const ReadPendingDocumentsForManager = async (data: any) => {
   const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
   const Documents = await prisma.document.findMany({
     where: {
       status: "PENDING",
-      issuedById: { not: ManagerId }, //! No self iprovement
+      issuedById: { not: ManagerId }, 
+      employee: {
+        structureId: manager.structureId, 
+      },
     },
     include: {
       missionOrder: true,
@@ -174,7 +185,41 @@ export const ReadPendingDocumentsForManager = async (data: any) => {
       },
     },
   });
+
   return Documents;
+};
+
+export const ReadEmployeesHistoryForManager = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const employees = await prisma.employee.findMany({
+    where: {
+      structureId: manager.structureId,
+      id: { not: ManagerId }, // exclude manager himself
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      issuedDocuments: {
+        include: {
+          missionOrder: true,
+          absenceAuth: true,
+          exitSlip: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  return employees;
 };
 
 // Update 
