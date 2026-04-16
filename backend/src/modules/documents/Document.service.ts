@@ -158,6 +158,24 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
     return Documents ; 
 }
 
+export const ReadPendingDocumentsForManager = async (data: any) => {
+  const { ManagerId } = data;
+  const Documents = await prisma.document.findMany({
+    where: {
+      status: "PENDING",
+      issuedById: { not: ManagerId }, //! No self iprovement
+    },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      employee: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+  });
+  return Documents;
+};
 
 // Update 
 
