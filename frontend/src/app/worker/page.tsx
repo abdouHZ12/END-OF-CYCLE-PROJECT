@@ -37,12 +37,20 @@ export type Document = {
   type : string;
   createdAt : string ;
   status : string ;
-  exitSlip? : unknown ;
+  exitSlip? : {
+    exitTime :string;
+    returnTime :string;
+    gate : string ;
+  } ;
   absenceAuth? : {
-    reason : string ;
+    endDate : string;
+    startDate : string;
+    reason : string;
   } ;
   missionOrder? :{
+    duration :number;
     destination : string ;
+    purpose : string ;
   } ;
 }
 
