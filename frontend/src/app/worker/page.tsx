@@ -37,6 +37,9 @@ export type Document = {
   type : string;
   createdAt : string ;
   status : string ;
+  issuedById? : number;
+  authIssuedAt? : string;
+  decisionMadeById?: number ;
   exitSlip? : {
     exitTime :string;
     returnTime :string;
