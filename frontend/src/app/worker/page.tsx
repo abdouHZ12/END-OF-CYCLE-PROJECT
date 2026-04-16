@@ -99,7 +99,9 @@ const router = useRouter() ;
       setIsLoading(true);
       setError(null);
       try { 
-        const res = await apiGet<DocumentResponse>("/api/dAll/documents/1",); // Assuming employee ID is 1 for testing
+        const raw = localStorage.getItem("naftal.employee");
+        const employeeId = raw ? JSON.parse(raw).id : null;
+        const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         const documentsArray = Object.values(res);
         if (documentsArray.length === 0) {
           setEmpty(true);
