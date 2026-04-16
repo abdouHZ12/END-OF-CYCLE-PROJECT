@@ -12,12 +12,14 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
 import {useMediaQuery , useTheme} from "@mui/material";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
+
 import {
   Box,
   Table,
@@ -33,6 +35,13 @@ import {
 } from "@mui/material";
 
 
+
+export function getDate(time : string){
+    return time.split("T")[0].replace(/-/g , "/")
+}
+export function getFullDate(time: string){
+    return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1]
+}
 export default function Page() {
 
   const [Rows , setRows] = useState<Document[]>([]);
@@ -47,7 +56,7 @@ export default function Page() {
 
 
     fetchDocuments();
-  }, []);
+  }, [status]);
 
 
   async function fetchDocuments() {
@@ -114,7 +123,7 @@ export default function Page() {
                 padding: "16px",
             }}>
                 <Box>
-                    <CancelOutlinedIcon />
+                    <FilterAltOutlinedIcon />
                     <Typography variant="h6" sx={{ color: "#fff", mb: 2 }}>
                         Filter
                     </Typography>
@@ -164,18 +173,23 @@ export default function Page() {
                         <option value="oldest">Oldest -&gt; Recent</option>
                         </select>
 
-                        </Grid>
-                                {isLoading ? (
+                    </Grid>
+
+                </Grid>
+            </Box>
+
+            <Box sx={{mt:4}}>
+                    {isLoading ? (
                                   <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
                                     Loading documents...
                                   </Typography>
-                                ) : error  ? (
-                                  <Typography variant="body1" sx={{ color: "red", textAlign: "center", mt: 4 }}>
+                        ) : error  ? (
+                                <Typography variant="body1" sx={{ color: "red", textAlign: "center", mt: 4 }}>
                                     {error}
-                                  </Typography>) 
-                                  : empty ? ( 
-                                    <div>No documents found</div> ) 
-                                 : ( 
+                                </Typography>) 
+                            : empty ? ( 
+                                <div>No documents found</div> ) 
+                        : ( 
                                   <TableContainer
                                   component={Paper}
                                   sx={{
@@ -209,16 +223,17 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                informations 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+getDate(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                 row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
                                           </TableCell>
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
-                                              <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
                                               <Typography sx={{color:"lightgray"}}>
-                                              {row.createdAt} {/* Display only the date part */}
+                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
                                               </Typography>
                                             </Box>
                                           </TableCell>
@@ -227,18 +242,13 @@ export default function Page() {
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
-                                                <Button variant="contained" size="small" sx={{ textTransform: "none", backgroundColor: "#3f51b5" , "&:hover": { backgroundColor: "#303f9f" } }}>
-                                                    <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}>
-                                                        <RemoveRedEyeOutlinedIcon />
-                                                    </Avatar>
+                                                <Avatar sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
+                                                    <VisibilityOutlinedIcon />
+                                                </Avatar>
 
-                                                </Button>
-
-                                                <Button>
-                                                    <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
-                                                        <CancelOutlinedIcon sx={{ color: "#f44336" }} />
-                                                    </Avatar>
-                                                </Button>
+                                                <Avatar sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
+                                                    <CancelOutlinedIcon sx={{ color: "#f44336" }} />
+                                                </Avatar>
                                             </Box>
                                           </TableCell>
 
@@ -246,9 +256,7 @@ export default function Page() {
                                       ))}
                                     </TableBody>
                                   </Table>
-                                </TableContainer> ) }
-
-                </Grid>
+                                </TableContainer> ) }                
             </Box>
 
 
