@@ -24,8 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 
-
-
 export function getDate(time : string){
     return time.split("T")[0].replace(/-/g , "/")
 }
@@ -34,8 +32,7 @@ export function getFullDate(time: string ) {
 }
 
 
-
-export default function Page() {
+export default function Page() {        
 
   const [Rows , setRows] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(false);
