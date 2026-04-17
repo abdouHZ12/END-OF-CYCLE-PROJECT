@@ -1,16 +1,15 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { apiGet ,apiDelete, type ApiError} from "@/lib/api";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
-import { useRef } from "react";
 
 
 import {
@@ -47,14 +46,10 @@ export default function Page() {
   const [toast , setToast] = useState<string | null>(null) ;
 
   const router = useRouter();
+  const pathname = usePathname();
+  const routePrefix = pathname?.startsWith("/manager") ? "/manager" : "/worker";
 
   const toastTimerRef = useRef<number | null>(null) ;
-
-  useEffect(() => {
-
-
-    fetchDocuments();
-  }, [status]);
 
 
   const handleDelete = async (id: number) => {
@@ -84,7 +79,7 @@ export default function Page() {
         }, durationMs);
       }
 
-  async function fetchDocuments() {
+  const fetchDocuments = useCallback(async () => {
       setIsLoading(true);
       setError(null);
       try { 
@@ -114,7 +109,11 @@ export default function Page() {
       }finally {
         setIsLoading(false);
       }
-      }  
+      }, [status]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   return (
 
@@ -285,7 +284,7 @@ export default function Page() {
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
-                                                <Avatar onClick={() => {router.push(`/worker/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
+                                              <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
                                                     <VisibilityOutlinedIcon />
                                                 </Avatar>
 
