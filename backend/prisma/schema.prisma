@@ -99,6 +99,8 @@ model Document {
   authIssuedAt     DateTime?
   type             DocumentType
 
+  managerComment   String?
+
   issuedById       Int
   employee         Employee     @relation("IssuedDocuments", fields: [issuedById], references: [id])
 
