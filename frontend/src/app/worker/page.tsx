@@ -41,6 +41,11 @@ export type Document = {
   issuedById? : number;
   authIssuedAt? : string;
   decisionMadeById?: number ;
+  decisionMadeBy?: {
+    id: number;
+    name: string;
+    username: string;
+  } | null;
   exitSlip? : {
     exitTime :string;
     returnTime :string;
