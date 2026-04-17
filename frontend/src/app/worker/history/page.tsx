@@ -438,7 +438,9 @@ export default function Page() {
                                           </TableCell>
 
                                           <TableCell sx={{ border:"none"}}>{getStatusChip(row.status)}</TableCell>
-                                          <TableCell sx={{ color: "#fff" , fontweight: "bold", border:"none"}}>{row.decisionMadeById || "N/A"}</TableCell>
+                                          <TableCell sx={{ color: "#fff" , fontweight: "bold", border:"none"}}>
+                                            {row.decisionMadeBy?.username || row.decisionMadeBy?.name || "N/A"}
+                                          </TableCell>
 
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>

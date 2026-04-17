@@ -82,7 +82,10 @@ export const ReadAllDocuments = async (id :any) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
@@ -98,7 +101,10 @@ export const ReadAllDocumentByState = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
@@ -116,7 +122,10 @@ export const ReadDocumentById = async (data : any , id : any , employeeId : any 
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Document ; 
@@ -133,7 +142,10 @@ export const ReadAllDocumentByType = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     
     })
@@ -153,7 +165,10 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
