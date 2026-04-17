@@ -404,7 +404,7 @@ export default function Page() {
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Submission Date</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Approved By</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Made By</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Date</TableCell>
 
                                       </TableRow>
