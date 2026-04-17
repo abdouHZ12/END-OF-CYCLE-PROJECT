@@ -131,6 +131,22 @@ return (
                               marginBottom: "20px",
                           }}
                           />
+
+                          {document.managerComment ? (
+                            <>
+                              <Divider sx={{ margin: "12px 0", backgroundColor: "rgba(255, 255, 255, 0.08)" }} />
+                              <Typography variant="subtitle2" sx={{ fontWeight: 700, marginBottom: "6px" }}>
+                                Commentaire du manager
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "lightgray", whiteSpace: "pre-wrap" }}
+                              >
+                                {document.managerComment}
+                              </Typography>
+                            </>
+                          ) : null}
+
                           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
                               {document.type === "EXIT_SLIP" && document.exitSlip?.exitTime ? "Exit Hour  : "+getFullDate(document.exitSlip.exitTime) : 
                               document.type === "ABSENCE_AUTH" && document.absenceAuth?.startDate ? "Start Date  : "+getFullDate(document.absenceAuth.startDate) : 
