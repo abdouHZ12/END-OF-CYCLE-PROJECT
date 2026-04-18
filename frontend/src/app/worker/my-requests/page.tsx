@@ -1,0 +1,306 @@
+"use client";
+
+import {useCallback, useEffect, useRef, useState} from "react";
+import Grid from "@mui/material/Grid";
+import Avatar from "@mui/material/Avatar";
+import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { apiGet ,apiDelete, type ApiError} from "@/lib/api";
+import { usePathname, useRouter } from "next/navigation";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
+
+
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
+
+export function getDate(time : string){
+    return time.split("T")[0].replace(/-/g , "/")
+}
+export function getFullDate(time: string ) {
+    return time.split("T")[0].replace(/-/g , "/") + " " + time.split("T")[1].split(":")[0]+ ":" +time.split("T")[1].split(":")[1] 
+}
+
+
+export default function Page() {        
+
+  const [Rows , setRows] = useState<Document[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [empty , setEmpty] = useState(false);
+  const [sort , setSort] = useState<string>("");
+  const [status , setStatus] = useState<string >("");
+  const [toast , setToast] = useState<string | null>(null) ;
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const routePrefix = pathname?.startsWith("/manager") ? "/manager" : "/worker";
+
+  const toastTimerRef = useRef<number | null>(null) ;
+
+
+  const handleDelete = async (id: number) => {
+    try {
+      const raw = localStorage.getItem("naftal.employee");
+      const employeeId = raw ? JSON.parse(raw).id : null;
+      await apiDelete(`/api/employee/${employeeId}/document/${id}`);
+      setRows(prevRows => prevRows.filter(row => row.id !== id));
+      showToast("Document deleted successfully" , 2500) ;
+
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      setError(apiErr.message || "An error occurred while deleting the document.");
+    }
+  };
+
+
+  function showToast(message: string, durationMs: number) {
+        if (toastTimerRef.current) {
+          window.clearTimeout(toastTimerRef.current);
+          toastTimerRef.current = null;
+        }
+        setToast(message);
+        toastTimerRef.current = window.setTimeout(() => {
+          setToast(null);
+          toastTimerRef.current = null;
+        }, durationMs);
+      }
+
+  const fetchDocuments = useCallback(async () => {
+      setIsLoading(true);
+      setError(null);
+      try { 
+        const raw = localStorage.getItem("naftal.employee");
+        const employeeId = raw ? JSON.parse(raw).id : null;
+        const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
+        const documentsArray = Object.values(res);
+        if (documentsArray.length === 0) {
+          setEmpty(true);
+        } else {
+          if(status == "")  
+          setRows(documentsArray);
+          else if(status == "PENDING") {
+          setRows(documentsArray.filter(doc => doc.status === "PENDING"));  
+          }
+          else if(status == "APPROVED") {
+            setRows(documentsArray.filter(doc => doc.status === "APPROVED"));  
+          }
+          else if(status == "REJECTED") {
+            setRows(documentsArray.filter(doc => doc.status === "REJECTED"));  
+          }
+        }
+      }catch (err:unknown) {
+        
+        const apiErr = err as ApiError;
+        setError(apiErr.message || "An error occurred while fetching documents.");
+      }finally {
+        setIsLoading(false);
+      }
+      }, [status]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
+
+  return (
+
+    <Box
+        sx={{
+            flexGrow: 1,
+            mt: "70px", // push below navbar
+            backgroundColor: "rgb(10, 22, 40)",
+            display: "grid",
+            gridTemplateRows: "1fr auto",
+            padding: "36px",
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        >
+        <Box sx={{width:"100% ", height: "100%"}}>
+                    {toast ? (
+                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {toast}
+                      </div>
+                    ) : null}
+
+            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
+              Dashboard
+            </h1>
+            <p
+              style={{
+                fontSize: "20px ",
+                color: "gray",
+                fontWeight: "bold",
+                marginBottom: "20px",
+              }}
+            >
+              Welcome to your dashboard
+            </p>
+            <Box sx={{
+                backgroundColor: "#1a2942",
+                borderRadius: "12px",
+                padding: "16px",
+            }}>
+                <Box>
+                    <FilterAltOutlinedIcon />
+                    <Typography variant="h6" sx={{ color: "#fff", mb: 2 }}>
+                        Filter
+                    </Typography>
+                </Box>
+                <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
+
+                    <Grid key={1} size={{ md: 6 , lg:8 }}>
+                        <label htmlFor="" style={{color:"lightgray" }}>Status</label>
+                        <select
+                            id="sort"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            required
+                            style={{
+                                marginTop:"10px",
+                                width: "100%",
+                                padding: "12px",
+                                borderRadius: "5px",
+                                backgroundColor: "rgb(10, 22, 40)",
+                                color: "white",
+                        }}
+                        >
+                        <option value="" style={{color:"white"}} >All Status</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                        </select>
+                    </Grid>
+
+                    <Grid key={2} size={{ md: 6 , lg:8 }}>
+                        <label htmlFor="" style={{color:"lightgray"}}>Sort By</label>
+                        <select
+                            id="sort"
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                            required
+                            style={{
+                                marginTop:"10px",
+                                width: "100%",
+                                padding: "12px",
+                                borderRadius: "5px",
+                                backgroundColor: "rgb(10, 22, 40)",
+                                color: "white",
+                        }}
+                        >
+                        <option value="Recent" >Recent  -&gt; Oldest</option>
+                        <option value="oldest">Oldest -&gt; Recent</option>
+                        </select>
+
+                    </Grid>
+
+                </Grid>
+            </Box>
+            
+            <Box sx={{mt:4}}>
+                    {isLoading ? (
+                                  <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
+                                    Loading documents...
+                                  </Typography>
+                        ) : error  ? (
+                                <Typography variant="body1" sx={{ color: "red", textAlign: "center", mt: 4 }}>
+                                    {error}
+                                </Typography>) 
+                            : empty ? ( 
+                                <Box sx={{
+                                    backgroundColor: "#1a2942",
+                                    borderRadius: "12px",
+                                    padding: "30px 20px",
+                                    }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
+                                            No documents found
+                                        </Typography>
+                                    </Box>
+                                 </Box>   ) 
+                        : ( 
+                                  <TableContainer
+                                  component={Paper}
+                                  sx={{
+                                    backgroundColor: "#1a2942",
+                                    borderRadius: 2,
+                                    overflowY: "auto",
+                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+                                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                                  }}
+                                >
+                                  <Table sx={{ }}>
+                                    <TableHead sx={{bgcolor:"#10223A" , boxShadow:"0px 0px 1px 0px gray"}}>
+                                      <TableRow>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Type</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Submission Date</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Actions</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {Rows.map((row) => (
+                                        <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
+                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                                              <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
+                                              {gettype(row.type)}
+                                            </Box>
+                                          </TableCell>
+
+                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                                              <Typography sx={{color:"lightgray"}}>
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+getDate(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                 row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
+                                              </Typography>
+                                            </Box>
+                                          </TableCell>
+
+                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                            <Box sx={{ display: "flex", alignItems: "center"  }}>
+                                              <Typography sx={{color:"lightgray"}}>
+                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
+                                              </Typography>
+                                            </Box>
+                                          </TableCell>
+
+                                          <TableCell sx={{ border:"none"}}>{getStatusChip(row.status)}</TableCell>
+
+                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                            <Box sx={{ display: "flex", alignItems: "center"  }}>
+                                              <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
+                                                    <VisibilityOutlinedIcon />
+                                                </Avatar>
+
+                                                <Avatar onClick={() => {handleDelete(row.id)}} sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
+                                                    <CancelOutlinedIcon sx={{ color: "#f44336" }} />
+                                                </Avatar>
+                                            </Box>
+                                          </TableCell>
+
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </TableContainer> ) }                
+            </Box>
+
+
+        </Box>
+
+    </Box>
+  );
+} 

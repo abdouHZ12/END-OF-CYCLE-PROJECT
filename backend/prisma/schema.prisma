@@ -95,9 +95,11 @@ model Document {
   id               Int          @id @default(autoincrement())
   status           Status       @default(PENDING)
   createdAt        DateTime     @default(now())
-  qrCode           String
+  qrCode           String?
   authIssuedAt     DateTime?
   type             DocumentType
+
+  managerComment   String?
 
   issuedById       Int
   employee         Employee     @relation("IssuedDocuments", fields: [issuedById], references: [id])

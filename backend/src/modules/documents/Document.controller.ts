@@ -30,6 +30,7 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
         const newMissionOrder = await DocumentService.CreateMissionOrder(req.body);
         res.status(201).json(newMissionOrder);
     } catch (error) {
+        console.error(error);
         res.status(500).json({error:"failed to create Mission Order"})
     }
 }
@@ -41,7 +42,7 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
 
 export const ReadAllDocuments = async (req: Request , res: Response) => {
     try {
-        const Documents = await DocumentService.ReadAllDocuments(req.body) ; 
+        const Documents = await DocumentService.ReadAllDocuments(req.params.id) ; 
         res.status(201).json(Documents);
     } catch (error) {
         console.error(error);
@@ -61,7 +62,7 @@ export const ReadAllDocumentByState = async (req: Request , res: Response) => {
 
 export const ReadDocumentById = async (req: Request , res: Response) => {
     try {
-        const Document = await DocumentService.ReadDocumentById(req.body , req.params.id) ; 
+        const Document = await DocumentService.ReadDocumentById(req.body , req.params.id , req.params.employeeId) ; 
         res.status(201).json(Document);
     } catch (error) {
         res.status(500).json({error:`failed to fetch document id : ${req.params.id}`})
@@ -90,17 +91,56 @@ export const ReadAllDocumentByStatusAndType = async (req: Request , res: Respons
     }
 }
 
+export const ReadPendingDocumentsForManager = async (req: Request, res: Response) => {
+  try {
+    const Documents = await DocumentService.ReadPendingDocumentsForManager(req.body);
+    res.status(200).json(Documents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error, message: "failed to fetch pending documents for manager" });
+  }
+};
+
+export const ReadEmployeesHistoryForManager = async (req: Request, res: Response) => {
+  try {
+    const result = await DocumentService.ReadEmployeesHistoryForManager(req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "failed to fetch employees history",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+export const ReadManagerDashboardStats = async (req: Request, res: Response) => {
+  try {
+    const result = await DocumentService.ReadManagerDashboardStats(req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "failed to fetch dashboard stats",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
 //UPDATE PART 
 
-export const UpdateDocumentState = async (req: Request , res: Response) => {
-    try {
-        const Document = await DocumentService.UpdateDocumentState(req.body , req.params.id) ; 
-        res.status(201).json(Document);
-    } catch (error) {
-        res.status(500).json({error:"failed to update state of this document"})
-        console.log(error);
-    }
-}
+export const UpdateDocumentState = async (req: Request, res: Response) => {
+  try {
+    const Document = await DocumentService.UpdateDocumentState(req.body, req.params.id);
+    res.status(201).json(Document);
+  } catch (error) {
+    console.error("UpdateDocumentState error:", error); // ← check your terminal
+    res.status(500).json({
+      error: "failed to update state of this document",
+      message: error instanceof Error ? error.message : String(error), // ← now visible in browser too
+    });
+  }
+};
 
 
 export const UpdateWholeExitSlip = async (req: Request , res: Response) => {
@@ -138,10 +178,10 @@ export const UpdateWholeMissionOrder = async (req: Request , res: Response) => {
 
 export const DeleteDocumentById = async (req: Request , res: Response) => {
     try {
-        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.id) ; 
+        const deletedDocument = await DocumentService.DeleteDocumentById(req.params.id , req.params.employeeId) ; 
         res.status(201).json(deletedDocument);
     } catch (error) {
-        res.status(500).json({error:"failed to delete this Document"})
+        res.status(500).json({error , message: "failed to delete this Document"})
         console.log(error);
     }
 }

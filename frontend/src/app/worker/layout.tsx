@@ -10,7 +10,7 @@ import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Dashboard from "@/components/Dashboard";
-export default function EmployeeLayout({
+export default function workerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -19,27 +19,27 @@ export default function EmployeeLayout({
   const items = [
     {
       label: "Tableau de bord",
-      href: "/employee",
+      href: "/worker",
       icon: <DashboardOutlinedIcon />,
     },
     {
       label: "Nouvelle demande",
-      href: "/employee/fill-request",
+      href: "/worker/fill-request",
       icon: <TextSnippetOutlinedIcon />,
     },
     {
       label: "Mes demandes",
-      href: "/employee/requests",
+      href: "/worker/my-requests",
       icon: <AssignmentOutlinedIcon />,
     },
     {
       label: "Historique",
-      href: "/employee/history",
+      href: "/worker/history",
       icon: <RestoreOutlinedIcon />,
     },
     {
       label: "Télécharger autorisation",
-      href: "/employee/download",
+      href: "/worker/download",
       icon: <FileDownloadOutlinedIcon />,
     },
   ];

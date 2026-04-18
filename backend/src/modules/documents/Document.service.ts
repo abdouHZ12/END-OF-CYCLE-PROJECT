@@ -1,3 +1,4 @@
+import { parse } from 'node:path';
 import { prisma } from '../../../lib/prisma.js'
 
 
@@ -71,8 +72,9 @@ export const CreateMissionOrder = async (data : any ) => {
 // all THESE READS CONCERN ONE EMPLOYEE ONLY 
 
 
-export const ReadAllDocuments = async (data :any) => {
-    const {EmployeeId} = data ; 
+export const ReadAllDocuments = async (id :any) => {
+    const DocumentId = parseInt(id) ;
+    const EmployeeId = DocumentId ; 
     const Documents = await prisma.document.findMany({
         where : {
             issuedById : EmployeeId
@@ -80,7 +82,10 @@ export const ReadAllDocuments = async (data :any) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
@@ -96,16 +101,19 @@ export const ReadAllDocumentByState = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
 }
 
 
-export const ReadDocumentById = async (data : any , id : any ) => {
+export const ReadDocumentById = async (data : any , id : any , employeeId : any ) => {
     const DocumentId = parseInt(id) ; 
-    const { EmployeeId } = data ; 
+    const  EmployeeId  = parseInt(employeeId) ; 
     const Document = await prisma.document.findUnique({
         where : {
             issuedById : EmployeeId ,
@@ -114,7 +122,10 @@ export const ReadDocumentById = async (data : any , id : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Document ; 
@@ -131,7 +142,10 @@ export const ReadAllDocumentByType = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     
     })
@@ -151,12 +165,113 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
-            exitSlip : true
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
          }
     })
     return Documents ; 
 }
 
+export const ReadPendingDocumentsForManager = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const Documents = await prisma.document.findMany({
+    where: {
+      status: "PENDING",
+      issuedById: { not: ManagerId }, 
+      employee: {
+        structureId: manager.structureId, 
+      },
+    },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      employee: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+  });
+
+  return Documents;
+};
+
+export const ReadEmployeesHistoryForManager = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const employees = await prisma.employee.findMany({
+    where: {
+      structureId: manager.structureId,
+      id: { not: ManagerId }, // exclude manager himself
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      issuedDocuments: {
+        include: {
+          missionOrder: true,
+          absenceAuth: true,
+          exitSlip: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  return employees;
+};
+
+export const ReadManagerDashboardStats = async (data: any) => {
+  const { ManagerId } = data;
+
+  const manager = await prisma.employee.findUnique({
+    where: { id: ManagerId },
+    select: { structureId: true },
+  });
+
+  if (!manager) throw new Error("Manager not found");
+
+  const teamDocs = await prisma.document.findMany({
+    where: {
+      issuedById: { not: ManagerId },
+      employee: { structureId: manager.structureId },
+    },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      employee: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const total    = teamDocs.length;
+  const pending  = teamDocs.filter((d) => d.status === "PENDING").length;
+  const approved = teamDocs.filter((d) => d.status === "APPROVED").length;
+  const rejected = teamDocs.filter((d) => d.status === "REJECTED").length;
+  const recentDocuments = teamDocs.slice(0, 5);
+
+  return { total, pending, approved, rejected, recentDocuments };
+};
 
 // Update 
 
@@ -168,16 +283,22 @@ export const ReadAllDocumentByStatusAndType = async (data : any ) => {
 export const UpdateDocumentState = async (data : any , id : any ) => { 
     const DocumentId = parseInt(id) ; 
     const IssueDate : Date = new Date() ;
-    const { state  , ManagerId } = data ; 
+    const { state, ManagerId, managerComment, comment } = data;
+
+    const rawComment = typeof managerComment === "string" ? managerComment : typeof comment === "string" ? comment : undefined;
+    const normalizedComment = rawComment?.trim() ? rawComment.trim() : null;
     const document = await prisma.document.update({
         where : { 
             id : DocumentId 
         } , 
-        data : { 
-            authIssuedAt : IssueDate ,
-            status : state , 
-            decisionMadeById : ManagerId 
-         }
+        data: {
+            authIssuedAt: IssueDate,
+            status: state,
+            decisionMadeBy: {
+                connect: { id: ManagerId }  
+            },
+            managerComment: normalizedComment,
+        } as any
     })
     return document ;
 }
@@ -261,10 +382,11 @@ export const UpdateWholeMissionOrder = async (data : any , id : any) =>{
 
  // DELETE PART 
 
-export const DeleteDocumentById = async (data : any ) => {
+export const DeleteDocumentById = async (data : any  , employeeId : any) => {
     const DocumentId = parseInt(data) ; 
+    const EmployeeId = parseInt(employeeId) ;
     const deletedDocument = await prisma.document.delete({
-        where : { id : DocumentId}
+        where : { id : DocumentId, issuedById: EmployeeId }
     })
     return deletedDocument ;
 }
