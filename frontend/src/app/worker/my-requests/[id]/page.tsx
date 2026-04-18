@@ -2,14 +2,9 @@
 
 import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
-import Avatar from "@mui/material/Avatar";
-import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import {type DocumentResponse , type Document , gettype , getStatusChip} from "../../page";
+import {type Document} from "../../page";
 import { useParams } from "next/navigation";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import { getFullDate } from "../../history/page";
@@ -50,7 +45,6 @@ export default function Page() {
       } catch (err: unknown) {
         const apiErr = err as ApiError;
         setError(apiErr.message || "Failed to fetch the document.");
-        throw err;
       } finally {
         setIsLoading(false);
       }
@@ -67,11 +61,11 @@ return (
 
     <Box
         sx={{
-            flexGdocument: 1,
+            flexGrow: 1,
             mt: "70px", // push below navbar
             backgroundColor: "rgb(10, 22, 40)",
             display: "grid",
-            gridTemplatedocuments: "1fr auto",
+            gridTemplateRows: "1fr auto",
             padding: "36px",
             overflowY: "auto",
             overflowX: "hidden",
@@ -95,8 +89,11 @@ return (
               Welcome to your dashboard
             </p>
 
-
-            {error  ? (
+            {isLoading ? (
+              <Typography variant="body1" sx={{ color: "lightgray", textAlign: "center", mt: 4 }}>
+                Chargement...
+              </Typography>
+            ) : error  ? (
                 <Typography variant="body1" sx={{ color: "red", textAlign: "center", mt: 4 }}>
                       {error}
                 </Typography>) :
@@ -114,7 +111,7 @@ return (
                       >
                           <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "10px" }}>
                           {document.type === "EXIT_SLIP" ? "Bon de sortie" :
-                          document.type === "ABSENCE_AUTH" ? "Autorisation d`&apos;`absence" : 
+                          document.type === "ABSENCE_AUTH" ? "Autorisation d'absence" : 
                           document.type ==="MISSION_ORDER" ? "Ordre de mission" : "Document"}
                           </Typography>
                           <Typography variant="body2" sx={{ color: "gray", marginBottom: "10px" }}>
@@ -186,7 +183,7 @@ return (
                           </Typography>
                           <Divider sx={{ margin: "10px 0", backgroundColor: "gray" }} />
                           <Typography variant="body2" sx={{ color: "gray" }}>
-                              ○ En cours d`&apos;`examen
+                              {"○ En cours d'examen"}
                           </Typography>
                           <Divider sx={{ margin: "10px 0", backgroundColor: "gray" }} />
                           <Typography variant="body2" sx={{ color: "gray" }}>
