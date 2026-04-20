@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -51,30 +51,7 @@ export default function Page() {
   const [Rows1 , setRows1] = useState<Document[]>([]);
   const [month , setMonth] = useState<string>(""); 
   
-
-  useEffect(() => {
-
-
-    fetchDocuments();
-
-  }, [type] );
-
-    useEffect(() => {
-
-
-    fetchDocuments();
-
-  }, [year] );
-
-
-  useEffect(() => {
-
-
-    fetchDocuments();
-
-  }, [month] );
-
-  async function fetchDocuments() {
+  const fetchDocuments = useCallback(async () => {
       setIsLoading(true);
       setError(null);
       try { 
@@ -103,7 +80,11 @@ export default function Page() {
       }finally {
         setIsLoading(false);
       }
-      }  
+      }, [month, type, year]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   return (
         <Box
@@ -404,7 +385,7 @@ export default function Page() {
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Submission Date</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Approved By</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Made By</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Date</TableCell>
 
                                       </TableRow>

@@ -129,15 +129,18 @@ export const ReadManagerDashboardStats = async (req: Request, res: Response) => 
 
 //UPDATE PART 
 
-export const UpdateDocumentState = async (req: Request , res: Response) => {
-    try {
-        const Document = await DocumentService.UpdateDocumentState(req.body , req.params.id) ; 
-        res.status(201).json(Document);
-    } catch (error) {
-        res.status(500).json({error:"failed to update state of this document"})
-        console.log(error);
-    }
-}
+export const UpdateDocumentState = async (req: Request, res: Response) => {
+  try {
+    const Document = await DocumentService.UpdateDocumentState(req.body, req.params.id);
+    res.status(201).json(Document);
+  } catch (error) {
+    console.error("UpdateDocumentState error:", error); // ← check your terminal
+    res.status(500).json({
+      error: "failed to update state of this document",
+      message: error instanceof Error ? error.message : String(error), // ← now visible in browser too
+    });
+  }
+};
 
 
 export const UpdateWholeExitSlip = async (req: Request , res: Response) => {

@@ -82,7 +82,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [empty , setEmpty] = useState(false);
-  const [role , setRole] = useState<string | null>(null);
+  const [role , setRole] = useState<"WORKER" | "MANAGER" | null>(null) ;
 
 const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm")) ;
   
@@ -101,8 +101,8 @@ const router = useRouter() ;
       try { 
         const raw = localStorage.getItem("naftal.employee");
         const employeeId = raw ? JSON.parse(raw).id : null;
-        const employeeRole = raw ? JSON.parse(raw).role : null;
-        setRole(employeeRole);
+        const role = raw ? JSON.parse(raw).role : null;
+        setRole(role);
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         const documentsArray = Object.values(res);
         if (documentsArray.length === 0) {

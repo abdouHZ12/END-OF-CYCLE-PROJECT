@@ -2,12 +2,16 @@
 import Dashboard from "@/components/Dashboard";
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Button from "@mui/material/Button";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import GroupIcon from "@mui/icons-material/Group";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
+import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
 
 const EMPLOYEE_PATHS = [
   "/manager/my-dashboard",
@@ -35,7 +39,7 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   ];
 
   const toggleButton = (
-    <button
+    <Button
       onClick={() => {
         if (isEmployeeView) {
           router.push("/manager"); // go to manager space
@@ -43,21 +47,35 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
           router.push("/manager/my-dashboard"); // go to employee space
         }
       }}
-      style={{
-        width: "100%",
-        padding: "8px 12px",
+      fullWidth
+      variant="outlined"
+      startIcon={
+        isEmployeeView ? (
+          <AdminPanelSettingsOutlinedIcon fontSize="small" />
+        ) : (
+          <PersonOutlineOutlinedIcon fontSize="small" />
+        )
+      }
+      endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
+      sx={{
+        justifyContent: "space-between",
+        px: 1.5,
+        py: 1,
         backgroundColor: "rgba(255,165,0,0.12)",
         color: "#ffa500",
-        border: "1px solid rgba(255,165,0,0.3)",
-        borderRadius: "8px",
-        cursor: "pointer",
+        borderColor: "rgba(255,165,0,0.3)",
+        borderRadius: "10px",
+        textTransform: "none",
         fontSize: "13px",
-        fontWeight: "bold",
-        textAlign: "left",
+        fontWeight: 700,
+        "&:hover": {
+          backgroundColor: "rgba(255,165,0,0.18)",
+          borderColor: "rgba(255,165,0,0.45)",
+        },
       }}
     >
-      {isEmployeeView ? "📋 Espace manager" : "👤 Mes demandes"}
-    </button>
+      {isEmployeeView ? "Espace manager" : "Mes demandes"}
+    </Button>
   );
 
   return (

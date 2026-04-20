@@ -1,5 +1,5 @@
 import { parse } from 'node:path';
-import { prisma } from '../../lib//prisma.js'
+import { prisma } from '../../lib/prisma.js'
 
 
 //Creation Part
@@ -283,16 +283,22 @@ export const ReadManagerDashboardStats = async (data: any) => {
 export const UpdateDocumentState = async (data : any , id : any ) => { 
     const DocumentId = parseInt(id) ; 
     const IssueDate : Date = new Date() ;
-    const { state  , ManagerId } = data ; 
+    const { state, ManagerId, managerComment, comment } = data;
+
+    const rawComment = typeof managerComment === "string" ? managerComment : typeof comment === "string" ? comment : undefined;
+    const normalizedComment = rawComment?.trim() ? rawComment.trim() : null;
     const document = await prisma.document.update({
         where : { 
             id : DocumentId 
         } , 
-        data : { 
-            authIssuedAt : IssueDate ,
-            status : state , 
-            decisionMadeById : ManagerId 
-         }
+        data: {
+            authIssuedAt: IssueDate,
+            status: state,
+            decisionMadeBy: {
+                connect: { id: ManagerId }  
+            },
+            managerComment: normalizedComment,
+        } as any
     })
     return document ;
 }

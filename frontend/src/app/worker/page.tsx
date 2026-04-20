@@ -38,6 +38,7 @@ export type Document = {
   createdAt : string ;
   status : string ;
   qrCode? : string ;
+  managerComment?: string | null;
   issuedById? : number;
   authIssuedAt? : string;
   decisionMadeById?: number ;
