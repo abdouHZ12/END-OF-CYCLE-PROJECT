@@ -17,7 +17,14 @@ import { apiPost, type ApiError } from "@/lib/api";
 type SignInResponse = {
 	accessToken: string;
 	refreshToken: string;
-	employee: { id: string; name: string; username: string; role: string };
+	employee: {
+		id: number;
+		name: string;
+		username: string;
+		roles: string[];
+
+		role?: string;
+	};
 	message?: string;
 };
 
@@ -78,13 +85,15 @@ function LoginPageInner() {
 			localStorage.setItem("naftal.refreshToken", res.refreshToken);
 			localStorage.setItem("naftal.employee", JSON.stringify(res.employee));
 
-			if (res.employee.role === "MANAGER") {
+			const roles = Array.isArray(res.employee.roles)
+				? res.employee.roles
+				: res.employee.role
+					? [res.employee.role]
+					: [];
+
+			if (roles.includes("MANAGER") || roles.includes("ADMIN")) {
 				router.push("/manager");
-			} 
-			else if (res.employee.role === "ADMIN") {
-				router.push("/admin");
-			} 
-			else {
+			} else {
 				router.push("/worker");
 			}
 		} catch (err: unknown) {
