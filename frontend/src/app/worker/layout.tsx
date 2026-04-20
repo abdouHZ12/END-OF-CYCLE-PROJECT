@@ -39,7 +39,7 @@ export default function workerLayout({
     },
     {
       label: "Télécharger autorisation",
-      href: "/worker/download",
+      href: "/worker/download-auth",
       icon: <FileDownloadOutlinedIcon />,
     },
   ];
