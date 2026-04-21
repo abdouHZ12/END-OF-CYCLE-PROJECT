@@ -84,6 +84,60 @@ export const getAllRoles = async (req: Request, res: Response) => {
   }
 };
 
+export const createRole = async (req: Request, res: Response) => {
+  try {
+    const { name, type, permissions } = req.body;
+    if (!name || !type) {
+      return res.status(400).json({ message: 'Name and type are required' });
+    }
+    const role = await adminService.createRole({ name, type, permissions: permissions ?? '' });
+    res.status(201).json(role);
+  } catch (error: any) {
+    if (error.message === 'INVALID_ROLE_TYPE') {
+      return res.status(400).json({ message: 'Invalid role type' });
+    }
+    if (error.message === 'ROLE_ALREADY_EXISTS') {
+      return res.status(409).json({ message: 'A role with this name already exists' });
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Failed to create role' });
+  }
+};
+
+export const updateRole = async (req: Request<IdParam>, res: Response) => {
+  try {
+    const { name, permissions } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+    const role = await adminService.updateRole(parseInt(req.params.id), { name, permissions });
+    res.status(200).json(role);
+  } catch (error: any) {
+    if (error.message === 'ROLE_NOT_FOUND') {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update role' });
+  }
+};
+
+export const deleteRole = async (req: Request<IdParam>, res: Response) => {
+  try {
+    await adminService.deleteRole(parseInt(req.params.id));
+    res.status(200).json({ message: 'Role deleted successfully' });
+  } catch (error: any) {
+    if (error.message === 'ROLE_NOT_FOUND') {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+    if (error.message === 'ROLE_IN_USE') {
+      return res.status(409).json({ message: 'Cannot delete a role that is assigned to employees' });
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Failed to delete role' });
+  }
+};
+
+
 export const assignRole = async (req: Request<IdParam>, res: Response) => {
   try {
     const { roleId } = req.body;
@@ -133,11 +187,17 @@ export const createStructure = async (req: Request, res: Response) => {
 
 export const updateStructure = async (req: Request<IdParam>, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name, parentId } = req.body;
     if (!name) return res.status(400).json({ message: 'Name is required' });
-    const structure = await adminService.updateStructure(parseInt(req.params.id), name);
+    const structure = await adminService.updateStructure(parseInt(req.params.id), {
+      name,
+      parentId: parentId ? parseInt(parentId) : null,
+    });
     res.status(200).json(structure);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'SELF_PARENT') {
+      return res.status(400).json({ message: 'A department cannot be its own parent' });
+    }
     res.status(500).json({ message: 'Failed to update structure' });
   }
 };

@@ -10,6 +10,10 @@ router.put('/employees/:id',                  adminController.updateEmployee);
 router.delete('/employees/:id',               adminController.deleteEmployee);
 
 router.get('/roles',                          adminController.getAllRoles);
+router.post('/roles',                         adminController.createRole);       // ← new
+router.put('/roles/:id',                      adminController.updateRole);       // ← new
+router.delete('/roles/:id',                   adminController.deleteRole);       // ← new
+
 router.post('/employees/:id/roles',           adminController.assignRole);
 router.delete('/employees/:id/roles/:roleId', adminController.revokeRole);
 

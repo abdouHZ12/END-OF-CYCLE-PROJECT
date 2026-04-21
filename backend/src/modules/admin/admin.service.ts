@@ -127,10 +127,16 @@ export const createStructure = async (data: { name: string; parentId?: number })
   });
 };
 
-export const updateStructure = async (id: number, name: string) => {
+export const updateStructure = async (
+  id: number,
+  data: { name: string; parentId?: number | null }
+) => {
+
+  if (data.parentId === id) throw new Error("SELF_PARENT");
+
   return prisma.structure.update({
     where: { id },
-    data: { name },
+    data: { name: data.name, parentId: data.parentId ?? null },
     include: { _count: { select: { employees: true } }, parent: true },
   });
 };
@@ -139,4 +145,44 @@ export const deleteStructure = async (id: number) => {
   const hasEmployees = await prisma.employee.count({ where: { structureId: id } });
   if (hasEmployees > 0) throw new Error('STRUCTURE_HAS_EMPLOYEES');
   return prisma.structure.delete({ where: { id } });
+};
+
+export const createRole = async (data: {
+  name: string;
+  type: string;
+  permissions: string;
+}) => {
+  const validTypes = ["ADMIN", "MANAGER", "WORKER", "AGENT"];
+  if (!validTypes.includes(data.type)) throw new Error("INVALID_ROLE_TYPE");
+
+  const existing = await prisma.role.findFirst({ where: { name: data.name } });
+  if (existing) throw new Error("ROLE_ALREADY_EXISTS");
+
+  return prisma.role.create({
+    data: {
+      name: data.name,
+      type: data.type as import("../../../generated/prisma/client.js").RoleType,
+      permissions: data.permissions ?? "",
+    },
+  });
+};
+
+export const updateRole = async (
+  id: number,
+  data: { name?: string; permissions?: string }
+) => {
+  const role = await prisma.role.findUnique({ where: { id } });
+  if (!role) throw new Error("ROLE_NOT_FOUND");
+
+  return prisma.role.update({ where: { id }, data });
+};
+
+export const deleteRole = async (id: number) => {
+  const role = await prisma.role.findUnique({ where: { id } });
+  if (!role) throw new Error("ROLE_NOT_FOUND");
+
+  const inUse = await prisma.employeeRole.count({ where: { roleId: id } });
+  if (inUse > 0) throw new Error("ROLE_IN_USE");
+
+  return prisma.role.delete({ where: { id } });
 };
