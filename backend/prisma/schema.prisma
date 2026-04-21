@@ -95,7 +95,7 @@ model Document {
   id               Int          @id @default(autoincrement())
   status           Status       @default(PENDING)
   createdAt        DateTime     @default(now())
-  qrCode           String?
+  qrCode           String?      @unique
   authIssuedAt     DateTime?
   type             DocumentType
 

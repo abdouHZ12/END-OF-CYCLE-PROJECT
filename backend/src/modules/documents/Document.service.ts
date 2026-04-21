@@ -1,6 +1,8 @@
 import { parse } from 'node:path';
 import { prisma } from '../../lib/prisma.js'
 import puppeteer , {Browser} from 'puppeteer' ;
+import { generateToken } from '../../lib/Aid.js';
+import QRCode from 'qrcode' ;
 
 //Creation Part
 // FOR NOW I AM RETREIVING ALL DATA FROM REQ.BODY
@@ -284,9 +286,18 @@ export const UpdateDocumentState = async (data : any , id : any ) => {
     const DocumentId = parseInt(id) ; 
     const IssueDate : Date = new Date() ;
     const { state, ManagerId, managerComment, comment } = data;
-
     const rawComment = typeof managerComment === "string" ? managerComment : typeof comment === "string" ? comment : undefined;
     const normalizedComment = rawComment?.trim() ? rawComment.trim() : null;
+
+    if (state === "APPROVED" ) {
+        const token = generateToken();
+        await prisma.document.update({
+            where: { id: DocumentId },
+            data: {
+                qrCode: token,
+            },
+        });
+    }
     const document = await prisma.document.update({
         where : { 
             id : DocumentId 
@@ -420,6 +431,9 @@ export const GeneratePdf = async ( id : any) => {
          }
     })
     if(!Document) throw new Error("Document not found") ;
+    
+    const url = `http://192.168.100.3:3000/scan?token=${Document.qrCode}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(url);
 
     const html = `<!DOCTYPE html>
     <html>
@@ -467,8 +481,9 @@ export const GeneratePdf = async ( id : any) => {
                         </div>
 
                         <div class="qr">
-                        <img src="" width="150" height="150" />
-                        <p>Scan to verify</p>
+                            <img src="${qrCodeDataUrl}" width="150" height="150" />
+                            <p>Scan to verify</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -490,8 +505,27 @@ try{
     return pdfBuffer ;
 } finally{
     await page.close();
+}    
 }
 
 
+
+export const ScanDocument = async (token : any , EmployeeId : any) => {
+    const Document = await prisma.document.findUnique({
+        where : { qrCode : token } ,
+        include : {
+            missionOrder  : true ,
+            absenceAuth : true , 
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
+         }
+    })
+    if(!Document) throw new Error("Invalid QR code") ;
     
+    if(Document.issuedById !== parseInt(EmployeeId)) {
+        throw new Error("Unauthorized access to this document") ;
+    }
+    return Document ; 
 }

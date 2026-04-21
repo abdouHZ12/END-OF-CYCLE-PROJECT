@@ -2,21 +2,14 @@
 
 import {useEffect, useState , useCallback} from "react";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import Stack from "@mui/material/Stack";
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { getDate } from "../my-requests/page";
 import { apiGet ,apiGetBinary ,type ApiError} from "@/lib/api";
 import { getFullDate } from "../my-requests/page";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import {type DocumentResponse , type Document , gettype , getStatusChip} from "../page";
+import {type DocumentResponse , type Document , gettype } from "../page";
 
 
 import {
@@ -84,13 +77,13 @@ export default function Page() {
             documentsArray = documentsArray.filter(doc => doc.type === type);
            }
             setRows(documentsArray);
- } catch (err:unknown) {
-        const apiErr = err as ApiError;
-        setError(apiErr.message || "An error occurred while fetching documents.");
-      }finally {
-        setIsLoading(false);
-      }
-      }, [type]);
+      } catch (err:unknown) {
+              const apiErr = err as ApiError;
+              setError(apiErr.message || "An error occurred while fetching documents.");
+            }finally {
+              setIsLoading(false);
+            }
+            }, [type]);
 
   useEffect(() => {
     fetchDocuments();

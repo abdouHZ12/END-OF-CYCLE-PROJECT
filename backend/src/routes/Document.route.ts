@@ -1,7 +1,7 @@
 import express from 'express'
 import { Router } from 'express'
 import * as DocumentController from '../modules/documents/Document.controller.js'
-
+import {auth} from "../middlewares/authHandler.js" ;
 const router : Router = Router() ; 
 
 
@@ -15,6 +15,8 @@ router.post("/documents/MissionOrder" ,DocumentController.CreateMissionOrder);
 router.post("/manager/pending-documents", DocumentController.ReadPendingDocumentsForManager);
 router.post("/manager/employees-history", DocumentController.ReadEmployeesHistoryForManager);
 router.post("/manager/dashboard-stats", DocumentController.ReadManagerDashboardStats);
+
+router.post("/scan", auth, DocumentController.ScanDocument);
 
 router.get("/dAll/documents/:id",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);

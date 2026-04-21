@@ -59,7 +59,6 @@ export default function Page() {
 
         try {
           await apiPost<DocumentResponse>("/api/documents/ExitSlip" , {
-            Qrcode : "123456789" ,
             Type : "EXIT_SLIP" , 
             EmployeeId : employeeId ,
             exitTime : new Date(exitTime) ,
@@ -93,7 +92,6 @@ export default function Page() {
 
           try {
           await apiPost<DocumentResponse>("/api/documents/AbsenceAuth" , {
-            Qrcode : "123456789" ,
             Type : "ABSENCE_AUTH" , 
             EmployeeId : employeeId ,
             startDate : new Date(startDate) ,
@@ -130,7 +128,6 @@ export default function Page() {
         setError(null) ;
           try {
           await apiPost<DocumentResponse>("/api/documents/MissionOrder" , {
-            Qrcode : "123456789" ,
             Type : "MISSION_ORDER" , 
             EmployeeId : employeeId ,
             destination , 
