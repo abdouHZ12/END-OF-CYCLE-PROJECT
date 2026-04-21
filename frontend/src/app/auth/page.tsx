@@ -91,7 +91,14 @@ function LoginPageInner() {
 					? [res.employee.role]
 					: [];
 
-			if (roles.includes("MANAGER") || roles.includes("ADMIN")) {
+			const normalizedRoles = roles
+				.filter((r): r is string => typeof r === "string")
+				.map((r) => r.trim().toUpperCase())
+				.filter(Boolean);
+
+			if (normalizedRoles.includes("ADMIN")) {
+				router.push("/admin");
+			} else if (normalizedRoles.includes("MANAGER")) {
 				router.push("/manager");
 			} else {
 				router.push("/worker");
