@@ -1,5 +1,9 @@
 import { prisma } from '../../lib/prisma.js';
 import bcrypt from 'bcryptjs';
+import { generateUsername } from '../../lib/credentials.js';
+import crypto from 'node:crypto';
+import { sendAccountSetupEmail } from '../../lib/mailer.js';
+import { tokenService } from '../auth/token.service.js';
 
 export const getAllEmployees = async () => {
   return prisma.employee.findMany({
@@ -25,35 +29,43 @@ export const getEmployeeById = async (id: number) => {
 
 export const registerEmployee = async (data: {
   name: string;
-  username: string;
   email: string;
-  password: string;
   structureId: number;
   roleIds: number[];
 }) => {
-  const existing = await prisma.employee.findFirst({
-    where: { OR: [{ username: data.username }, { email: data.email }] },
-  });
+  const existing = await prisma.employee.findFirst({ where: { email: data.email } });
   if (existing) throw new Error('EMPLOYEE_ALREADY_EXISTS');
 
-  const hashed = await bcrypt.hash(data.password, 10);
+  const username = await generateUsername(data.name);
+  const hashed = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
 
-  return prisma.employee.create({
+  const employee = await prisma.employee.create({
     data: {
       name: data.name,
-      username: data.username,
+      username,
       email: data.email,
       password: hashed,
       structureId: data.structureId,
-      roles: {
-        create: data.roleIds.map((roleId) => ({ roleId })),
-      },
+      roles: { create: data.roleIds.map((roleId) => ({ roleId })) },
     },
     include: {
       roles: { include: { role: true } },
       structure: true,
     },
   });
+
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = await tokenService.hashToken(rawToken);
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24h
+
+  await prisma.passwordReset.create({
+    data: { token: hashedToken, expiresAt, employeeId: employee.id },
+  });
+
+  sendAccountSetupEmail(data.email, data.name, username, rawToken)
+    .catch((err) => console.error('Failed to send setup email:', err));
+
+  return employee;
 };
 
 export const updateEmployee = async (

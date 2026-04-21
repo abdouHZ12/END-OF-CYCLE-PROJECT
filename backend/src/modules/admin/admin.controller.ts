@@ -29,22 +29,13 @@ export const getEmployeeById = async (req: Request<IdParam>, res: Response) => {
 
 export const registerEmployee = async (req: Request, res: Response) => {
   try {
-    const { name, username, email, password, structureId, roleIds } = req.body;
-    if (!name || !username || !email || !password || !structureId || !roleIds?.length) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-    const employee = await adminService.registerEmployee({
-      name, username, email, password,
-      structureId: parseInt(structureId),
-      roleIds: roleIds.map(Number),
-    });
+    const { name, email, structureId, roleIds } = req.body;  // no username/password
+    const employee = await adminService.registerEmployee({ name, email, structureId, roleIds });
     res.status(201).json(employee);
-  } catch (error: any) {
-    if (error.message === 'EMPLOYEE_ALREADY_EXISTS') {
-      return res.status(409).json({ message: 'Username or email already exists' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to register employee' });
+  } catch (err: any) {
+    if (err.message === 'EMPLOYEE_ALREADY_EXISTS')
+      return res.status(409).json({ message: 'Email already in use' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -213,3 +204,4 @@ export const deleteStructure = async (req: Request<IdParam>, res: Response) => {
     res.status(500).json({ message: 'Failed to delete structure' });
   }
 };
+
