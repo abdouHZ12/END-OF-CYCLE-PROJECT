@@ -510,13 +510,15 @@ try{
 
 
 
-export const ScanDocument = async (token : any , EmployeeId : any) => {
+export const ScanDocument = async (token : any , Employeeid : any) => {
+    const EmployeeId = parseInt(Employeeid) ;
     const Document = await prisma.document.findUnique({
         where : { qrCode : token } ,
         include : {
             missionOrder  : true ,
             absenceAuth : true , 
             exitSlip : true,
+            leaveSession : true ,
             decisionMadeBy: {
                 select: { id: true, name: true, username: true },
             },
@@ -524,8 +526,94 @@ export const ScanDocument = async (token : any , EmployeeId : any) => {
     })
     if(!Document) throw new Error("Invalid QR code") ;
     
-    if(Document.issuedById !== parseInt(EmployeeId)) {
+    if(Document.issuedById !==EmployeeId) {
         throw new Error("Unauthorized access to this document") ;
     }
-    return Document ; 
+    let message = "" ;
+    const now = new Date() ;
+    let session = await prisma.leaveSession.findUnique({
+        where : { documentId : Document.id }
+    });
+    if(!session){
+        session = await prisma.leaveSession.create({
+            data : {
+                documentId :    Document.id ,
+                status :        "OUT",
+                employeeId :    EmployeeId,
+                leaveTime  :    now,
+            }
+        })
+
+    const refreshedDocument = await prisma.document.findUnique({
+        where : { id : Document.id } ,
+        include : {
+            missionOrder  : true ,
+            absenceAuth : true , 
+            exitSlip : true,
+            leaveSession : true ,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
+         }
+    })
+    return {message: "QR code Valid , leave time created", Document : refreshedDocument};
+    }
+
+    if(session && !session.returnTime){
+
+        if (Document.type === "EXIT_SLIP"){
+            const hour = now.getHours() ;
+            if(hour >= 16){
+                await prisma.leaveSession.update({
+                    where : { id : session.id } ,
+                    data : {
+                        status : "NOT_RETURNED"
+                    }
+                })
+                const refreshedDocument = await prisma.document.findUnique({
+                    where: { id: Document.id },
+                    include: {
+                        missionOrder: true,
+                        absenceAuth: true,
+                        exitSlip: true,
+                        decisionMadeBy: { select: { id: true, name: true, username: true } },
+                        leaveSession: true, // Include the updated leaveSession
+                    },
+                });
+                return {message: "Too late it's past 16:00 -> marked as NOT_RETURNED", Document : refreshedDocument};
+            }
+        } 
+        await prisma.leaveSession.update({
+            where : { id : session.id } ,
+            data : {
+                returnTime : now ,
+                status : "RETURNED"
+            }
+        })
+        const refreshedDocument = await prisma.document.findUnique({
+            where: { id: Document.id },
+            include: {
+                missionOrder: true,
+                absenceAuth: true,
+                exitSlip: true,
+                decisionMadeBy: { select: { id: true, name: true, username: true } },
+                leaveSession: true, // Include the updated leaveSession
+            },
+        });
+    return {message: "QR code Valid , return time recorded", Document : refreshedDocument};
+    }
+
+
+        const refreshedDocument = await prisma.document.findUnique({
+            where: { id: Document.id },
+            include: {
+                missionOrder: true,
+                absenceAuth: true,
+                exitSlip: true,
+                decisionMadeBy: { select: { id: true, name: true, username: true } },
+                leaveSession: true, // Include the updated leaveSession
+            },
+        });
+    
+    return {message: "QR code Valid , Already completed", Document : refreshedDocument}; 
 }

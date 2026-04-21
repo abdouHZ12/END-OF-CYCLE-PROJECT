@@ -210,10 +210,10 @@ export const ScanDocument = async (req: Request , res: Response) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
         const employeeId = req.user.id ;
-        const Document = await DocumentService.ScanDocument(req.body.token ,employeeId) ;
-        res.status(201).json({Document ,message:"QR code Valid"});
+        const { Document, message } = await DocumentService.ScanDocument(req.body.token ,employeeId) ;
+        res.status(201).json({Document ,message});
     } catch (error) {
         console.error(error);
-        res.status(500).json({error , message:"failed to Scan QR code"})
+        res.status(500).json({error})
     }  
 }
