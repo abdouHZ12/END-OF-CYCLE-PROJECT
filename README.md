@@ -65,6 +65,10 @@ npx prisma studio
 pnpm prisma db seed
 ```
 
+## must be done in both frontend and backend 
+
+pnpm install 
+
 
 ## Change in .env.local in frontend 
 
