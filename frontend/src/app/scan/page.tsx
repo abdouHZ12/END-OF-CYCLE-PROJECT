@@ -42,7 +42,6 @@ export default function ScanPage() {
   const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
-  const [message , setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ScanResponse | null>(null);
 
@@ -65,7 +64,6 @@ export default function ScanPage() {
 
             const res = await scanPost<ScanResponse>(`/api/scan`, { token }, jwt);
             setData(res);
-            setMessage(res.message? res.message : "Scan completed successfully.");
         }
         catch(err) {
             const apiError = err as ApiError;
