@@ -1,6 +1,6 @@
 import { parse } from 'node:path';
 import { prisma } from '../../lib/prisma.js'
-
+import puppeteer , {Browser} from 'puppeteer' ;
 
 //Creation Part
 // FOR NOW I AM RETREIVING ALL DATA FROM REQ.BODY
@@ -389,4 +389,109 @@ export const DeleteDocumentById = async (data : any  , employeeId : any) => {
         where : { id : DocumentId, issuedById: EmployeeId }
     })
     return deletedDocument ;
+}
+
+
+let browser : Browser ;
+
+export const initBrowser = async () =>{
+    if(!browser){
+        browser = await puppeteer.launch({
+            headless : true ,
+            executablePath: "/usr/bin/google-chrome",
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+    }
+}
+
+
+
+export const GeneratePdf = async ( id : any) => {
+    const DocumentId = parseInt(id) ;
+    const Document = await prisma.document.findUnique({
+        where : { id : DocumentId } ,
+        include : {
+            missionOrder  : true ,
+            absenceAuth : true , 
+            exitSlip : true,
+            decisionMadeBy: {
+                select: { id: true, name: true, username: true },
+            },
+         }
+    })
+    if(!Document) throw new Error("Document not found") ;
+
+    const html = `<!DOCTYPE html>
+    <html>
+        <head>
+            <style>
+            body {
+                font-family: Arial;
+                padding: 40px;
+            }
+            .container {
+                border: 1px solid #000;
+                padding: 20px;
+            }
+            .title {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+            }
+            .qr {
+                margin-top: 30px;
+                text-align: center;
+            }
+            .content {
+                display: flex;
+                gap: 24px;
+                align-items: flex-start;
+                margin-top: 24px;
+            }
+
+            .info {
+                flex: 1;
+            }
+            </style>
+        </head>
+
+        <body>
+            <div class="container">
+                <div class="title">Approved Document</div>
+
+                <div class="content">
+                    <div class="info">
+                        <p><strong>User:</strong> ${Document?.id}</p>
+                        <p><strong>Type:</strong> ${Document?.type}</p>
+                        <p><strong>Date:</strong> ${new Date(Document.createdAt).toLocaleDateString()}</p>
+                        </div>
+
+                        <div class="qr">
+                        <img src="" width="150" height="150" />
+                        <p>Scan to verify</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>`;
+
+    if(!browser) {
+        throw new Error("Browser not initialized. Call initBrowser() first.");
+    }
+    const page = await browser.newPage();
+try{
+    await page.setContent(html , {waitUntil:"load"});
+
+    const pdfBuffer = await page.pdf({
+        format:"A4",
+        printBackground: true
+    });
+
+    return pdfBuffer ;
+} finally{
+    await page.close();
+}
+
+
+    
 }

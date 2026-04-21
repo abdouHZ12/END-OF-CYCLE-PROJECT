@@ -187,3 +187,31 @@ export async function apiDelete<TResponse>(
 
   return (data ?? ({} as unknown)) as TResponse;
 }
+
+
+export async function apiGetBinary(path: string): Promise<Blob> {
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBaseUrl()}${path}`, {
+      method: "GET",
+    });
+  } catch {
+    const err: ApiError = {
+      status: 0,
+      message:
+        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
+    };
+    throw err;
+  }
+
+  if (!res.ok) {
+    const err: ApiError = {
+      status: res.status,
+      message: `Request failed with status ${res.status}`,
+    };
+    throw err;
+  }
+
+  // Return the binary data as a Blob
+  return await res.blob();
+}

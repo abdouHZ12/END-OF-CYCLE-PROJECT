@@ -185,3 +185,21 @@ export const DeleteDocumentById = async (req: Request , res: Response) => {
         console.log(error);
     }
 }
+
+
+export const GeneratePdf = async (req: Request , res: Response) => {
+    try {
+        const pdfBuffer = await DocumentService.GeneratePdf(req.params.id) ;
+        const filename  = `document-${req.params.id}.pdf`
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename=${filename}`,
+            "Content-Length": pdfBuffer.length
+        });
+
+        res.status(201).send(pdfBuffer);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error , message:"failed to generate pdf"})
+    }  
+}
