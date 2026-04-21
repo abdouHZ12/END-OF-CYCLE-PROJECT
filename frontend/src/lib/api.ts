@@ -141,10 +141,6 @@ export async function apiGet<TResponse>(
   return (data ?? ({} as unknown)) as TResponse;
 }
 
-
-
-
-
 export async function apiDelete<TResponse>(
   path: string,
   body?: unknown
