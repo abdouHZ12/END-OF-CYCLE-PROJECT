@@ -173,58 +173,37 @@ export default function Dashboard({
 
       <Divider />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          marginTop: "auto",
-        }}
-      >
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignItems: "center",
-            marginRight: "70px",
+            gap: "10px",
+            padding: "12px 16px",
           }}
         >
-        <Avatar
-          sx={{
-            bgcolor: "darkorange",
-            color: "#222",
-            width: 40,
-            height: 40,
-            border: "none",
-            boxShadow: "none",
-            fontSize: "16px",
-            fontWeight: "bold",
-            marginRight: "117px",
-            marginBottom: "-40px",
-          }}
-        >
-          {user.initials}
-        </Avatar>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginLeft: "auto",
-          }}
-        >
-          <p style={{ fontSize: "15px", fontWeight: "bold", color: "white" }}>
-            {user.name}
-          </p>
-          <p
-            style={{
-              fontSize: "11px",
-              fontWeight: "normal",
-              color: "lightgray",
+          <Avatar
+            sx={{
+              bgcolor: "darkorange",
+              color: "#222",
+              width: 40,
+              height: 40,
+              fontSize: "16px",
+              fontWeight: "bold",
+              flexShrink: 0,
             }}
           >
-            {user.role}
-          </p>
-        </div>
+            {user.initials}
+          </Avatar>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <p style={{ fontSize: "15px", fontWeight: "bold", color: "white", margin: 0 }}>
+              {user.name}
+            </p>
+            <p style={{ fontSize: "11px", color: "lightgray", margin: 0 }}>
+              {user.role}
+            </p>
+          </div>
         </div>
 
         <ListItem disablePadding>
@@ -255,7 +234,6 @@ export default function Dashboard({
         </ListItem>
       </div>
 
-    </div>
   );
 
   return (

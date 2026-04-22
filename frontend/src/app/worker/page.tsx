@@ -365,17 +365,17 @@ const router = useRouter() ;
                 Recent Requests
               </Typography>
               <Button
-                variant="contained"
+                variant="outlined"
                 sx={{
-                  backgroundColor: "white",
-                  color: "gray",
+                  backgroundColor: "transparent",
+                  color: "lightgray",
                   textTransform: "none",
                   borderRadius: 2,
                   padding: "8px 16px",
-                  border: "1px solid gray",
+                  border: "1px solid rgba(255,255,255,0.15)",
                   "&:hover": {
                     color: "orange",
-                    backgroundColor: "rgba(255, 165, 0, 0.2)",
+                    backgroundColor: "rgba(255, 165, 0, 0.1)",
                     border: "1px solid orange",
                   },
                 }}
@@ -427,7 +427,9 @@ const router = useRouter() ;
                 <TableBody>
                   {Rows.map((row) => (
                     <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
-                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold" , border:"none" }}>{row.id}</TableCell>
+                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
+                        {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
+                      </TableCell>
                       <TableCell sx={{ color: "#fff" , border:"none"}}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
@@ -469,11 +471,8 @@ const router = useRouter() ;
                       padding: "16px",
                     }}
                   >
-                  <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "bold", color: "#ffa500" }}
-                  >
-                    {row.id}
+                  <Typography variant="h6" sx={{ fontWeight: "bold", color: "#ffa500" }}>
+                    {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
                   </Typography>
                   <Typography variant="body1" sx={{ color: "#fff" }}>
                     {gettype(row.type)}

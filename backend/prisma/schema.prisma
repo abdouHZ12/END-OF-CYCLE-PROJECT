@@ -50,8 +50,7 @@ model Employee {
   email            String     @unique
   password         String
 
-  roleId           Int
-  role             Role       @relation("RoleEmployees", fields: [roleId], references: [id])
+  roles             EmployeeRole[]
 
   structureId      Int
   structure        Structure  @relation(fields: [structureId], references: [id])
@@ -63,6 +62,27 @@ model Employee {
   passwordResets   PasswordReset[]
 }
 
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        String
+  type        RoleType  
+  permissions String
+
+  employees   EmployeeRole[]
+}
+
+model EmployeeRole {
+  employeeId Int
+  roleId     Int
+  employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@id([employeeId, roleId])
+  @@index([employeeId])
+  @@index([roleId])
+}
+
 model PasswordReset {
   id          Int         @id @default(autoincrement())
 
@@ -70,7 +90,7 @@ model PasswordReset {
   expiresAt   DateTime
 
   employeeId  Int
-  employee    Employee  @relation(fields: [employeeId], references: [id])
+  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime  @default(now()) 
 
