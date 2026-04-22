@@ -534,74 +534,76 @@ export const ScanDocument = async (token : any , Employeeid : any) => {
     let session = await prisma.leaveSession.findUnique({
         where : { documentId : Document.id }
     });
-    if(!session){
-        session = await prisma.leaveSession.create({
-            data : {
-                documentId :    Document.id ,
-                status :        "OUT",
-                employeeId :    EmployeeId,
-                leaveTime  :    now,
-            }
-        })
+    if(Document.status == "APPROVED") {
+        if(!session){
+            session = await prisma.leaveSession.create({
+                data : {
+                    documentId :    Document.id ,
+                    status :        "OUT",
+                    employeeId :    EmployeeId,
+                    leaveTime  :    now,
+                }
+            })
 
-    const refreshedDocument = await prisma.document.findUnique({
-        where : { id : Document.id } ,
-        include : {
-            missionOrder  : true ,
-            absenceAuth : true , 
-            exitSlip : true,
-            leaveSession : true ,
-            decisionMadeBy: {
-                select: { id: true, name: true, username: true },
-            },
-         }
-    })
-    return {message: "QR code Valid , leave time created", Document : refreshedDocument};
-    }
-
-    if(session && !session.returnTime){
-
-        if (Document.type === "EXIT_SLIP"){
-            const hour = now.getHours() ;
-            if(hour >= 16){
-                await prisma.leaveSession.update({
-                    where : { id : session.id } ,
-                    data : {
-                        status : "NOT_RETURNED"
-                    }
-                })
-                const refreshedDocument = await prisma.document.findUnique({
-                    where: { id: Document.id },
-                    include: {
-                        missionOrder: true,
-                        absenceAuth: true,
-                        exitSlip: true,
-                        decisionMadeBy: { select: { id: true, name: true, username: true } },
-                        leaveSession: true, // Include the updated leaveSession
-                    },
-                });
-                return {message: "Too late it's past 16:00 -> marked as NOT_RETURNED", Document : refreshedDocument};
-            }
-        } 
-        await prisma.leaveSession.update({
-            where : { id : session.id } ,
-            data : {
-                returnTime : now ,
-                status : "RETURNED"
-            }
-        })
         const refreshedDocument = await prisma.document.findUnique({
-            where: { id: Document.id },
-            include: {
-                missionOrder: true,
-                absenceAuth: true,
-                exitSlip: true,
-                decisionMadeBy: { select: { id: true, name: true, username: true } },
-                leaveSession: true, // Include the updated leaveSession
-            },
-        });
-    return {message: "QR code Valid , return time recorded", Document : refreshedDocument};
-    }
+            where : { id : Document.id } ,
+            include : {
+                missionOrder  : true ,
+                absenceAuth : true , 
+                exitSlip : true,
+                leaveSession : true ,
+                decisionMadeBy: {
+                    select: { id: true, name: true, username: true },
+                },
+            }
+        })
+        return {message: "QR code Valid , leave time created", Document : refreshedDocument};
+        }
+
+        if(session && !session.returnTime){
+
+            if (Document.type === "EXIT_SLIP"){
+                const hour = now.getHours() ;
+                if(hour >= 16){
+                    await prisma.leaveSession.update({
+                        where : { id : session.id } ,
+                        data : {
+                            status : "NOT_RETURNED"
+                        }
+                    })
+                    const refreshedDocument = await prisma.document.findUnique({
+                        where: { id: Document.id },
+                        include: {
+                            missionOrder: true,
+                            absenceAuth: true,
+                            exitSlip: true,
+                            decisionMadeBy: { select: { id: true, name: true, username: true } },
+                            leaveSession: true, // Include the updated leaveSession
+                        },
+                    });
+                    return {message: "Too late it's past 16:00 -> marked as NOT_RETURNED", Document : refreshedDocument};
+                }
+            } 
+            await prisma.leaveSession.update({
+                where : { id : session.id } ,
+                data : {
+                    returnTime : now ,
+                    status : "RETURNED"
+                }
+            })
+            const refreshedDocument = await prisma.document.findUnique({
+                where: { id: Document.id },
+                include: {
+                    missionOrder: true,
+                    absenceAuth: true,
+                    exitSlip: true,
+                    decisionMadeBy: { select: { id: true, name: true, username: true } },
+                    leaveSession: true, // Include the updated leaveSession
+                },
+            });
+        return {message: "QR code Valid , return time recorded", Document : refreshedDocument};
+        } 
+        }
 
 
         const refreshedDocument = await prisma.document.findUnique({
@@ -615,5 +617,5 @@ export const ScanDocument = async (token : any , Employeeid : any) => {
             },
         });
     
-    return {message: "QR code Valid , Already completed", Document : refreshedDocument}; 
+return {message: "QR code Valid , Already completed", Document : refreshedDocument}; 
 }
