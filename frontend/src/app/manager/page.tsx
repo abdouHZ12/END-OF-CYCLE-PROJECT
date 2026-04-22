@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -119,7 +118,6 @@ const getStatusChip = (status: string) => {
 };
 
 export default function ManagerHomePage() {
-  const router = useRouter();
   const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
   const [stats, setStats]     = React.useState<Stats | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -371,27 +369,24 @@ export default function ManagerHomePage() {
             <Typography variant="h5" sx={{ fontSize: "25px", fontWeight: "bold", color: "#fff" }}>
               Recent Requests
             </Typography>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "white",
-                color: "gray",
-                textTransform: "none",
-                borderRadius: 2,
-                padding: "8px 16px",
-                border: "1px solid gray",
-                "&:hover": {
-                  color: "orange",
-                  backgroundColor: "rgba(255, 165, 0, 0.2)",
-                  border: "1px solid orange",
-                },
-              }}
-              onClick={() => {
-                router.push("/manager/employees-history");
-              }}
-            >
-              See all
-            </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  backgroundColor: "transparent",
+                  color: "lightgray",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  padding: "8px 16px",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  "&:hover": {
+                    color: "orange",
+                    backgroundColor: "rgba(255, 165, 0, 0.1)",
+                    border: "1px solid orange",
+                  },
+                }}
+              >
+                See all
+              </Button>
           </Box>
 
           {stats.recentDocuments.length === 0 ? (

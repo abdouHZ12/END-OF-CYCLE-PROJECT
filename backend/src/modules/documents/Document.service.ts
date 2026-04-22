@@ -1,5 +1,5 @@
 import { parse } from 'node:path';
-import { prisma } from '../../../lib/prisma.js'
+import { prisma } from '../../lib/prisma.js'
 
 
 //Creation Part
