@@ -64,3 +64,41 @@ npx prisma studio
 ```
 pnpm prisma db seed
 ```
+
+## must be done in both frontend and backend 
+
+pnpm install 
+
+
+## Change in .env.local in frontend 
+
+
+change the  NEXT_PUBLIC_API_URL 
+
+from this
+ NEXT_PUBLIC_API_URL=http://localhost:PORT-FORBACKEND
+
+to
+ NEXT_PUBLIC_API_URL=http://your-machine-IP:PORT-FOR-BACKEND
+
+
+
+ ## How to scan 
+
+pnpm install in both frontend and backend 
+
+ create a document in worker 
+
+ approve it 
+
+ download pdf 
+
+ scan QR code 
+
+ log in with employee credentials
+
+ re-enter the scan 
+
+ QR CODE VALID 
+ 
+ should show up if then everything is working

@@ -37,6 +37,12 @@ enum Status {
   REJECTED
 }
 
+enum StatusLeave {
+  OUT 
+  RETURNED
+  NOT_RETURNED
+}
+
 model Employee {
   id               Int        @id @default(autoincrement()) 
   name             String
@@ -102,11 +108,33 @@ model Structure {
   employees Employee[]
 }
 
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        String
+  type        RoleType  
+  permissions String
+
+  employees   Employee[] @relation("RoleEmployees")
+}
+
+model LeaveSession {
+  id          Int       @id @default(autoincrement())
+  employeeId  Int          
+  status      StatusLeave?
+  leaveTime   DateTime?
+  returnTime  DateTime?
+  createdAt   DateTime  @default(now())
+
+  documentId  Int       @unique
+  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+
+}
+
 model Document {
   id               Int          @id @default(autoincrement())
   status           Status       @default(PENDING)
   createdAt        DateTime     @default(now())
-  qrCode           String?
+  qrCode           String?      @unique
   authIssuedAt     DateTime?
   type             DocumentType
 
@@ -121,6 +149,8 @@ model Document {
   missionOrder     MissionOrder?
   absenceAuth      AbsenceAuth?
   exitSlip         ExitSlip?
+
+  leaveSession     LeaveSession?
 }
 
 model MissionOrder {

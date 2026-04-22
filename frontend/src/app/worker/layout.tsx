@@ -19,11 +19,31 @@ export default function WorkerLayout({ children }: { children: React.ReactNode }
   const roles     = currentUser?.roles ?? [];
 
   const items = [
-    { label: "Tableau de bord",          href: "/worker",              icon: <DashboardOutlinedIcon /> },
-    { label: "Nouvelle demande",         href: "/worker/fill-request", icon: <TextSnippetOutlinedIcon /> },
-    { label: "Mes demandes",             href: "/worker/my-requests",  icon: <AssignmentOutlinedIcon /> },
-    { label: "Historique",               href: "/worker/history",      icon: <RestoreOutlinedIcon /> },
-    { label: "Télécharger autorisation", href: "/worker/download",     icon: <FileDownloadOutlinedIcon /> },
+    {
+      label: "Tableau de bord",
+      href: "/worker",
+      icon: <DashboardOutlinedIcon />,
+    },
+    {
+      label: "Nouvelle demande",
+      href: "/worker/fill-request",
+      icon: <TextSnippetOutlinedIcon />,
+    },
+    {
+      label: "Mes demandes",
+      href: "/worker/my-requests",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      label: "Historique",
+      href: "/worker/history",
+      icon: <RestoreOutlinedIcon />,
+    },
+    {
+      label: "Télécharger autorisation",
+      href: "/worker/download-auth",
+      icon: <FileDownloadOutlinedIcon />,
+    },
   ];
 
   const toggleSx = {
