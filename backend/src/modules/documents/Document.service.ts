@@ -1,19 +1,49 @@
-import { parse } from 'node:path';
 import { prisma } from '../../lib/prisma.js'
-import puppeteer , {Browser} from 'puppeteer' ;
+import puppeteer, { Browser } from 'puppeteer';
 import { generateToken } from '../../lib/Aid.js';
-import QRCode from 'qrcode' ;
+import QRCode from 'qrcode';
+
+import { RoleType } from '../../../generated/prisma/client.js';
+
+function httpError(status: number, message: string): Error & { status: number } {
+    const err = new Error(message) as Error & { status: number };
+    err.status = status;
+    return err;
+}
+
+async function getEmployeeRoleTypes(employeeId: number): Promise<RoleType[]> {
+    const employee = await prisma.employee.findUnique({
+        where: { id: employeeId },
+        select: {
+            roles: {
+                select: {
+                    role: {
+                        select: { type: true },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!employee) throw httpError(404, 'Employee not found');
+    return employee.roles.map((r) => r.role.type);
+}
 
 //Creation Part
 // FOR NOW I AM RETREIVING ALL DATA FROM REQ.BODY
 
 export const CreateExitSlip = async (data : any ) => {
     const {Qrcode , Type , EmployeeId,  exitTime , returnTime , gate} = data ; 
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+    await getEmployeeRoleTypes(employeeIdNum);
+
     const ExitSlip = await prisma.document.create({
         data : {
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             exitSlip : {
                 create : {
                         exitTime , 
@@ -28,11 +58,16 @@ export const CreateExitSlip = async (data : any ) => {
 
 export const CreateAbsenceAuth = async (data : any ) =>{
     const {Qrcode , Type , EmployeeId , startDate , endDate , reason}  = data ;
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+    await getEmployeeRoleTypes(employeeIdNum);
+
     const AbsenceAuth = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             absenceAuth : {
                 create : { 
                         startDate , 
@@ -49,11 +84,24 @@ export const CreateAbsenceAuth = async (data : any ) =>{
 
 export const CreateMissionOrder = async (data : any ) => {
     const {Qrcode , Type , EmployeeId , destination , duration , purpose , travelMethod } = data ;
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+
+    const roles = await getEmployeeRoleTypes(employeeIdNum);
+
+    // Agent behaves like worker, but can only create ExitSlip + AbsenceAuth.
+    // If the user has both WORKER and AGENT roles, allow Mission Orders (WORKER wins).
+    const isAgentOnly = roles.includes(RoleType.AGENT) && !roles.includes(RoleType.WORKER);
+    if (isAgentOnly) {
+      throw httpError(403, 'AGENT users cannot create Mission Orders');
+    }
+
     const MissionOrder = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             missionOrder : {
                 create : { 
                         travelMethod ,

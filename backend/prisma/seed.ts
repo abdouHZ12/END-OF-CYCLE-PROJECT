@@ -38,12 +38,23 @@ async function main() {
       },
     }));
 
-  const [adminPassword, managerPassword, adminManagerPassword, workerPassword] =
+  const agentRole =
+    (await prisma.role.findFirst({ where: { type: 'AGENT' } })) ??
+    (await prisma.role.create({
+      data: {
+        name: 'Agent',
+        type: 'AGENT',
+        permissions: '*',
+      },
+    }));
+
+  const [adminPassword, managerPassword, adminManagerPassword, workerPassword, agentPassword] =
     await Promise.all([
       bcrypt.hash('admin', 10),
       bcrypt.hash('manager', 10),
       bcrypt.hash('AdminManager', 10),
       bcrypt.hash('worker', 10),
+      bcrypt.hash('agent', 10),
     ]);
 
   const admin = await prisma.employee.upsert({
@@ -152,7 +163,32 @@ async function main() {
     include: { roles: { include: { role: true } } },
   });
 
-  console.log('✅ Seed complete:', { admin, manager, adminManager, worker });
+  const agent = await prisma.employee.upsert({
+    where: { username: 'agent' },
+    update: {
+      name: 'agent',
+      email: 'agent@example.com',
+      password: agentPassword,
+      structure: { connect: { id: structure.id } },
+      roles: {
+        deleteMany: {},
+        create: [{ role: { connect: { id: agentRole.id } } }],
+      },
+    },
+    create: {
+      name: 'agent',
+      username: 'agent',
+      email: 'agent@example.com',
+      password: agentPassword,
+      structure: { connect: { id: structure.id } },
+      roles: {
+        create: [{ role: { connect: { id: agentRole.id } } }],
+      },
+    },
+    include: { roles: { include: { role: true } } },
+  });
+
+  console.log('✅ Seed complete:', { admin, manager, adminManager, worker, agent });
 }
 
 main()

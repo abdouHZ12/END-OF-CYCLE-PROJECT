@@ -9,7 +9,8 @@ export const CreateExitSlip = async (req: Request , res: Response) => {
         res.status(201).json(newExitSlip);
     } catch (error) {
         console.error(error);
-        res.status(500).json({error , message :"failed to create exit slip"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create exit slip" })
     }
 }
 
@@ -20,7 +21,8 @@ export const CreateAbsenceAuth = async (req: Request , res: Response) => {
         const newAbsenceAuth = await DocumentService.CreateAbsenceAuth(req.body );
         res.status(201).json(newAbsenceAuth);
     } catch (error) {
-        res.status(500).json({error:"failed to create Absence Auth"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create Absence Auth" })
     }
 }
 
@@ -31,7 +33,8 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
         res.status(201).json(newMissionOrder);
     } catch (error) {
         console.error(error);
-        res.status(500).json({error:"failed to create Mission Order"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create Mission Order" })
     }
 }
 
