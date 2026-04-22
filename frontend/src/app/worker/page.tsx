@@ -427,7 +427,9 @@ const router = useRouter() ;
                 <TableBody>
                   {Rows.map((row) => (
                     <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
-                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold" , border:"none" }}>{row.id}</TableCell>
+                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
+                        {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
+                      </TableCell>
                       <TableCell sx={{ color: "#fff" , border:"none"}}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
@@ -469,11 +471,8 @@ const router = useRouter() ;
                       padding: "16px",
                     }}
                   >
-                  <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "bold", color: "#ffa500" }}
-                  >
-                    {row.id}
+                  <Typography variant="h6" sx={{ fontWeight: "bold", color: "#ffa500" }}>
+                    {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
                   </Typography>
                   <Typography variant="body1" sx={{ color: "#fff" }}>
                     {gettype(row.type)}
