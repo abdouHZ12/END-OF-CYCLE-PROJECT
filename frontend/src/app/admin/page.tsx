@@ -11,7 +11,6 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 
 import {
   Box,
@@ -166,7 +165,6 @@ export default function AdminPage() {
 
   const adminCount   = employees.filter(e => e.roles.some(r => r.role.type === "ADMIN")).length;
   const managerCount = employees.filter(e => e.roles.some(r => r.role.type === "MANAGER")).length;
-  const workerCount  = employees.filter(e => e.roles.some(r => r.role.type === "WORKER")).length;
 
   return (
     <Box
@@ -236,20 +234,24 @@ export default function AdminPage() {
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#fff" }}>
           Recent Employees
         </Typography>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "white",
-            color: "gray",
-            textTransform: "none",
-            borderRadius: 2,
-            border: "1px solid gray",
-            "&:hover": { color: "orange", backgroundColor: "rgba(255,165,0,0.2)", border: "1px solid orange" },
-          }}
-          onClick={() => router.push("/admin/employees")}
-        >
-          See all
-        </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  backgroundColor: "transparent",
+                  color: "lightgray",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  padding: "8px 16px",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  "&:hover": {
+                    color: "orange",
+                    backgroundColor: "rgba(255, 165, 0, 0.1)",
+                    border: "1px solid orange",
+                  },
+                }}
+              >
+                See all
+              </Button>
       </Box>
 
       {isLoading ? (

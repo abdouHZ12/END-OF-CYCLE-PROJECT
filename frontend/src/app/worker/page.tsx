@@ -365,17 +365,17 @@ const router = useRouter() ;
                 Recent Requests
               </Typography>
               <Button
-                variant="contained"
+                variant="outlined"
                 sx={{
-                  backgroundColor: "white",
-                  color: "gray",
+                  backgroundColor: "transparent",
+                  color: "lightgray",
                   textTransform: "none",
                   borderRadius: 2,
                   padding: "8px 16px",
-                  border: "1px solid gray",
+                  border: "1px solid rgba(255,255,255,0.15)",
                   "&:hover": {
                     color: "orange",
-                    backgroundColor: "rgba(255, 165, 0, 0.2)",
+                    backgroundColor: "rgba(255, 165, 0, 0.1)",
                     border: "1px solid orange",
                   },
                 }}
