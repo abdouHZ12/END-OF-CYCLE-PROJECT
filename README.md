@@ -65,14 +65,16 @@ npx prisma studio
 pnpm prisma db seed
 ```
 
+---
 
-## .env.local in frontend 
+## Scan QR code 
+#### .env.local in frontend 
 ```
  NEXT_PUBLIC_API_URL=http://your-machine-IP:PORT-FOR-BACKEND
 ```
 
 
- ## How to scan 
+ #### How to scan 
 
  1. create a document in worker 
  2. approve it 
