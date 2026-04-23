@@ -451,18 +451,22 @@ export const DeleteDocumentById = async (data : any  , employeeId : any) => {
 }
 
 
-let browser : Browser ;
+let browser: Browser;
 
-export const initBrowser = async () =>{
-    if(!browser){
-        browser = await puppeteer.launch({
-            headless : true ,
-            executablePath: "/usr/bin/google-chrome",
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+export const initBrowser = async () => {
+  if (!browser) {
+    const options: Parameters<typeof puppeteer.launch>[0] = {
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    };
+
+    if (process.env.CHROME_PATH) {
+      options.executablePath = process.env.CHROME_PATH;
     }
-}
 
+    browser = await puppeteer.launch(options);
+  }
+};
 
 
 export const GeneratePdf = async ( id : any) => {
@@ -480,7 +484,7 @@ export const GeneratePdf = async ( id : any) => {
     })
     if(!Document) throw new Error("Document not found") ;
     
-    const url = `http://192.168.100.3:3000/scan?token=${Document.qrCode}`;
+    const url = `${process.env.CLIENT_URL}/scan?token=${Document.qrCode}`;
     const qrCodeDataUrl = await QRCode.toDataURL(url);
 
     const html = `<!DOCTYPE html>
@@ -558,40 +562,42 @@ try{
 
 
 
-export const ScanDocument = async (token : any , Employeeid : any) => {
-    const EmployeeId = parseInt(Employeeid) ;
+export const ScanDocument = async (token: any) => {
+    // removed EmployeeId parameter
+    
     const Document = await prisma.document.findUnique({
-        where : { qrCode : token } ,
-        include : {
-            missionOrder  : true ,
-            absenceAuth : true , 
-            exitSlip : true,
-            leaveSession : true ,
+        where: { qrCode: token },
+        include: {
+            missionOrder: true,
+            absenceAuth: true,
+            exitSlip: true,
+            leaveSession: true,
             decisionMadeBy: {
                 select: { id: true, name: true, username: true },
             },
-         }
-    })
-    if(!Document) throw new Error("Invalid QR code") ;
-    
-    if(Document.issuedById !==EmployeeId) {
-        throw new Error("Unauthorized access to this document") ;
-    }
-    let message = "" ;
-    const now = new Date() ;
-    let session = await prisma.leaveSession.findUnique({
-        where : { documentId : Document.id }
+        }
     });
-    if(Document.status == "APPROVED") {
-        if(!session){
-            session = await prisma.leaveSession.create({
-                data : {
-                    documentId :    Document.id ,
-                    status :        "OUT",
-                    employeeId :    EmployeeId,
-                    leaveTime  :    now,
+
+    if (!Document) throw new Error("Invalid QR code");
+
+    let message = "";
+    const now = new Date();
+    let session = await prisma.leaveSession.findUnique({
+        where: { documentId: Document.id }
+    });
+
+    if (Document.status == "APPROVED") {
+        if (!session) {
+            session = await prisma.leaveSession.upsert({
+                where: { documentId: Document.id },
+                update: {},
+                create: {
+                    documentId: Document.id,
+                    status: "OUT",
+                    employeeId: Document.issuedById,
+                    leaveTime: now,
                 }
-            })
+    });
 
         const refreshedDocument = await prisma.document.findUnique({
             where : { id : Document.id } ,

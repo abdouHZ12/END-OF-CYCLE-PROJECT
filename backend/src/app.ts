@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 	const isDevLocalhostOrigin =
 		typeof origin === 'string' &&
 		(origin.startsWith('http://localhost:') ||
-			origin.startsWith('http://192.168.100.3:'));
+			origin.startsWith('http://192.168.')); 
 
 	const allowOrigin =
 		origin &&

@@ -16,7 +16,7 @@ router.post("/manager/pending-documents", DocumentController.ReadPendingDocument
 router.post("/manager/employees-history", DocumentController.ReadEmployeesHistoryForManager);
 router.post("/manager/dashboard-stats", DocumentController.ReadManagerDashboardStats);
 
-router.post("/scan", auth, DocumentController.ScanDocument);
+router.post("/scan", DocumentController.ScanDocument);
 
 router.get("/dAll/documents/:id",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);

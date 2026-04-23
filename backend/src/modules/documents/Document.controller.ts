@@ -207,16 +207,12 @@ export const GeneratePdf = async (req: Request , res: Response) => {
     }  
 }
 
-export const ScanDocument = async (req: Request , res: Response) => {
+export const ScanDocument = async (req: Request, res: Response) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-        const employeeId = req.user.id ;
-        const { Document, message } = await DocumentService.ScanDocument(req.body.token ,employeeId) ;
-        res.status(201).json({Document ,message});
+        const { Document, message } = await DocumentService.ScanDocument(req.body.token);
+        res.status(201).json({ Document, message });
     } catch (error) {
         console.error(error);
-        res.status(500).json({error})
-    }  
+        res.status(500).json({ error });
+    }
 }

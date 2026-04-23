@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect , useCallback , useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import dynamic from 'next/dynamic';
+import { useSearchParams } from "next/navigation";
 import {scanPost , type ApiError} from "@/lib/api";
 import {
   Alert,
@@ -37,41 +38,31 @@ function formatDateTime(value?: string) {
 }
 
 
-export default function ScanPage() {
+function ScanPageInner() {
   const params = useSearchParams();
-  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ScanResponse | null>(null);
 
-  const scan = useCallback(async () => {
-        try{
-            setLoading(true);
-            setError(null);
-            setData(null);
+const scan = useCallback(async () => {
+    try {
+        setLoading(true);
+        setError(null);
+        setData(null);
 
-            const token = params.get("token");
-            if (!token) throw new Error("Missing token in URL");
+        const token = params.get("token");
+        if (!token) throw new Error("Missing token in URL");
 
-            const jwt = localStorage.getItem("naftal.accessToken");
-
-            // Not logged in → redirect to login
-            if (!jwt) {
-            router.push(`/auth?redirect=/scan?token=${token}`);
-            return;
-            }
-
-            const res = await scanPost<ScanResponse>(`/api/scan`, { token }, jwt);
-            setData(res);
-        }
-        catch(err) {
-            const apiError = err as ApiError;
-            setError(apiError.message || "An error occurred during scanning.");
-        } finally {
-      setLoading(false);
+        const res = await scanPost<ScanResponse>(`/api/scan`, { token });
+        setData(res);
+    } catch(err) {
+        const apiError = err as ApiError;
+        setError(apiError.message || "An error occurred during scanning.");
+    } finally {
+        setLoading(false);
     }
-   },[params, router]) 
+}, [params]);
 
   useEffect(() => {
 
@@ -177,3 +168,5 @@ export default function ScanPage() {
     </Container>
   );
 }
+
+export default dynamic(() => Promise.resolve(ScanPageInner), { ssr: false });

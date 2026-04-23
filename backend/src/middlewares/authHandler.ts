@@ -1,15 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
 import { tokenService } from '../modules/auth/token.service.js';
+import type { RoleType } from '../../generated/prisma/browser.js';
 
 declare module 'express-serve-static-core' {
     interface Request {
-        user?: { id: number; role: string }; // Adjust the type based on your token payload
+        user?: { id: number; roles: RoleType[] }; 
     }
 }
 
 export function auth(req: Request, res: Response, next: NextFunction) {
 
     const authHeader = req.headers['authorization'];
+    console.log("AUTH HEADER:", authHeader);
     if(!authHeader) return res.status(401).json({ message: 'No token provided' });
 
     const token = authHeader.split(' ')[1];

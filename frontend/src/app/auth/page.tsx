@@ -96,7 +96,11 @@ function LoginPageInner() {
 				.map((r) => r.trim().toUpperCase())
 				.filter(Boolean);
 
-			if (normalizedRoles.includes("ADMIN")) {
+			const redirectTo = searchParams.get("redirect");
+
+			if (redirectTo) {
+				router.push(decodeURIComponent(redirectTo));
+			} else if (normalizedRoles.includes("ADMIN")) {
 				router.push("/admin");
 			} else if (normalizedRoles.includes("MANAGER")) {
 				router.push("/manager");
