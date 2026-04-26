@@ -11,15 +11,18 @@ app.use(express.json());
 app.use((req, res, next) => {
 	const origin = req.headers.origin;
 
-	const isDevLocalhostOrigin =
+	const isDevPrivateNetworkOrigin =
 		typeof origin === 'string' &&
 		(origin.startsWith('http://localhost:') ||
-			origin.startsWith('http://192.168.')); 
+			origin.startsWith('http://127.0.0.1:') ||
+			origin.startsWith('http://192.168.') ||
+			origin.startsWith('http://10.') ||
+			/^http:\/\/172\.(1[6-9]|2\d|3[0-1])\./.test(origin));
 
 	const allowOrigin =
 		origin &&
 		(origin === config.clientUrl ||
-			(process.env.NODE_ENV !== 'production' && isDevLocalhostOrigin));
+			(process.env.NODE_ENV !== 'production' && isDevPrivateNetworkOrigin));
 
 	if (allowOrigin) {
 		res.setHeader('Access-Control-Allow-Origin', origin);
