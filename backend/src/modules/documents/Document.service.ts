@@ -492,7 +492,6 @@ export const GeneratePdf = async (id: any) => {
   if (!Document) throw new Error("Document not found");
   if (!Document.qrCode) throw new Error("Document has no QR code");
 
-  // ✅ Always uses current machine's real IP in dev, CLIENT_URL in production
   const baseUrl = process.env.NODE_ENV === "production"
     ? process.env.CLIENT_URL
     : `http://${getLocalIP()}:3000`;
