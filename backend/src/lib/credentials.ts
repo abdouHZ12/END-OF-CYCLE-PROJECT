@@ -6,10 +6,9 @@ export const generateUsername = async (fullName: string): Promise<string> => {
     .toLowerCase()
     .trim()
     .split(/\s+/)
-    .map((part, i) => (i === 0 ? part : part[0]))   // firstname + initials
-    .join('.');                                        // e.g. "ahmed.b"
+    .map((part, i) => (i === 0 ? part : part[0]))  
+    .join('.');                                       
 
-  // Ensure uniqueness — append a counter if taken
   let candidate = base;
   let counter = 1;
   while (await prisma.employee.findUnique({ where: { username: candidate } })) {
@@ -19,6 +18,5 @@ export const generateUsername = async (fullName: string): Promise<string> => {
 };
 
 export const generateTempPassword = (): string => {
-  // 12-char: letters + digits, readable (no ambiguous chars)
   return crypto.randomBytes(9).toString('base64url').slice(0, 12);
 };

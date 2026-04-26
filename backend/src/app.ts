@@ -7,7 +7,6 @@ const app: Express = express();
 
 app.use(express.json());
 
-// CORS (minimal) for browser clients (e.g. Next.js on http://localhost:3000)
 app.use((req, res, next) => {
 	const origin = req.headers.origin;
 

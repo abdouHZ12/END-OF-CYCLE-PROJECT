@@ -208,11 +208,11 @@ export const GeneratePdf = async (req: Request , res: Response) => {
 }
 
 export const ScanDocument = async (req: Request, res: Response) => {
-    try {
-        const { Document, message } = await DocumentService.ScanDocument(req.body.token);
-        res.status(201).json({ Document, message });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error });
-    }
-}
+  try {
+    const result = await DocumentService.ScanDocument(req.body.token) as { Document: any; message: string };
+    res.status(201).json({ Document: result.Document, message: result.message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
