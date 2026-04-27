@@ -6,14 +6,16 @@ export const generateUsername = async (fullName: string): Promise<string> => {
     .toLowerCase()
     .trim()
     .split(/\s+/)
-    .map((part, i) => (i === 0 ? part : part[0]))  
-    .join('.');                                       
+    .map((part, i) => (i === 0 ? part : part[0]))
+    .join('.');
 
   let candidate = base;
   let counter = 1;
+
   while (await prisma.employee.findUnique({ where: { username: candidate } })) {
     candidate = `${base}${counter++}`;
   }
+
   return candidate;
 };
 

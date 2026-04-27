@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authController } from '../modules/auth/auth.controller.js';
 
-const router: ReturnType<typeof Router> = Router();
+const router = Router();
 
 router.post('/signin',          authController.signIn);
 router.post('/signout',         authController.signOut);

@@ -16,6 +16,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
 import {useMediaQuery , useTheme} from "@mui/material";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 import {
   Box,
@@ -118,8 +119,11 @@ const router = useRouter() ;
       setIsLoading(true);
       setError(null);
       try { 
-        const raw = localStorage.getItem("naftal.employee");
-        const employeeId = raw ? JSON.parse(raw).id : null;
+        const employeeId = getStoredEmployeeId();
+        if (!employeeId) {
+          setError("You are not logged in.");
+          return;
+        }
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         const documentsArray = Object.values(res);
         if (documentsArray.length === 0) {

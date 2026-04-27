@@ -4,10 +4,11 @@ import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
-import {type Document} from "../../page";
+import type { Document } from "@/features/documents/types";
 import { useParams } from "next/navigation";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-import { getFullDate } from "../../history/page";
+import { getFullDate } from "@/lib/datetime";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 import {
   Box,
   Card,
@@ -35,8 +36,7 @@ export default function Page() {
       setError("");
 
       try {
-        const raw = localStorage.getItem("naftal.employee");
-        const employeeId = raw ? JSON.parse(raw).id : null;
+        const employeeId = getStoredEmployeeId();
         if (!employeeId) {
           throw new Error("Employee ID is missing.");
         }

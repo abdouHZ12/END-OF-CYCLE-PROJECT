@@ -1,16 +1,19 @@
-import { prisma } from '../../lib/prisma.js';
 import bcrypt from 'bcryptjs';
-import { generateUsername } from '../../lib/credentials.js';
 import crypto from 'node:crypto';
+import { prisma } from '../../lib/prisma.js';
+import { generateUsername } from '../../lib/credentials.js';
+import { generateResetToken } from '../../lib/token.js';
 import { sendAccountSetupEmail } from '../../lib/mailer.js';
-import { tokenService } from '../auth/token.service.js';
+import type { RoleType } from '../../../generated/prisma/client.js';
+
+const hashToken = (token: string): Promise<string> => bcrypt.hash(token, 10);
+
+const VALID_ROLE_TYPES: RoleType[] = ['ADMIN', 'MANAGER', 'WORKER', 'AGENT'];
+const SETUP_TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export const getAllEmployees = async () => {
   return prisma.employee.findMany({
-    include: {
-      roles: { include: { role: true } },
-      structure: true,
-    },
+    include: { roles: { include: { role: true } }, structure: true },
     orderBy: { id: 'asc' },
   });
 };
@@ -18,10 +21,7 @@ export const getAllEmployees = async () => {
 export const getEmployeeById = async (id: number) => {
   const employee = await prisma.employee.findUnique({
     where: { id },
-    include: {
-      roles: { include: { role: true } },
-      structure: true,
-    },
+    include: { roles: { include: { role: true } }, structure: true },
   });
   if (!employee) throw new Error('EMPLOYEE_NOT_FOUND');
   return employee;
@@ -37,29 +37,28 @@ export const registerEmployee = async (data: {
   if (existing) throw new Error('EMPLOYEE_ALREADY_EXISTS');
 
   const username = await generateUsername(data.name);
-  const hashed = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
+  const tempPassword = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
 
   const employee = await prisma.employee.create({
     data: {
       name: data.name,
       username,
       email: data.email,
-      password: hashed,
+      password: tempPassword,
       structureId: data.structureId,
       roles: { create: data.roleIds.map((roleId) => ({ roleId })) },
     },
-    include: {
-      roles: { include: { role: true } },
-      structure: true,
-    },
+    include: { roles: { include: { role: true } }, structure: true },
   });
 
-  const rawToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = await tokenService.hashToken(rawToken);
-  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24h
+  const rawToken = generateResetToken();
 
   await prisma.passwordReset.create({
-    data: { token: hashedToken, expiresAt, employeeId: employee.id },
+    data: {
+      token: await hashToken(rawToken),
+      expiresAt: new Date(Date.now() + SETUP_TOKEN_TTL_MS),
+      employeeId: employee.id,
+    },
   });
 
   sendAccountSetupEmail(data.email, data.name, username, rawToken)
@@ -70,12 +69,7 @@ export const registerEmployee = async (data: {
 
 export const updateEmployee = async (
   id: number,
-  data: {
-    name?: string;
-    username?: string;
-    email?: string;
-    structureId?: number;
-  }
+  data: { name?: string; username?: string; email?: string; structureId?: number }
 ) => {
   const employee = await prisma.employee.findUnique({ where: { id } });
   if (!employee) throw new Error('EMPLOYEE_NOT_FOUND');
@@ -83,10 +77,7 @@ export const updateEmployee = async (
   return prisma.employee.update({
     where: { id },
     data,
-    include: {
-      roles: { include: { role: true } },
-      structure: true,
-    },
+    include: { roles: { include: { role: true } }, structure: true },
   });
 };
 
@@ -96,6 +87,45 @@ export const deleteEmployee = async (id: number) => {
   return prisma.employee.delete({ where: { id } });
 };
 
+
+export const getAllRoles = async () => {
+  return prisma.role.findMany({ orderBy: { id: 'asc' } });
+};
+
+export const createRole = async (data: {
+  name: string;
+  type: string;
+  permissions: string;
+}) => {
+  if (!VALID_ROLE_TYPES.includes(data.type as RoleType)) throw new Error('INVALID_ROLE_TYPE');
+
+  const existing = await prisma.role.findFirst({ where: { name: data.name } });
+  if (existing) throw new Error('ROLE_ALREADY_EXISTS');
+
+  return prisma.role.create({
+    data: {
+      name: data.name,
+      type: data.type as RoleType,
+      permissions: data.permissions ?? '',
+    },
+  });
+};
+
+export const updateRole = async (id: number, data: { name?: string; permissions?: string }) => {
+  const role = await prisma.role.findUnique({ where: { id } });
+  if (!role) throw new Error('ROLE_NOT_FOUND');
+  return prisma.role.update({ where: { id }, data });
+};
+
+export const deleteRole = async (id: number) => {
+  const role = await prisma.role.findUnique({ where: { id } });
+  if (!role) throw new Error('ROLE_NOT_FOUND');
+
+  const inUse = await prisma.employeeRole.count({ where: { roleId: id } });
+  if (inUse > 0) throw new Error('ROLE_IN_USE');
+
+  return prisma.role.delete({ where: { id } });
+};
 
 export const assignRole = async (employeeId: number, roleId: number) => {
   const employee = await prisma.employee.findUnique({ where: { id: employeeId } });
@@ -117,17 +147,10 @@ export const revokeRole = async (employeeId: number, roleId: number) => {
   });
 };
 
-export const getAllRoles = async () => {
-  return prisma.role.findMany({ orderBy: { id: 'asc' } });
-};
-
 
 export const getAllStructures = async () => {
   return prisma.structure.findMany({
-    include: {
-      _count: { select: { employees: true } },
-      parent: true,
-    },
+    include: { _count: { select: { employees: true } }, parent: true },
     orderBy: { id: 'asc' },
   });
 };
@@ -143,8 +166,7 @@ export const updateStructure = async (
   id: number,
   data: { name: string; parentId?: number | null }
 ) => {
-
-  if (data.parentId === id) throw new Error("SELF_PARENT");
+  if (data.parentId === id) throw new Error('SELF_PARENT');
 
   return prisma.structure.update({
     where: { id },
@@ -159,79 +181,22 @@ export const deleteStructure = async (id: number) => {
   return prisma.structure.delete({ where: { id } });
 };
 
-export const createRole = async (data: {
-  name: string;
-  type: string;
-  permissions: string;
-}) => {
-  const validTypes = ["ADMIN", "MANAGER", "WORKER", "AGENT"];
-  if (!validTypes.includes(data.type)) throw new Error("INVALID_ROLE_TYPE");
-
-  const existing = await prisma.role.findFirst({ where: { name: data.name } });
-  if (existing) throw new Error("ROLE_ALREADY_EXISTS");
-
-  return prisma.role.create({
-    data: {
-      name: data.name,
-      type: data.type as import("../../../generated/prisma/client.js").RoleType,
-      permissions: data.permissions ?? "",
-    },
-  });
-};
-
-export const updateRole = async (
-  id: number,
-  data: { name?: string; permissions?: string }
-) => {
-  const role = await prisma.role.findUnique({ where: { id } });
-  if (!role) throw new Error("ROLE_NOT_FOUND");
-
-  return prisma.role.update({ where: { id }, data });
-};
-
-export const deleteRole = async (id: number) => {
-  const role = await prisma.role.findUnique({ where: { id } });
-  if (!role) throw new Error("ROLE_NOT_FOUND");
-
-  const inUse = await prisma.employeeRole.count({ where: { roleId: id } });
-  if (inUse > 0) throw new Error("ROLE_IN_USE");
-
-  return prisma.role.delete({ where: { id } });
-};
 
 export const getWorkers = async () => {
   return prisma.employee.findMany({
-    where: {
-      roles: {
-        some: {
-          role: {
-            type: 'WORKER',
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      username: true,
-    },
+    where: { roles: { some: { role: { type: 'WORKER' } } } },
+    select: { id: true, name: true, username: true },
     orderBy: { name: 'asc' },
   });
 };
 
 export const getWorkerMissions = async (employeeId: number) => {
   return prisma.document.findMany({
-    where: {
-      issuedById: employeeId,
-      type: "MISSION_ORDER",
-      status: "APPROVED",
-    },
+    where: { issuedById: employeeId, type: 'MISSION_ORDER', status: 'APPROVED' },
     include: {
       missionOrder: true,
-      decisionMadeBy: {
-        select: { id: true, name: true, username: true },
-      },
+      decisionMadeBy: { select: { id: true, name: true, username: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 };

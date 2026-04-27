@@ -26,6 +26,7 @@ import FlightTakeoffOutlinedIcon from "@mui/icons-material/FlightTakeoffOutlined
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 
 import { apiPost } from "@/lib/api";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type Employee = {
   id: number;
@@ -125,17 +126,7 @@ export default function EmployeesHistoryPage() {
   const [error, setError]         = React.useState<string | null>(null);
   const [expanded, setExpanded]   = React.useState<number | null>(null);
 
-  const getManagerId = () => {
-    try {
-      const raw = localStorage.getItem("naftal.employee");
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      const id = parsed?.id;
-      return typeof id === "number" ? id : null;
-    } catch {
-      return null;
-    }
-  };
+  const getManagerId = () => getStoredEmployeeId();
 
   React.useEffect(() => {
     const fetch = async () => {
@@ -143,6 +134,9 @@ export default function EmployeesHistoryPage() {
       setError(null);
       try {
         const managerId = getManagerId();
+        if (!managerId) {
+          throw new Error("Not logged in");
+        }
         const data = await apiPost<Employee[]>("/api/manager/employees-history", {
           ManagerId: managerId,
         });

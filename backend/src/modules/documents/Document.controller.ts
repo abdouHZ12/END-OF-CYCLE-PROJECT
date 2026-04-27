@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express' 
-import * as DocumentService from './Document.service.js'
+import * as DocumentService from './Document.js'
 
 // Creation Part 
 

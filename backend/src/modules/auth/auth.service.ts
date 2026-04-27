@@ -1,34 +1,34 @@
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 import { prisma } from '../../lib/prisma.js';
 import { sendResetEmail } from '../../lib/mailer.js';
 import { tokenService } from './token.service.js';
+import { generateResetToken } from '../../lib/token.js';
+
+const hashPassword = (password: string): Promise<string> => bcrypt.hash(password, 10);
+const comparePassword = (raw: string, hashed: string): Promise<boolean> => bcrypt.compare(raw, hashed);
+const hashToken = (token: string): Promise<string> => bcrypt.hash(token, 10);
+const compareToken = (raw: string, hashed: string): Promise<boolean> => bcrypt.compare(raw, hashed);
+
+const RESET_TOKEN_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 export const authService = {
   async signIn(username: string, password: string) {
     const employee = await prisma.employee.findUnique({
       where: { username },
-      include: {
-        roles: {
-          include: { role: true },
-        },
-      },
+      include: { roles: { include: { role: true } } },
     });
 
-    if (!employee) throw new Error('INVALID_CREDENTIALS');
+    if (!employee || !(await comparePassword(password, employee.password))) {
+      throw new Error('INVALID_CREDENTIALS');
+    }
 
-    const isPasswordValid = await bcrypt.compare(password, employee.password);
-    if (!isPasswordValid) throw new Error('INVALID_CREDENTIALS');
-
-    const roleTypes = employee.roles.map(er => er.role.type);
-
+    const roleTypes = employee.roles.map((er) => er.role.type);
     const accessToken = tokenService.generateAccessToken(employee.id, roleTypes);
     const refreshToken = tokenService.generateRefreshToken(employee.id);
-    const hashedRefreshToken = await tokenService.hashToken(refreshToken);
 
     await prisma.employee.update({
       where: { id: employee.id },
-      data: { refreshToken: hashedRefreshToken },
+      data: { refreshToken: await hashToken(refreshToken) },
     });
 
     return {
@@ -38,7 +38,7 @@ export const authService = {
         id: employee.id,
         name: employee.name,
         username: employee.username,
-        roles: roleTypes,           // array instead of single role
+        roles: roleTypes,
       },
     };
   },
@@ -56,19 +56,16 @@ export const authService = {
 
     const employee = await prisma.employee.findUnique({
       where: { id: payload.id },
-      include: {
-        roles: {
-          include: { role: true },
-        },
-      },
+      include: { roles: { include: { role: true } } },
     });
 
-    if (!employee || !employee.refreshToken) throw new Error('INVALID_REFRESH_TOKEN');
+    if (!employee?.refreshToken) throw new Error('INVALID_REFRESH_TOKEN');
 
-    const isValid = await tokenService.compareToken(refreshToken, employee.refreshToken);
-    if (!isValid) throw new Error('INVALID_REFRESH_TOKEN');
+    if (!(await compareToken(refreshToken, employee.refreshToken))) {
+      throw new Error('INVALID_REFRESH_TOKEN');
+    }
 
-    const roleTypes = employee.roles.map(er => er.role.type);
+    const roleTypes = employee.roles.map((er) => er.role.type);
 
     return {
       accessToken: tokenService.generateAccessToken(employee.id, roleTypes),
@@ -77,19 +74,17 @@ export const authService = {
 
   async forgotPassword(email: string) {
     const employee = await prisma.employee.findUnique({ where: { email } });
-    if (!employee) return;
+    if (!employee) return; 
 
-    await prisma.passwordReset.deleteMany({
-      where: { employeeId: employee.id },
-    });
+    await prisma.passwordReset.deleteMany({ where: { employeeId: employee.id } });
 
-    const rawToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = await tokenService.hashToken(rawToken);
+    const rawToken = generateResetToken();
+    const hashedToken = await hashToken(rawToken);
 
     await prisma.passwordReset.create({
       data: {
         token: hashedToken,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+        expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
         employeeId: employee.id,
       },
     });
@@ -106,8 +101,7 @@ export const authService = {
 
     let matchedRecord = null;
     for (const record of resetRecords) {
-      const isMatch = await tokenService.compareToken(token, record.token);
-      if (isMatch) {
+      if (await compareToken(token, record.token)) {
         matchedRecord = record;
         break;
       }
@@ -115,15 +109,11 @@ export const authService = {
 
     if (!matchedRecord) throw new Error('INVALID_RESET_TOKEN');
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     await prisma.employee.update({
       where: { id: matchedRecord.employeeId },
-      data: { password: hashedPassword },
+      data: { password: await hashPassword(newPassword) },
     });
 
-    await prisma.passwordReset.delete({
-      where: { id: matchedRecord.id },
-    });
+    await prisma.passwordReset.delete({ where: { id: matchedRecord.id } });
   },
 };

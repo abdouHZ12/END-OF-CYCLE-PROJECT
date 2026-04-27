@@ -3,6 +3,8 @@ export type ApiError = {
   message: string;
 };
 
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+
 function getApiBaseUrl() {
   const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
   
@@ -13,25 +15,45 @@ function getApiBaseUrl() {
   return base;
 }
 
+function toApiError(status: number, data: unknown): ApiError {
+  const message =
+    data &&
+    typeof data === "object" &&
+    "message" in data &&
+    typeof (data as Record<string, unknown>).message === "string"
+      ? ((data as Record<string, unknown>).message as string)
+      : status === 0
+        ? "Network error: cannot reach the API (check backend is running, URL/port, and CORS)."
+        : `Request failed with status ${status}`;
 
-export async function apiPost<TResponse>(
-  path: string,
-  body: unknown
-): Promise<TResponse> {
+  return { status, message };
+}
+
+async function requestJson<TResponse>(input: {
+  method: HttpMethod;
+  path: string;
+  body?: unknown;
+  jwt?: string;
+}): Promise<TResponse> {
   let res: Response;
   try {
-    res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    const headers: Record<string, string> = {};
+    const hasBody = input.body !== undefined;
+
+    if (hasBody) {
+      headers["Content-Type"] = "application/json";
+    }
+    if (input.jwt) {
+      headers["Authorization"] = `Bearer ${input.jwt}`;
+    }
+
+    res = await fetch(`${getApiBaseUrl()}${input.path}`, {
+      method: input.method,
+      headers,
+      body: hasBody ? JSON.stringify(input.body) : undefined,
     });
   } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
+    throw toApiError(0, undefined);
   }
 
   const text = await res.text();
@@ -43,61 +65,42 @@ export async function apiPost<TResponse>(
   }
 
   if (!res.ok) {
-    const message =
-      data &&
-      typeof data === "object" &&
-      "message" in data &&
-      typeof (data as Record<string, unknown>).message === "string"
-        ? ((data as Record<string, unknown>).message as string)
-        : `Request failed with status ${res.status}`;
-    const err: ApiError = { status: res.status, message };
-    throw err;
+    throw toApiError(res.status, data);
   }
 
   return (data ?? ({} as unknown)) as TResponse;
+}
+
+async function requestBinary(input: { path: string }): Promise<Blob> {
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBaseUrl()}${input.path}`, {
+      method: "GET",
+    });
+  } catch {
+    throw toApiError(0, undefined);
+  }
+
+  if (!res.ok) {
+    throw toApiError(res.status, undefined);
+  }
+
+  return await res.blob();
+}
+
+
+export async function apiPost<TResponse>(
+  path: string,
+  body: unknown
+): Promise<TResponse> {
+  return await requestJson<TResponse>({ method: "POST", path, body });
 }
 
 export async function apiPut<TResponse>(
   path: string,
   body: unknown
 ): Promise<TResponse> {
-  let res: Response;
-  try {
-    res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
-  }
-
-  const text = await res.text();
-  let data: unknown = undefined;
-  try {
-    data = text ? JSON.parse(text) : undefined;
-  } catch {
-    data = undefined;
-  }
-
-  if (!res.ok) {
-    const message =
-      data &&
-      typeof data === "object" &&
-      "message" in data &&
-      typeof (data as Record<string, unknown>).message === "string"
-        ? ((data as Record<string, unknown>).message as string)
-        : `Request failed with status ${res.status}`;
-    const err: ApiError = { status: res.status, message };
-    throw err;
-  }
-
-  return (data ?? ({} as unknown)) as TResponse;
+  return await requestJson<TResponse>({ method: "PUT", path, body });
 }
 
 
@@ -105,114 +108,19 @@ export async function apiGet<TResponse>(
   path: string,
   body?: unknown
 ): Promise<TResponse> {
-  let res: Response;
-  try {
-      res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
-  }
-
-  const text = await res.text();
-  let data: unknown = undefined;
-  try {
-    data = text ? JSON.parse(text) : undefined;
-  } catch {
-    data = undefined;
-  }
-
-  if (!res.ok) {
-    const message =
-      data &&
-      typeof data === "object" &&
-      "message" in data &&
-      typeof (data as Record<string, unknown>).message === "string"
-        ? ((data as Record<string, unknown>).message as string)
-        : `Request failed with status ${res.status}`;
-    const err: ApiError = { status: res.status, message };
-    throw err;
-  }
-
-  return (data ?? ({} as unknown)) as TResponse;
+  return await requestJson<TResponse>({ method: "GET", path, body });
 }
 
 export async function apiDelete<TResponse>(
   path: string,
   body?: unknown
 ): Promise<TResponse> {
-  let res: Response;
-  try {
-      res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
-  }
-
-  const text = await res.text();
-  let data: unknown = undefined;
-  try {
-    data = text ? JSON.parse(text) : undefined;
-  } catch {
-    data = undefined;
-  }
-
-  if (!res.ok) {
-    const message =
-      data &&
-      typeof data === "object" &&
-      "message" in data &&
-      typeof (data as Record<string, unknown>).message === "string"
-        ? ((data as Record<string, unknown>).message as string)
-        : `Request failed with status ${res.status}`;
-    const err: ApiError = { status: res.status, message };
-    throw err;
-  }
-
-  return (data ?? ({} as unknown)) as TResponse;
+  return await requestJson<TResponse>({ method: "DELETE", path, body });
 }
 
 
 export async function apiGetBinary(path: string): Promise<Blob> {
-  let res: Response;
-  try {
-    res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "GET",
-    });
-  } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
-  }
-
-  if (!res.ok) {
-    const err: ApiError = {
-      status: res.status,
-      message: `Request failed with status ${res.status}`,
-    };
-    throw err;
-  }
-
-  // Return the binary data as a Blob
-  return await res.blob();
+  return await requestBinary({ path });
 }
 
 
@@ -227,41 +135,5 @@ export async function scanPost<TResponse>(
   body?: unknown,
   jwt?: string
 ): Promise<TResponse> {
-  let res: Response;
-  try {
-      res = await fetch(`${getApiBaseUrl()}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${jwt}` },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    const err: ApiError = {
-      status: 0,
-      message:
-        "Network error: cannot reach the API (check backend is running, URL/port, and CORS).",
-    };
-    throw err;
-  }
-
-  const text = await res.text();
-  let data: unknown = undefined;
-  try {
-    data = text ? JSON.parse(text) : undefined;
-  } catch {
-    data = undefined;
-  }
-
-  if (!res.ok) {
-    const message =
-      data &&
-      typeof data === "object" &&
-      "message" in data &&
-      typeof (data as Record<string, unknown>).message === "string"
-        ? ((data as Record<string, unknown>).message as string)
-        : `Request failed with status ${res.status}`;
-    const err: ApiError = { status: res.status, message };
-    throw err;
-  }
-
-  return (data ?? ({} as unknown)) as TResponse;
+  return await requestJson<TResponse>({ method: "POST", path, body, jwt });
 }
