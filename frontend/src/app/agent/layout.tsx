@@ -8,6 +8,7 @@ import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
+import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
 import Dashboard from "@/components/Dashboard";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -22,6 +23,7 @@ export default function WorkerLayout({ children }: { children: React.ReactNode }
     { label: "Nouvelle demande", href: "/agent/fill-request", icon: <TextSnippetOutlinedIcon /> },
     { label: "Mes demandes",     href: "/agent/my-requests",  icon: <AssignmentOutlinedIcon /> },
     { label: "Historique",       href: "/agent/history",      icon: <RestoreOutlinedIcon /> },
+    { label: "Scanner",          href: "/agent/scan",         icon: <QrCodeScannerOutlinedIcon /> },
   ];
 
   const toggleSx = {

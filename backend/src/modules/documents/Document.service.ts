@@ -323,6 +323,32 @@ export const ReadManagerDashboardStats = async (data: any) => {
   return { total, pending, approved, rejected, recentDocuments };
 };
 
+export const GetAllSessions = async () => {
+  return await prisma.leaveSession.findMany({
+    orderBy: { leaveTime: "desc" },
+    include: {
+      document: {
+        include: {
+          employee: {
+            select: { 
+              id: true, 
+              name: true, 
+              username: true, 
+              email: true,        // ← add
+              structure: {        // ← add
+                select: { id: true, name: true }
+              }
+            }
+          },
+          missionOrder: true,
+          absenceAuth: true,
+          exitSlip: true,
+        }
+      }
+    }
+  });
+};
+
 // Update 
 
 // Disclaimer : 
@@ -547,6 +573,15 @@ export const ScanDocument = async (token: any) => {
   const Document = await prisma.document.findUnique({
     where: { qrCode: token },
     include: {
+      employee: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          structure: { select: { id: true, name: true } },
+        },
+      },
       missionOrder: true,
       absenceAuth: true,
       exitSlip: true,
@@ -587,6 +622,15 @@ export const ScanDocument = async (token: any) => {
       const refreshedDocument = await prisma.document.findUnique({
         where: { id: Document.id },
         include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              structure: { select: { id: true, name: true } },
+            },
+          },
           missionOrder: true, absenceAuth: true, exitSlip: true,
           leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
         }
@@ -606,6 +650,15 @@ export const ScanDocument = async (token: any) => {
           const refreshedDocument = await prisma.document.findUnique({
             where: { id: Document.id },
             include: {
+              employee: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  email: true,
+                  structure: { select: { id: true, name: true } },
+                },
+              },
               missionOrder: true, absenceAuth: true, exitSlip: true,
               leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
             }
@@ -621,6 +674,15 @@ export const ScanDocument = async (token: any) => {
       const refreshedDocument = await prisma.document.findUnique({
         where: { id: Document.id },
         include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              structure: { select: { id: true, name: true } },
+            },
+          },
           missionOrder: true, absenceAuth: true, exitSlip: true,
           leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
         }
@@ -633,6 +695,15 @@ export const ScanDocument = async (token: any) => {
   const refreshedDocument = await prisma.document.findUnique({
     where: { id: Document.id },
     include: {
+      employee: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          structure: { select: { id: true, name: true } },
+        },
+      },
       missionOrder: true, absenceAuth: true, exitSlip: true,
       leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
     }

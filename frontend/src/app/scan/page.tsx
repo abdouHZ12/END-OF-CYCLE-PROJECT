@@ -20,7 +20,7 @@ import {
 type ScanResponse = {
   message?: string;
   Document : {
-    id: string;
+    id: number;
     type: string;
     leaveSession?: {
       status: string;
@@ -151,7 +151,7 @@ const scan = useCallback(async () => {
                             State
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatDateTime(leaveSession?.status)}
+                            {leaveSession?.status ?? "—"}
                           </Typography>
                         </Stack>
 
