@@ -22,10 +22,6 @@ type DocumentResponse ={
 };
 export default function Page() {
 
-      const [destination , setDestination] = React.useState<string>("") ;
-      const [duration , setDuration] = React.useState<string>("") ;
-      const [purpose , setPurpose] = React.useState<string>("") ;
-      const [travelMethod , setTravelMethod] = React.useState<string>("") ;
 
       const [startDate , setStartDate] = React.useState<string>("") ;
       const [endDate , setEndDate] = React.useState<string>("") ;
@@ -115,41 +111,6 @@ export default function Page() {
       }
 
       }
-
-
-
-      async function handleMissionOrderSubmit (e:React.FormEvent) {
-        e.preventDefault() ;
-        if (!employeeId) {
-          setError("Please sign in");
-          return;
-        }
-        setIsLoading(true) ;
-        setError(null) ;
-          try {
-          await apiPost<DocumentResponse>("/api/documents/MissionOrder" , {
-            Type : "MISSION_ORDER" , 
-            EmployeeId : employeeId ,
-            destination , 
-            duration : parseInt(duration) , 
-            purpose , 
-            travelMethod
-        }) ; 
-
-        showToast("Mission Order created succefully" , 2500) ;
-        setDestination("");
-        setDuration("");
-        setPurpose("");
-        setTravelMethod("");
-
-
-      } catch (err :unknown) {
-        const apiErr = err as ApiError ;
-        setError(
-          apiErr?.message || "An error occurred while submitting the mission order" ) ;
-      } finally {
-        setIsLoading(false);
-      } }
 
       const router = useRouter() ;
       const handleCancel = () => {
@@ -254,29 +215,6 @@ export default function Page() {
                   }}
                 >
                   Absence Authorization{" "}
-                </Button>
-              </Grid>
-              <Grid key={3} size={{ xs: 2, sm: 4, md: 4 }}>
-                <Button
-                  fullWidth
-                  onClick={() => setIsSelected("MissionOrder")}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    alignItems: "center",
-                    color: isSelected === "MissionOrder" ? "#fff" : "lightgray",
-                    backgroundColor:
-                      isSelected === "MissionOrder" ? "#20314E" : "#1a2742", // Change background color when selected
-                    borderRadius: "12px 12px 0 0",
-                    borderBottom:
-                      isSelected === "MissionOrder"
-                        ? "2px solid #ffa500"
-                        : "none", // Add orange border when selected
-                    textTransform: "none",
-                    padding: "12px 16px",
-                  }}
-                >
-                  Mission Order
                 </Button>
               </Grid>
             </Grid>
@@ -577,175 +515,6 @@ export default function Page() {
                     </Grid>
                   </Box>
                 </motion.div>  
-              </Grid>
-            )}
-            {isSelected === "MissionOrder" && (
-              <Grid container>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }} // Start with opacity 0 and slightly below
-                    animate={{ opacity: 1, y: 0 }} // Fade in and move to original position
-                    exit={{ opacity: 0, y: 20 }} // Fade out and move slightly below
-                    transition={{ duration: 0.5 }} // Animation duration
-                    style={{width:"100%"}}
-
-                  >
-                  <Box
-                    component="form"
-                    onSubmit={handleMissionOrderSubmit}
-                    sx={{
-                      padding: "24px",
-                      backgroundColor: "#20314E",
-                      borderRadius: "12px 12px 12px 12px",
-                      marginTop: "20px ",
-                      width: "100%",
-                    }}
-                  >
-                    {toast ? (
-                      <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                        {toast}
-                      </div>
-                    ) : null}
-
-                    {error ? (
-                      <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                        {error}
-                      </div>
-                    ) : null}
-                    <label htmlFor="" style={{ color: "#fff" }}>Desination *</label>
-                    <br />
-                    <input
-                      type="text"
-                      placeholder="    Ex : Alger"
-                      required
-                      value ={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-                      style={{
-                        width: "100%",
-                        backgroundColor: "rgb(10, 22, 40)",
-                        borderRadius: "5px 5px 5px 5px",
-                        fontSize: "16px ",
-                        marginTop: "2px",
-                        marginBottom: "10px",
-                        paddingTop: "2px",
-                        paddingBottom: "8px",
-                        color:"#fff"
-                      }}
-                    />
-                    <Grid container spacing={2}>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>Duration *</label>
-                        <input
-                          type="number"
-                          required
-                          value ={duration}
-                          onChange={(e) => setDuration(e.target.value)}
-                          placeholder="Duration in days"
-                          style={{
-                            width: "100%",
-                            backgroundColor: "rgb(10, 22, 40)",
-                            borderRadius: "5px",
-                            fontSize: "16px",
-                            marginTop: "2px",
-                            marginBottom: "10px",
-                            paddingTop: "2px",
-                            paddingBottom: "8px",
-                            paddingLeft: "8px",
-                            paddingRight: "10px",
-                            color: "#fff"
-                          }}
-                        />
-                      </Grid>
-
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}> Purpose *</label>
-                        <input
-                          type="text"
-                          required
-                          value ={purpose}
-                          onChange={(e) => setPurpose(e.target.value)}
-                          placeholder="Purpose of the mission"
-                          style={{
-                            width: "100%",
-                            backgroundColor: "rgb(10, 22, 40)",
-                            borderRadius: "5px",
-                            fontSize: "16px",
-                            marginTop: "2px",
-                            marginBottom: "10px",
-                            paddingTop: "2px",
-                            paddingBottom: "8px",
-                            paddingLeft: "8px",
-                            paddingRight: "190px",
-                            color: "#fff"
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-
-                    <label htmlFor="" style={{ color: "#fff" }}>Travel Method</label>
-                    <select
-                      id="travel-method"
-                      value={travelMethod}
-                      onChange={(e) => setTravelMethod(e.target.value)}
-                      required
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        borderRadius: "5px",
-                        backgroundColor: "rgb(10, 22, 40)",
-                        color: "gray",
-                      }}
-                    >
-                      <option value="" disabled >Select Travel Method</option>
-                      <option value="PERSONNAL">Personnel</option>
-                      <option value="COMPANY">Company</option>
-                      <option value="AIRPLANE">Airplane</option>
-                    </select>
-                    <br />
-                    <Grid container spacing={2} sx={{ marginTop: "20px" }}>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Button
-                          disabled={isLoading}
-                          type="submit"
-                          sx={{
-                            backgroundColor: "#ffa500",
-                            color: "black",
-                            fontWeight: "bold",
-                            padding: "12px 24px",
-                            borderRadius: "8px",
-                            width: "100%",
-                            textTransform: "none",
-                            "&:hover": {
-                              backgroundColor: "#ffb733",
-                            },
-                          }}
-                        >
-                          {isLoading ? "Submitting..." : "Submit Request"}
-                        </Button>
-                      </Grid>
-
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Button
-                          onClick={handleCancel}
-                          sx={{
-                            backgroundColor: "transparent",
-                            color: "white",
-                            fontWeight: "bold",
-                            padding: "12px 24px",
-                            border: "1px solid white",
-                            borderRadius: "8px",
-                            width: "100%",
-                            textTransform: "none",
-                            "&:hover": {
-                              backgroundColor: "rgba(255, 255, 255, 0.1)",
-                            },
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </motion.div>
               </Grid>
             )}
           </Box>

@@ -9,6 +9,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
 import Dashboard from "@/components/Dashboard";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import CardTravelIcon from '@mui/icons-material/CardTravel';
 
 export default function ManagerLayout({ children }: { children: React.ReactNode }) {
   const router      = useRouter();
@@ -21,6 +22,7 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   const items = [
     { label: "Tableau de bord",     href: "/manager",                   icon: <DashboardOutlinedIcon /> },
     { label: "Demandes en attente", href: "/manager/pending",           icon: <PendingActionsIcon /> },
+    { label: "Mission Order",       href: "/manager/mission-order",     icon: <CardTravelIcon /> },
     { label: "Historique employés", href: "/manager/employees-history", icon: <GroupIcon /> },
   ];
   
@@ -40,8 +42,6 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
     },
   } as const;
 
-  // manager always has worker toggle (manager = worker too)
-  // if also admin → show admin toggle instead
 const toggleButton = (
   <Button
     onClick={() => router.push(employeeHref)}

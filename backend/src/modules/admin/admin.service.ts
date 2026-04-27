@@ -198,3 +198,23 @@ export const deleteRole = async (id: number) => {
 
   return prisma.role.delete({ where: { id } });
 };
+
+export const getWorkers = async () => {
+  return prisma.employee.findMany({
+    where: {
+      roles: {
+        some: {
+          role: {
+            type: 'WORKER',
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+    },
+    orderBy: { name: 'asc' },
+  });
+};

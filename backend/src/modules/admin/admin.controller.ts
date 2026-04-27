@@ -205,3 +205,11 @@ export const deleteStructure = async (req: Request<IdParam>, res: Response) => {
   }
 };
 
+export const GetWorkers = async (req: Request, res: Response) => {
+  try {
+    const workers = await adminService.getWorkers();
+    res.status(200).json(workers);
+  } catch (error) {
+    res.status(500).json({ error, message: "failed to fetch workers" });
+  }
+};
