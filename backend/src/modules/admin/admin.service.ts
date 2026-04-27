@@ -198,3 +198,40 @@ export const deleteRole = async (id: number) => {
 
   return prisma.role.delete({ where: { id } });
 };
+
+export const getWorkers = async () => {
+  return prisma.employee.findMany({
+    where: {
+      roles: {
+        some: {
+          role: {
+            type: 'WORKER',
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+    },
+    orderBy: { name: 'asc' },
+  });
+};
+
+export const getWorkerMissions = async (employeeId: number) => {
+  return prisma.document.findMany({
+    where: {
+      issuedById: employeeId,
+      type: "MISSION_ORDER",
+      status: "APPROVED",
+    },
+    include: {
+      missionOrder: true,
+      decisionMadeBy: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};

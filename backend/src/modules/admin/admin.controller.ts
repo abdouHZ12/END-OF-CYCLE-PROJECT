@@ -205,3 +205,26 @@ export const deleteStructure = async (req: Request<IdParam>, res: Response) => {
   }
 };
 
+export const GetWorkers = async (req: Request, res: Response) => {
+  try {
+    const workers = await adminService.getWorkers();
+    res.status(200).json(workers);
+  } catch (error) {
+    res.status(500).json({ error, message: "failed to fetch workers" });
+  }
+};
+
+export const GetWorkerMissions = async (req: Request, res: Response) => {
+  try {
+    const { employeeId } = req.params;
+    if (typeof employeeId !== "string") {
+      throw new Error("Invalid employeeId");
+    }
+
+    const id = parseInt(employeeId, 10);
+    const missions = await adminService.getWorkerMissions(id);
+    res.status(200).json(missions);
+  } catch (error) {
+    res.status(500).json({ error, message: "failed to fetch worker missions" });
+  }
+};

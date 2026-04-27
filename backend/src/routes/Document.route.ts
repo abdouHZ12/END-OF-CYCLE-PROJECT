@@ -1,10 +1,7 @@
-import express from 'express'
 import { Router } from 'express'
 import * as DocumentController from '../modules/documents/Document.controller.js'
-import {auth} from "../middlewares/authHandler.js" ;
-import { GetAllSessions } from '../modules/documents/Document.controller.js';
 const router : Router = Router() ; 
-
+import * as AdminController from '../modules/admin/admin.controller.js'
 
 
 
@@ -35,6 +32,8 @@ router.put("/document/MissionOrder/:id",DocumentController.UpdateWholeMissionOrd
 
 router.delete("/employee/:employeeId/document/:id",DocumentController.DeleteDocumentById);
 
+router.get("/employees/workers", AdminController.GetWorkers);
 
+router.get("/employees/:employeeId/mission-orders", AdminController.GetWorkerMissions);
 
 export default router;
