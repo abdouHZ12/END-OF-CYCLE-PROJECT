@@ -1,230 +1,180 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import * as adminService from './admin.service.js';
 
-type IdParam      = { id: string };
-type IdRoleParam  = { id: string; roleId: string };
+type IdParam     = { id: string };
+type IdRoleParam = { id: string; roleId: string };
+type WorkerParam = { employeeId: string };
 
+const parseId = (val: string): number => parseInt(val, 10);
 
-export const getAllEmployees = async (req: Request, res: Response) => {
+const isError = (err: unknown, message: string): boolean =>
+  err instanceof Error && err.message === message;
+
+export const getAllEmployees = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const employees = await adminService.getAllEmployees();
-    res.status(200).json(employees);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to fetch employees' });
+    res.status(200).json(await adminService.getAllEmployees());
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getEmployeeById = async (req: Request<IdParam>, res: Response) => {
+export const getEmployeeById = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const employee = await adminService.getEmployeeById(parseInt(req.params.id));
-    res.status(200).json(employee);
-  } catch (error: any) {
-    if (error.message === 'EMPLOYEE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Employee not found' });
-    }
-    res.status(500).json({ message: 'Failed to fetch employee' });
+    res.status(200).json(await adminService.getEmployeeById(parseId(req.params.id)));
+  } catch (err) {
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    next(err);
   }
 };
 
-export const registerEmployee = async (req: Request, res: Response) => {
+export const registerEmployee = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, email, structureId, roleIds } = req.body;  // no username/password
-    const employee = await adminService.registerEmployee({ name, email, structureId, roleIds });
-    res.status(201).json(employee);
-  } catch (err: any) {
-    if (err.message === 'EMPLOYEE_ALREADY_EXISTS')
-      return res.status(409).json({ message: 'Email already in use' });
-    res.status(500).json({ message: 'Internal server error' });
+    const { name, email, structureId, roleIds } = req.body;
+    res.status(201).json(await adminService.registerEmployee({ name, email, structureId, roleIds }));
+  } catch (err) {
+    if (isError(err, 'EMPLOYEE_ALREADY_EXISTS')) { res.status(409).json({ message: 'Email already in use' }); return; }
+    next(err);
   }
 };
 
-export const updateEmployee = async (req: Request<IdParam>, res: Response) => {
+export const updateEmployee = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const employee = await adminService.updateEmployee(parseInt(req.params.id), req.body);
-    res.status(200).json(employee);
-  } catch (error: any) {
-    if (error.message === 'EMPLOYEE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Employee not found' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update employee' });
+    res.status(200).json(await adminService.updateEmployee(parseId(req.params.id), req.body));
+  } catch (err) {
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    next(err);
   }
 };
 
-export const deleteEmployee = async (req: Request<IdParam>, res: Response) => {
+export const deleteEmployee = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await adminService.deleteEmployee(parseInt(req.params.id));
+    await adminService.deleteEmployee(parseId(req.params.id));
     res.status(200).json({ message: 'Employee deleted successfully' });
-  } catch (error: any) {
-    if (error.message === 'EMPLOYEE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Employee not found' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to delete employee' });
+  } catch (err) {
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    next(err);
   }
 };
 
-
-export const getAllRoles = async (req: Request, res: Response) => {
+export const getAllRoles = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const roles = await adminService.getAllRoles();
-    res.status(200).json(roles);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch roles' });
+    res.status(200).json(await adminService.getAllRoles());
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createRole = async (req: Request, res: Response) => {
+export const createRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, type, permissions } = req.body;
-    if (!name || !type) {
-      return res.status(400).json({ message: 'Name and type are required' });
-    }
-    const role = await adminService.createRole({ name, type, permissions: permissions ?? '' });
-    res.status(201).json(role);
-  } catch (error: any) {
-    if (error.message === 'INVALID_ROLE_TYPE') {
-      return res.status(400).json({ message: 'Invalid role type' });
-    }
-    if (error.message === 'ROLE_ALREADY_EXISTS') {
-      return res.status(409).json({ message: 'A role with this name already exists' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to create role' });
+    if (!name || !type) { res.status(400).json({ message: 'Name and type are required' }); return; }
+    res.status(201).json(await adminService.createRole({ name, type, permissions: permissions ?? '' }));
+  } catch (err) {
+    if (isError(err, 'INVALID_ROLE_TYPE'))   { res.status(400).json({ message: 'Invalid role type' }); return; }
+    if (isError(err, 'ROLE_ALREADY_EXISTS')) { res.status(409).json({ message: 'A role with this name already exists' }); return; }
+    next(err);
   }
 };
 
-export const updateRole = async (req: Request<IdParam>, res: Response) => {
+export const updateRole = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, permissions } = req.body;
-    if (!name) {
-      return res.status(400).json({ message: 'Name is required' });
-    }
-    const role = await adminService.updateRole(parseInt(req.params.id), { name, permissions });
-    res.status(200).json(role);
-  } catch (error: any) {
-    if (error.message === 'ROLE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Role not found' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update role' });
+    if (!name) { res.status(400).json({ message: 'Name is required' }); return; }
+    res.status(200).json(await adminService.updateRole(parseId(req.params.id), { name, permissions }));
+  } catch (err) {
+    if (isError(err, 'ROLE_NOT_FOUND')) { res.status(404).json({ message: 'Role not found' }); return; }
+    next(err);
   }
 };
 
-export const deleteRole = async (req: Request<IdParam>, res: Response) => {
+export const deleteRole = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await adminService.deleteRole(parseInt(req.params.id));
+    await adminService.deleteRole(parseId(req.params.id));
     res.status(200).json({ message: 'Role deleted successfully' });
-  } catch (error: any) {
-    if (error.message === 'ROLE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Role not found' });
-    }
-    if (error.message === 'ROLE_IN_USE') {
-      return res.status(409).json({ message: 'Cannot delete a role that is assigned to employees' });
-    }
-    console.error(error);
-    res.status(500).json({ message: 'Failed to delete role' });
+  } catch (err) {
+    if (isError(err, 'ROLE_NOT_FOUND')) { res.status(404).json({ message: 'Role not found' }); return; }
+    if (isError(err, 'ROLE_IN_USE'))    { res.status(409).json({ message: 'Cannot delete a role that is assigned to employees' }); return; }
+    next(err);
   }
 };
 
-
-export const assignRole = async (req: Request<IdParam>, res: Response) => {
+export const assignRole = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { roleId } = req.body;
-    if (!roleId) return res.status(400).json({ message: 'roleId is required' });
-    const result = await adminService.assignRole(parseInt(req.params.id), parseInt(roleId));
-    res.status(200).json(result);
-  } catch (error: any) {
-    if (error.message === 'EMPLOYEE_NOT_FOUND') {
-      return res.status(404).json({ message: 'Employee not found' });
-    }
-    res.status(500).json({ message: 'Failed to assign role' });
+    if (!roleId) { res.status(400).json({ message: 'roleId is required' }); return; }
+    res.status(200).json(await adminService.assignRole(parseId(req.params.id), parseId(roleId)));
+  } catch (err) {
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    next(err);
   }
 };
 
-export const revokeRole = async (req: Request<IdRoleParam>, res: Response) => {
+export const revokeRole = async (req: Request<IdRoleParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await adminService.revokeRole(parseInt(req.params.id), parseInt(req.params.roleId));
+    await adminService.revokeRole(parseId(req.params.id), parseId(req.params.roleId));
     res.status(200).json({ message: 'Role revoked successfully' });
-  } catch (error: any) {
-    if (error.message === 'LAST_ROLE') {
-      return res.status(400).json({ message: 'Employee must have at least one role' });
-    }
-    res.status(500).json({ message: 'Failed to revoke role' });
+  } catch (err) {
+    if (isError(err, 'LAST_ROLE')) { res.status(400).json({ message: 'Employee must have at least one role' }); return; }
+    next(err);
   }
 };
 
-
-export const getAllStructures = async (req: Request, res: Response) => {
+export const getAllStructures = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const structures = await adminService.getAllStructures();
-    res.status(200).json(structures);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch structures' });
+    res.status(200).json(await adminService.getAllStructures());
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createStructure = async (req: Request, res: Response) => {
+export const createStructure = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, parentId } = req.body;
-    if (!name) return res.status(400).json({ message: 'Name is required' });
-    const structure = await adminService.createStructure({ name, parentId });
-    res.status(201).json(structure);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create structure' });
+    if (!name) { res.status(400).json({ message: 'Name is required' }); return; }
+    res.status(201).json(await adminService.createStructure({ name, parentId }));
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updateStructure = async (req: Request<IdParam>, res: Response) => {
+export const updateStructure = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, parentId } = req.body;
-    if (!name) return res.status(400).json({ message: 'Name is required' });
-    const structure = await adminService.updateStructure(parseInt(req.params.id), {
-      name,
-      parentId: parentId ? parseInt(parentId) : null,
-    });
-    res.status(200).json(structure);
-  } catch (error: any) {
-    if (error.message === 'SELF_PARENT') {
-      return res.status(400).json({ message: 'A department cannot be its own parent' });
-    }
-    res.status(500).json({ message: 'Failed to update structure' });
+    if (!name) { res.status(400).json({ message: 'Name is required' }); return; }
+    res.status(200).json(
+      await adminService.updateStructure(parseId(req.params.id), {
+        name,
+        parentId: parentId ? parseId(parentId) : null,
+      })
+    );
+  } catch (err) {
+    if (isError(err, 'SELF_PARENT')) { res.status(400).json({ message: 'A department cannot be its own parent' }); return; }
+    next(err);
   }
 };
 
-export const deleteStructure = async (req: Request<IdParam>, res: Response) => {
+export const deleteStructure = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await adminService.deleteStructure(parseInt(req.params.id));
+    await adminService.deleteStructure(parseId(req.params.id));
     res.status(200).json({ message: 'Structure deleted successfully' });
-  } catch (error: any) {
-    if (error.message === 'STRUCTURE_HAS_EMPLOYEES') {
-      return res.status(400).json({ message: 'Cannot delete a department that has employees' });
-    }
-    res.status(500).json({ message: 'Failed to delete structure' });
+  } catch (err) {
+    if (isError(err, 'STRUCTURE_HAS_EMPLOYEES')) { res.status(400).json({ message: 'Cannot delete a department that has employees' }); return; }
+    next(err);
   }
 };
 
-export const GetWorkers = async (req: Request, res: Response) => {
+export const getWorkers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const workers = await adminService.getWorkers();
-    res.status(200).json(workers);
-  } catch (error) {
-    res.status(500).json({ error, message: "failed to fetch workers" });
+    res.status(200).json(await adminService.getWorkers());
+  } catch (err) {
+    next(err);
   }
 };
 
-export const GetWorkerMissions = async (req: Request, res: Response) => {
+export const getWorkerMissions = async (req: Request<WorkerParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { employeeId } = req.params;
-    if (typeof employeeId !== "string") {
-      throw new Error("Invalid employeeId");
-    }
-
-    const id = parseInt(employeeId, 10);
-    const missions = await adminService.getWorkerMissions(id);
-    res.status(200).json(missions);
-  } catch (error) {
-    res.status(500).json({ error, message: "failed to fetch worker missions" });
+    res.status(200).json(await adminService.getWorkerMissions(parseId(req.params.employeeId)));
+  } catch (err) {
+    next(err);
   }
 };

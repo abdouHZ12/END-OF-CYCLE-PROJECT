@@ -3,27 +3,30 @@ import { tokenService } from '../modules/auth/token.service.js';
 import type { RoleType } from '../../generated/prisma/browser.js';
 
 declare module 'express-serve-static-core' {
-    interface Request {
-        user?: { id: number; roles: RoleType[] }; 
-    }
+  interface Request {
+    user?: { id: number; roles: RoleType[] };
+  }
 }
 
-export function auth(req: Request, res: Response, next: NextFunction) {
+export function auth(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers['authorization'];
 
-    const authHeader = req.headers['authorization'];
-    console.log("AUTH HEADER:", authHeader);
-    if(!authHeader) return res.status(401).json({ message: 'No token provided' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ message: 'No token provided' });
+    return;
+  }
 
-    const token = authHeader.split(' ')[1];
-    if(!token) return res.status(401).json({ message: 'No token provided' });
+  const [, token] = authHeader.split(' ');
 
-    try {
-        const decoded = tokenService.verifyAccessToken(token);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: 'Invalid token' });
-    }
-    return
+  if (!token) {
+    res.status(401).json({ message: 'No token provided' });
+    return;
+  }
 
+  try {
+    req.user = tokenService.verifyAccessToken(token);
+    next();
+  } catch {
+    res.status(403).json({ message: 'Invalid or expired token' });
+  }
 }
