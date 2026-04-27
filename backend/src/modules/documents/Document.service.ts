@@ -1,19 +1,49 @@
-import { parse } from 'node:path';
 import { prisma } from '../../lib/prisma.js'
-import puppeteer , {Browser} from 'puppeteer' ;
+import puppeteer, { Browser } from 'puppeteer';
 import { generateToken } from '../../lib/Aid.js';
-import QRCode from 'qrcode' ;
+import QRCode from 'qrcode';
+import os from 'os';
+import { RoleType } from '../../../generated/prisma/client.js';
+
+function httpError(status: number, message: string): Error & { status: number } {
+    const err = new Error(message) as Error & { status: number };
+    err.status = status;
+    return err;
+}
+
+async function getEmployeeRoleTypes(employeeId: number): Promise<RoleType[]> {
+    const employee = await prisma.employee.findUnique({
+        where: { id: employeeId },
+        select: {
+            roles: {
+                select: {
+                    role: {
+                        select: { type: true },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!employee) throw httpError(404, 'Employee not found');
+    return employee.roles.map((r) => r.role.type);
+}
 
 //Creation Part
 // FOR NOW I AM RETREIVING ALL DATA FROM REQ.BODY
 
 export const CreateExitSlip = async (data : any ) => {
     const {Qrcode , Type , EmployeeId,  exitTime , returnTime , gate} = data ; 
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+    await getEmployeeRoleTypes(employeeIdNum);
+
     const ExitSlip = await prisma.document.create({
         data : {
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             exitSlip : {
                 create : {
                         exitTime , 
@@ -28,11 +58,16 @@ export const CreateExitSlip = async (data : any ) => {
 
 export const CreateAbsenceAuth = async (data : any ) =>{
     const {Qrcode , Type , EmployeeId , startDate , endDate , reason}  = data ;
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+    await getEmployeeRoleTypes(employeeIdNum);
+
     const AbsenceAuth = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             absenceAuth : {
                 create : { 
                         startDate , 
@@ -49,11 +84,24 @@ export const CreateAbsenceAuth = async (data : any ) =>{
 
 export const CreateMissionOrder = async (data : any ) => {
     const {Qrcode , Type , EmployeeId , destination , duration , purpose , travelMethod } = data ;
+
+    const employeeIdNum = Number(EmployeeId);
+    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+
+    const roles = await getEmployeeRoleTypes(employeeIdNum);
+
+    // Agent behaves like worker, but can only create ExitSlip + AbsenceAuth.
+    // If the user has both WORKER and AGENT roles, allow Mission Orders (WORKER wins).
+    const isAgentOnly = roles.includes(RoleType.AGENT) && !roles.includes(RoleType.WORKER);
+    if (isAgentOnly) {
+      throw httpError(403, 'AGENT users cannot create Mission Orders');
+    }
+
     const MissionOrder = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
             type : Type , 
-            issuedById : EmployeeId , 
+            issuedById : employeeIdNum , 
             missionOrder : {
                 create : { 
                         travelMethod ,
@@ -275,6 +323,32 @@ export const ReadManagerDashboardStats = async (data: any) => {
   return { total, pending, approved, rejected, recentDocuments };
 };
 
+export const GetAllSessions = async () => {
+  return await prisma.leaveSession.findMany({
+    orderBy: { leaveTime: "desc" },
+    include: {
+      document: {
+        include: {
+          employee: {
+            select: { 
+              id: true, 
+              name: true, 
+              username: true, 
+              email: true,        // ← add
+              structure: {        // ← add
+                select: { id: true, name: true }
+              }
+            }
+          },
+          missionOrder: true,
+          absenceAuth: true,
+          exitSlip: true,
+        }
+      }
+    }
+  });
+};
+
 // Update 
 
 // Disclaimer : 
@@ -403,219 +477,236 @@ export const DeleteDocumentById = async (data : any  , employeeId : any) => {
 }
 
 
-let browser : Browser ;
+let browser: Browser;
 
-export const initBrowser = async () =>{
-    if(!browser){
-        browser = await puppeteer.launch({
-            headless : true ,
-            executablePath: "/usr/bin/google-chrome",
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+export const initBrowser = async () => {
+  if (!browser) {
+    const options: Parameters<typeof puppeteer.launch>[0] = {
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    };
+
+    if (process.env.CHROME_PATH) {
+      options.executablePath = process.env.CHROME_PATH;
     }
+
+    browser = await puppeteer.launch(options);
+  }
+};
+
+
+function getLocalIP(): string {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .find((iface) => iface?.family === "IPv4" && !iface.internal)?.address || "localhost";
 }
 
+export const GeneratePdf = async (id: any) => {
+  const DocumentId = parseInt(id);
+  const Document = await prisma.document.findUnique({
+    where: { id: DocumentId },
+    include: {
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      decisionMadeBy: {
+        select: { id: true, name: true, username: true },
+      },
+    }
+  });
 
+  if (!Document) throw new Error("Document not found");
+  if (!Document.qrCode) throw new Error("Document has no QR code");
 
-export const GeneratePdf = async ( id : any) => {
-    const DocumentId = parseInt(id) ;
-    const Document = await prisma.document.findUnique({
-        where : { id : DocumentId } ,
-        include : {
-            missionOrder  : true ,
-            absenceAuth : true , 
-            exitSlip : true,
-            decisionMadeBy: {
-                select: { id: true, name: true, username: true },
-            },
-         }
-    })
-    if(!Document) throw new Error("Document not found") ;
-    
-    const url = `http://192.168.100.3:3000/scan?token=${Document.qrCode}`;
-    const qrCodeDataUrl = await QRCode.toDataURL(url);
+  const baseUrl = process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL
+    : `http://${getLocalIP()}:3000`;
 
-    const html = `<!DOCTYPE html>
+  const url = `${baseUrl}/scan?token=${Document.qrCode}`;
+  const qrCodeDataUrl = await QRCode.toDataURL(url);
+
+  const html = `<!DOCTYPE html>
     <html>
         <head>
             <style>
-            body {
-                font-family: Arial;
-                padding: 40px;
-            }
-            .container {
-                border: 1px solid #000;
-                padding: 20px;
-            }
-            .title {
-                text-align: center;
-                font-size: 24px;
-                font-weight: bold;
-            }
-            .qr {
-                margin-top: 30px;
-                text-align: center;
-            }
-            .content {
-                display: flex;
-                gap: 24px;
-                align-items: flex-start;
-                margin-top: 24px;
-            }
-
-            .info {
-                flex: 1;
-            }
+            body { font-family: Arial; padding: 40px; }
+            .container { border: 1px solid #000; padding: 20px; }
+            .title { text-align: center; font-size: 24px; font-weight: bold; }
+            .qr { margin-top: 30px; text-align: center; }
+            .content { display: flex; gap: 24px; align-items: flex-start; margin-top: 24px; }
+            .info { flex: 1; }
             </style>
         </head>
-
         <body>
             <div class="container">
                 <div class="title">Approved Document</div>
-
                 <div class="content">
                     <div class="info">
-                        <p><strong>User:</strong> ${Document?.id}</p>
-                        <p><strong>Type:</strong> ${Document?.type}</p>
+                        <p><strong>User:</strong> ${Document.id}</p>
+                        <p><strong>Type:</strong> ${Document.type}</p>
                         <p><strong>Date:</strong> ${new Date(Document.createdAt).toLocaleDateString()}</p>
-                        </div>
-
-                        <div class="qr">
-                            <img src="${qrCodeDataUrl}" width="150" height="150" />
-                            <p>Scan to verify</p>
-                        </div>
+                    </div>
+                    <div class="qr">
+                        <img src="${qrCodeDataUrl}" width="150" height="150" />
+                        <p>Scan to verify</p>
                     </div>
                 </div>
             </div>
         </body>
     </html>`;
 
-    if(!browser) {
-        throw new Error("Browser not initialized. Call initBrowser() first.");
-    }
-    const page = await browser.newPage();
-try{
-    await page.setContent(html , {waitUntil:"load"});
+  if (!browser) throw new Error("Browser not initialized. Call initBrowser() first.");
 
-    const pdfBuffer = await page.pdf({
-        format:"A4",
-        printBackground: true
-    });
-
-    return pdfBuffer ;
-} finally{
+  const page = await browser.newPage();
+  try {
+    await page.setContent(html, { waitUntil: "load" });
+    const pdfBuffer = await page.pdf({ format: "A4", printBackground: true });
+    return pdfBuffer;
+  } finally {
     await page.close();
-}    
-}
+  }
+};
 
 
 
-export const ScanDocument = async (token : any , Employeeid : any) => {
-    const EmployeeId = parseInt(Employeeid) ;
-    const Document = await prisma.document.findUnique({
-        where : { qrCode : token } ,
-        include : {
-            missionOrder  : true ,
-            absenceAuth : true , 
-            exitSlip : true,
-            leaveSession : true ,
-            decisionMadeBy: {
-                select: { id: true, name: true, username: true },
-            },
-         }
-    })
-    if(!Document) throw new Error("Invalid QR code") ;
-    
-    if(Document.issuedById !==EmployeeId) {
-        throw new Error("Unauthorized access to this document") ;
+export const ScanDocument = async (token: any) => {
+  const Document = await prisma.document.findUnique({
+    where: { qrCode: token },
+    include: {
+      employee: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          structure: { select: { id: true, name: true } },
+        },
+      },
+      missionOrder: true,
+      absenceAuth: true,
+      exitSlip: true,
+      leaveSession: true,
+      decisionMadeBy: { select: { id: true, name: true, username: true } },
     }
-    let message = "" ;
-    const now = new Date() ;
-    let session = await prisma.leaveSession.findUnique({
-        where : { documentId : Document.id }
-    });
-    if(Document.status == "APPROVED") {
-        if(!session){
-            session = await prisma.leaveSession.create({
-                data : {
-                    documentId :    Document.id ,
-                    status :        "OUT",
-                    employeeId :    EmployeeId,
-                    leaveTime  :    now,
-                }
-            })
+  });
 
-        const refreshedDocument = await prisma.document.findUnique({
-            where : { id : Document.id } ,
-            include : {
-                missionOrder  : true ,
-                absenceAuth : true , 
-                exitSlip : true,
-                leaveSession : true ,
-                decisionMadeBy: {
-                    select: { id: true, name: true, username: true },
-                },
-            }
-        })
-        return {message: "QR code Valid , leave time created", Document : refreshedDocument};
+  if (!Document) throw new Error("Invalid QR code");
+
+  const now = new Date();
+  let session = await prisma.leaveSession.findUnique({
+    where: { documentId: Document.id }
+  });
+
+  if (Document.status === "APPROVED") {
+    // First scan — record leave time
+    if (!session) {
+      try {
+        session = await prisma.leaveSession.create({
+          data: {
+            documentId: Document.id,
+            status: "OUT",
+            employeeId: Document.issuedById,
+            leaveTime: now,
+          }
+        });
+      } catch (err: any) {
+        if (err.code === 'P2002') {
+          session = await prisma.leaveSession.findUnique({
+            where: { documentId: Document.id }
+          });
+        } else {
+          throw err;
         }
+      }
 
-        if(session && !session.returnTime){
-
-            if (Document.type === "EXIT_SLIP"){
-                const hour = now.getHours() ;
-                if(hour >= 16){
-                    await prisma.leaveSession.update({
-                        where : { id : session.id } ,
-                        data : {
-                            status : "NOT_RETURNED"
-                        }
-                    })
-                    const refreshedDocument = await prisma.document.findUnique({
-                        where: { id: Document.id },
-                        include: {
-                            missionOrder: true,
-                            absenceAuth: true,
-                            exitSlip: true,
-                            decisionMadeBy: { select: { id: true, name: true, username: true } },
-                            leaveSession: true, // Include the updated leaveSession
-                        },
-                    });
-                    return {message: "Too late it's past 16:00 -> marked as NOT_RETURNED", Document : refreshedDocument};
-                }
-            } 
-            await prisma.leaveSession.update({
-                where : { id : session.id } ,
-                data : {
-                    returnTime : now ,
-                    status : "RETURNED"
-                }
-            })
-            const refreshedDocument = await prisma.document.findUnique({
-                where: { id: Document.id },
-                include: {
-                    missionOrder: true,
-                    absenceAuth: true,
-                    exitSlip: true,
-                    decisionMadeBy: { select: { id: true, name: true, username: true } },
-                    leaveSession: true, // Include the updated leaveSession
-                },
-            });
-        return {message: "QR code Valid , return time recorded", Document : refreshedDocument};
-        } 
+      const refreshedDocument = await prisma.document.findUnique({
+        where: { id: Document.id },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              structure: { select: { id: true, name: true } },
+            },
+          },
+          missionOrder: true, absenceAuth: true, exitSlip: true,
+          leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
         }
+      });
+      return { message: "QR code Valid , leave time created", Document: refreshedDocument };
+    }
 
-
-        const refreshedDocument = await prisma.document.findUnique({
+    // Second scan — record return time
+    if (session && !session.returnTime) {
+      if (Document.type === "EXIT_SLIP") {
+        const hour = now.getHours();
+        if (hour >= 16) {
+          await prisma.leaveSession.update({
+            where: { id: session.id },
+            data: { status: "NOT_RETURNED" }
+          });
+          const refreshedDocument = await prisma.document.findUnique({
             where: { id: Document.id },
             include: {
-                missionOrder: true,
-                absenceAuth: true,
-                exitSlip: true,
-                decisionMadeBy: { select: { id: true, name: true, username: true } },
-                leaveSession: true, // Include the updated leaveSession
+              employee: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  email: true,
+                  structure: { select: { id: true, name: true } },
+                },
+              },
+              missionOrder: true, absenceAuth: true, exitSlip: true,
+              leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
+            }
+          });
+          return { message: "Too late it's past 16:00 -> marked as NOT_RETURNED", Document: refreshedDocument };
+        }
+      }
+
+      await prisma.leaveSession.update({
+        where: { id: session.id },
+        data: { returnTime: now, status: "RETURNED" }
+      });
+      const refreshedDocument = await prisma.document.findUnique({
+        where: { id: Document.id },
+        include: {
+          employee: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              structure: { select: { id: true, name: true } },
             },
-        });
-    
-return {message: "QR code Valid , Already completed", Document : refreshedDocument}; 
-}
+          },
+          missionOrder: true, absenceAuth: true, exitSlip: true,
+          leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
+        }
+      });
+      return { message: "QR code Valid , return time recorded", Document: refreshedDocument };
+    }
+  }
+
+  // Already completed
+  const refreshedDocument = await prisma.document.findUnique({
+    where: { id: Document.id },
+    include: {
+      employee: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          structure: { select: { id: true, name: true } },
+        },
+      },
+      missionOrder: true, absenceAuth: true, exitSlip: true,
+      leaveSession: true, decisionMadeBy: { select: { id: true, name: true, username: true } },
+    }
+  });
+  return { message: "QR code Valid , Already completed", Document: refreshedDocument };
+};

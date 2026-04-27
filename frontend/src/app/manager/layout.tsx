@@ -14,6 +14,9 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   const router      = useRouter();
   const currentUser = useCurrentUser();
 
+  const roles = currentUser?.roles ?? [];
+  const employeeHref = roles.includes("WORKER") ? "/worker" : roles.includes("AGENT") ? "/agent" : "/worker";
+
 
   const items = [
     { label: "Tableau de bord",     href: "/manager",                   icon: <DashboardOutlinedIcon /> },
@@ -41,13 +44,13 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   // if also admin → show admin toggle instead
 const toggleButton = (
   <Button
-    onClick={() => router.push("/worker")}  // always go to worker first
+    onClick={() => router.push(employeeHref)}
     fullWidth variant="outlined"
     startIcon={<PersonOutlineOutlinedIcon fontSize="small" />}
     endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
     sx={toggleSx}
   >
-    Espace employé
+    {employeeHref === "/agent" ? "Espace agent" : "Espace employé"}
   </Button>
 );
 

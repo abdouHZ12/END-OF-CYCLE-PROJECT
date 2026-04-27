@@ -3,32 +3,29 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import Button from "@mui/material/Button";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
-import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
-import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
+import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
 import Dashboard from "@/components/Dashboard";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function WorkerLayout({ children }: { children: React.ReactNode }) {
   const router      = useRouter();
   const currentUser = useCurrentUser();
 
   const roles     = currentUser?.roles ?? [];
-  const isManager = roles.includes("MANAGER");
-  const isWorker  = roles.includes("WORKER");
-  const isAgent   = roles.includes("AGENT");
 
   const items = [
-    { label: "Dashboard",         href: "/admin",                    icon: <DashboardOutlinedIcon /> },
-    { label: "Employees",         href: "/admin/employees",          icon: <PeopleOutlinedIcon /> },
-    { label: "Register Employee", href: "/admin/employees/register", icon: <PersonAddOutlinedIcon /> },
-    { label: "Roles",             href: "/admin/roles",              icon: <ManageAccountsOutlinedIcon /> },
-    { label: "Departments",       href: "/admin/departments",        icon: <AccountTreeOutlinedIcon /> },
+    { label: "Tableau de bord",  href: "/agent",              icon: <DashboardOutlinedIcon /> },
+    { label: "Nouvelle demande", href: "/agent/fill-request", icon: <TextSnippetOutlinedIcon /> },
+    { label: "Mes demandes",     href: "/agent/my-requests",  icon: <AssignmentOutlinedIcon /> },
+    { label: "Historique",       href: "/agent/history",      icon: <RestoreOutlinedIcon /> },
+    { label: "Scanner",          href: "/agent/scan",         icon: <QrCodeScannerOutlinedIcon /> },
   ];
-  
+
   const toggleSx = {
     justifyContent: "space-between",
     px: 1.5, py: 1,
@@ -45,20 +42,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     },
   } as const;
 
-  // admin + manager → go to /manager (manager layout handles /worker from there)
-  // admin + worker only → go to /worker
-  const showToggle = isManager || isWorker || isAgent;
-  const toggleHref = isManager ? "/manager" : isWorker ? "/worker" : "/agent";
+  const isAdmin = roles.includes("ADMIN");
+  const isManager = roles.includes("MANAGER");
+  const showToggle = isAdmin || isManager;
 
   const toggleButton = showToggle ? (
     <Button
-      onClick={() => router.push(toggleHref)}
+      onClick={() => router.push(isAdmin ? "/admin" : "/manager")}
       fullWidth variant="outlined"
       startIcon={<AdminPanelSettingsOutlinedIcon fontSize="small" />}
       endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
       sx={toggleSx}
     >
-      {isManager ? "Espace manager" : isWorker ? "Espace employé" : "Espace agent"}
+      {isAdmin ? "Espace admin" : "Espace manager"}
     </Button>
   ) : undefined;
 
@@ -69,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       user={currentUser ? {
         initials: currentUser.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2),
         name: currentUser.name,
-        role: "Administrateur",
+        role: "Agent",
       } : undefined}
     >
       {children}

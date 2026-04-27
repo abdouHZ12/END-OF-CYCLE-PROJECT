@@ -4,11 +4,13 @@ export type ApiError = {
 };
 
 function getApiBaseUrl() {
-  // Default matches backend/.env PORT=5000 for local dev.
-  return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(
-    /\/$/,
-    ""
-  );
+  const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
+  
+  if (typeof window !== "undefined") {
+    return base.replace("localhost", window.location.hostname);
+  }
+
+  return base;
 }
 
 

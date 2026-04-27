@@ -2,6 +2,7 @@ import express from 'express'
 import { Router } from 'express'
 import * as DocumentController from '../modules/documents/Document.controller.js'
 import {auth} from "../middlewares/authHandler.js" ;
+import { GetAllSessions } from '../modules/documents/Document.controller.js';
 const router : Router = Router() ; 
 
 
@@ -16,7 +17,7 @@ router.post("/manager/pending-documents", DocumentController.ReadPendingDocument
 router.post("/manager/employees-history", DocumentController.ReadEmployeesHistoryForManager);
 router.post("/manager/dashboard-stats", DocumentController.ReadManagerDashboardStats);
 
-router.post("/scan", auth, DocumentController.ScanDocument);
+router.post("/scan", DocumentController.ScanDocument);
 
 router.get("/dAll/documents/:id",DocumentController.ReadAllDocuments);
 router.get("/documents/AllByState",DocumentController.ReadAllDocumentByState);
@@ -25,7 +26,7 @@ router.get("/documents/AllByType",DocumentController.ReadAllDocumentByType);
 router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByStatusAndType);
 
 router.get("/document/:id/pdf",DocumentController.GeneratePdf);
-
+router.get("/documents/sessions", DocumentController.GetAllSessions);
 
 router.put("/document/State/:id",DocumentController.UpdateDocumentState);
 router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);

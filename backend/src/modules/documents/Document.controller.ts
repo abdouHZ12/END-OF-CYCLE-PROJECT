@@ -9,7 +9,8 @@ export const CreateExitSlip = async (req: Request , res: Response) => {
         res.status(201).json(newExitSlip);
     } catch (error) {
         console.error(error);
-        res.status(500).json({error , message :"failed to create exit slip"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create exit slip" })
     }
 }
 
@@ -20,7 +21,8 @@ export const CreateAbsenceAuth = async (req: Request , res: Response) => {
         const newAbsenceAuth = await DocumentService.CreateAbsenceAuth(req.body );
         res.status(201).json(newAbsenceAuth);
     } catch (error) {
-        res.status(500).json({error:"failed to create Absence Auth"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create Absence Auth" })
     }
 }
 
@@ -31,7 +33,8 @@ export const CreateMissionOrder = async (req: Request , res: Response) => {
         res.status(201).json(newMissionOrder);
     } catch (error) {
         console.error(error);
-        res.status(500).json({error:"failed to create Mission Order"})
+        const status = (error as any)?.status ?? 500;
+        res.status(status).json({ error, message: (error as any)?.message ?? "failed to create Mission Order" })
     }
 }
 
@@ -127,6 +130,18 @@ export const ReadManagerDashboardStats = async (req: Request, res: Response) => 
   }
 };
 
+// controller
+export const GetAllSessions = async (req: Request, res: Response) => {
+  try {
+    const sessions = await DocumentService.GetAllSessions();
+    res.status(200).json(sessions);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+
+
 //UPDATE PART 
 
 export const UpdateDocumentState = async (req: Request, res: Response) => {
@@ -204,16 +219,12 @@ export const GeneratePdf = async (req: Request , res: Response) => {
     }  
 }
 
-export const ScanDocument = async (req: Request , res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-        const employeeId = req.user.id ;
-        const { Document, message } = await DocumentService.ScanDocument(req.body.token ,employeeId) ;
-        res.status(201).json({Document ,message});
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({error})
-    }  
-}
+export const ScanDocument = async (req: Request, res: Response) => {
+  try {
+    const result = await DocumentService.ScanDocument(req.body.token) as { Document: any; message: string };
+    res.status(201).json({ Document: result.Document, message: result.message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
