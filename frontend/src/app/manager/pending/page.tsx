@@ -22,6 +22,7 @@ import Typography from "@mui/material/Typography";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { apiPost, apiPut } from "@/lib/api";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type Employee = { id: number; name: string; username: string };
 
@@ -56,23 +57,16 @@ export default function PendingPage() {
   const [comment, setComment] = React.useState("");
 
   // get current manager id from localStorage
-  const getManagerId = () => {
-    try {
-      const raw = localStorage.getItem("naftal.employee");
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      const id = parsed?.id;
-      return typeof id === "number" ? id : null;
-    } catch {
-      return null;
-    }
-  };
+  const getManagerId = () => getStoredEmployeeId();
 
   const fetchPending = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const managerId = getManagerId();
+      if (!managerId) {
+        throw new Error("Not logged in");
+      }
       const data = await apiPost<Document[]>("/api/manager/pending-documents", {
         ManagerId: managerId,
       });

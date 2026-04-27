@@ -34,7 +34,7 @@ import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { apiGet, apiDelete, type ApiError } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { getRoleChip } from "../page";
+import { getRoleChip } from "@/features/admin/ui";
 
 
 type Role = { role: { id: number; name: string; type: string } };

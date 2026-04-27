@@ -1,8 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service.js';
 
-type AppError = Error & { name: string };
-
 const isError = (err: unknown, message: string): boolean =>
   err instanceof Error && err.message === message;
 

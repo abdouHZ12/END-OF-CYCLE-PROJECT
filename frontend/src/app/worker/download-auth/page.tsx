@@ -5,11 +5,12 @@ import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import { getDate } from "../my-requests/page";
 import { apiGet ,apiGetBinary ,type ApiError} from "@/lib/api";
-import { getFullDate } from "../my-requests/page";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import {type DocumentResponse , type Document , gettype } from "../page";
+import { getDate, getFullDate } from "@/lib/datetime";
+import type { DocumentResponse, Document } from "@/features/documents/types";
+import { gettype } from "@/features/documents/ui";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
 import {
@@ -63,8 +64,11 @@ export default function Page() {
       setIsLoading(true);
       setError(null);
       try { 
-        const raw = localStorage.getItem("naftal.employee");
-        const employeeId = raw ? JSON.parse(raw).id : null;
+        const employeeId = getStoredEmployeeId();
+        if (!employeeId) {
+          setError("You are not logged in.");
+          return;
+        }
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         let documentsArray = Object.values(res);
         documentsArray = documentsArray.filter(doc => doc.status === "APPROVED");

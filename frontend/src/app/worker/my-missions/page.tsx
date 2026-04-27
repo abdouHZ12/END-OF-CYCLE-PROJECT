@@ -14,8 +14,9 @@ import {
 } from "@mui/material";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { apiGet, type ApiError } from "@/lib/api";
-import { getStatusChip } from "../page";
-import { getFullDate } from "../my-requests/page";
+import { getStatusChip } from "@/features/documents/ui";
+import { getFullDate } from "@/lib/datetime";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type MissionOrder = {
   id: number;
@@ -45,8 +46,11 @@ export default function MyMissionsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const raw = localStorage.getItem("naftal.employee");
-      const employeeId = raw ? JSON.parse(raw).id : null;
+      const employeeId = getStoredEmployeeId();
+      if (!employeeId) {
+        setError("You are not logged in.");
+        return;
+      }
       const res = await apiGet<Mission[]>(`/api/employees/${employeeId}/mission-orders`);
       if (!res || res.length === 0) {
         setEmpty(true);

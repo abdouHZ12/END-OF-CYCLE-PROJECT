@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 
 import { apiPost } from "@/lib/api";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type Employee = { id: number; name: string; username: string };
 
@@ -123,11 +124,7 @@ export default function ManagerHomePage() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError]     = React.useState<string | null>(null);
 
-  const getManagerId = () => {
-    const raw = localStorage.getItem("naftal.employee");
-    if (!raw) return null;
-    return JSON.parse(raw).id;
-  };
+  const getManagerId = () => getStoredEmployeeId();
 
   React.useEffect(() => {
     const fetch = async () => {
@@ -135,6 +132,9 @@ export default function ManagerHomePage() {
       setError(null);
       try {
         const managerId = getManagerId();
+        if (!managerId) {
+          throw new Error("Not logged in");
+        }
         const data = await apiPost<Stats>("/api/manager/dashboard-stats", {
           ManagerId: managerId,
         });
