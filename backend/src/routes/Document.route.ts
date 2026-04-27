@@ -34,4 +34,6 @@ router.delete("/employee/:employeeId/document/:id",DocumentController.DeleteDocu
 
 router.get("/employees/workers", AdminController.GetWorkers);
 
+router.get("/employees/:employeeId/mission-orders", AdminController.GetWorkerMissions);
+
 export default router;

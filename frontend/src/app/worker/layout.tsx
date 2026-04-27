@@ -11,6 +11,7 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
 import Dashboard from "@/components/Dashboard";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 export default function WorkerLayout({ children }: { children: React.ReactNode }) {
   const router      = useRouter();
@@ -33,6 +34,11 @@ export default function WorkerLayout({ children }: { children: React.ReactNode }
       label: "Mes demandes",
       href: "/worker/my-requests",
       icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      label: "Mes missions",
+      href: "/worker/my-missions",
+      icon: <AssignmentIcon />,
     },
     {
       label: "Historique",

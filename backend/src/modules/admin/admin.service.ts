@@ -218,3 +218,20 @@ export const getWorkers = async () => {
     orderBy: { name: 'asc' },
   });
 };
+
+export const getWorkerMissions = async (employeeId: number) => {
+  return prisma.document.findMany({
+    where: {
+      issuedById: employeeId,
+      type: "MISSION_ORDER",
+      status: "APPROVED",
+    },
+    include: {
+      missionOrder: true,
+      decisionMadeBy: {
+        select: { id: true, name: true, username: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};

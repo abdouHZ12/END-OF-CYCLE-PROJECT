@@ -83,25 +83,40 @@ export const CreateAbsenceAuth = async (data : any ) =>{
 
 
 export const CreateMissionOrder = async (data : any ) => {
-    const {Qrcode , Type , EmployeeId , destination , duration , purpose , travelMethod } = data ;
+    const { Qrcode, Type, EmployeeId, assignedToId, destination, duration, purpose, travelMethod } = data;
 
-    const employeeIdNum = Number(EmployeeId);
-    if (!Number.isFinite(employeeIdNum)) throw httpError(400, 'EmployeeId is required');
+    const managerId = Number(EmployeeId);
+    if (!Number.isFinite(managerId)) throw httpError(400, 'EmployeeId (managerId) is required');
 
-    const roles = await getEmployeeRoleTypes(employeeIdNum);
+    if (Type !== 'MISSION_ORDER') {
+      throw httpError(400, 'Invalid Type for Mission Order');
+    }
 
-    // Agent behaves like worker, but can only create ExitSlip + AbsenceAuth.
-    // If the user has both WORKER and AGENT roles, allow Mission Orders (WORKER wins).
-    const isAgentOnly = roles.includes(RoleType.AGENT) && !roles.includes(RoleType.WORKER);
-    if (isAgentOnly) {
-      throw httpError(403, 'AGENT users cannot create Mission Orders');
+    const managerRoles = await getEmployeeRoleTypes(managerId);
+    const isManagerOrAdmin = managerRoles.includes(RoleType.MANAGER) || managerRoles.includes(RoleType.ADMIN);
+    if (!isManagerOrAdmin) {
+      throw httpError(403, 'Only MANAGER/ADMIN users can assign Mission Orders');
+    }
+
+    const assignedEmployeeId = Number(assignedToId);
+    if (!Number.isFinite(assignedEmployeeId)) {
+      throw httpError(400, 'assignedToId is required');
+    }
+
+    const assignedRoles = await getEmployeeRoleTypes(assignedEmployeeId);
+    const isWorker = assignedRoles.includes(RoleType.WORKER);
+    if (!isWorker) {
+      throw httpError(400, 'assignedToId must be a WORKER');
     }
 
     const MissionOrder = prisma.document.create({
         data : { 
             qrCode: Qrcode ,
-            type : Type , 
-            issuedById : employeeIdNum , 
+            type : Type ,
+            status: 'APPROVED',
+            authIssuedAt: new Date(),
+            issuedById : assignedEmployeeId,
+            decisionMadeById: managerId,
             missionOrder : {
                 create : { 
                         travelMethod ,
