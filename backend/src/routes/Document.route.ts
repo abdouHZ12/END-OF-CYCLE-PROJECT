@@ -23,6 +23,8 @@ router.get("/documents/AllByTypeAndStatus",DocumentController.ReadAllDocumentByS
 router.get("/document/:id/pdf",DocumentController.GeneratePdf);
 router.get("/documents/sessions", DocumentController.GetAllSessions);
 
+router.get("/document/suggestion/:id", DocumentController.GetSuggestion);
+
 router.put("/document/State/:id",DocumentController.UpdateDocumentState);
 router.put("/document/ExitSlip/:id",DocumentController.UpdateWholeExitSlip);
 router.put("/document/AbsenceAuth/:id",DocumentController.UpdateWholeAbsenceAuth);

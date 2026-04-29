@@ -23,6 +23,7 @@ import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { apiPost, apiPut } from "@/lib/api";
 import { getStoredEmployeeId } from "@/lib/authStorage";
+import { useRouter } from "next/navigation";
 
 type Employee = { id: number; name: string; username: string };
 
@@ -55,6 +56,8 @@ export default function PendingPage() {
 
   const [dialog, setDialog] = React.useState<DecisionDialogState>({ open: false });
   const [comment, setComment] = React.useState("");
+
+  const router = useRouter();
 
   // get current manager id from localStorage
   const getManagerId = () => getStoredEmployeeId();
@@ -277,6 +280,7 @@ export default function PendingPage() {
                     </Stack>
                   </CardContent>
                   <CardActions sx={{ px: 2, pb: 2 }}>
+                  <Stack direction="column" spacing={1.5} sx={{ width: "100%" }}>
                     <Stack direction="row" spacing={1.5} sx={{ width: "100%" }}>
                       <Button
                         fullWidth
@@ -299,6 +303,15 @@ export default function PendingPage() {
                         {actionLoading === doc.id ? "…" : "Refuser"}
                       </Button>
                     </Stack>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => router.push(`/manager/pending/${doc.id}`)}
+                    >
+                      Review
+                    </Button>
+                  </Stack>
                   </CardActions>
                 </Card>
               </Grid>
