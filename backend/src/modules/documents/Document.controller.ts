@@ -228,3 +228,14 @@ export const ScanDocument = async (req: Request, res: Response) => {
     res.status(500).json({ error });
   }
 };
+
+
+export const GetSuggestion = async (req: Request, res: Response) => {
+    try {
+        const result = await DocumentService.GetSuggestion(req.params.id as string);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error, message: "failed to get suggestion for this document" });
+    }
+};
