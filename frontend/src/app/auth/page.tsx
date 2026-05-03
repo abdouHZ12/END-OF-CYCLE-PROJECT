@@ -96,11 +96,6 @@ function LoginPageInner() {
 				.map((r) => r.trim().toUpperCase())
 				.filter(Boolean);
 
-			if (normalizedRoles.includes("AGENT") && !normalizedRoles.includes("WORKER") && !normalizedRoles.includes("MANAGER") && !normalizedRoles.includes("ADMIN")) {
-				setError("Accès non autorisé");
-				return;
-			}
-
 			const redirectTo = searchParams.get("redirect");
 
 			if (redirectTo) {
