@@ -23,6 +23,9 @@ export const authService = {
     }
 
     const roleTypes = employee.roles.map((er) => er.role.type);
+    if (!roleTypes.includes('AGENT')) {
+      throw new Error('NOT_AGENT');
+    }
     const accessToken = tokenService.generateAccessToken(employee.id, roleTypes);
     const refreshToken = tokenService.generateRefreshToken(employee.id);
 

@@ -22,6 +22,10 @@ export const authController = {
         res.status(401).json({ message: 'Invalid credentials' });
         return;
       }
+      if (isError(err, 'NOT_AGENT')) {
+        res.status(403).json({ message: 'Access denied: agent role required' });
+        return;
+      }
       next(err);
     }
   },
