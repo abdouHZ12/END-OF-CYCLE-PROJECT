@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express' 
 import * as DocumentService from './Document.js'
+import { httpError } from '../../common/errors.js';
 
 // Creation Part 
 
@@ -219,13 +220,34 @@ export const GeneratePdf = async (req: Request , res: Response) => {
     }  
 }
 
+    
 export const ScanDocument = async (req: Request, res: Response) => {
   try {
-    const result = await DocumentService.ScanDocument(req.body.token) as { Document: any; message: string };
-    res.status(201).json({ Document: result.Document, message: result.message });
+    const agentDeviceId = req.headers['x-agent-id'];
+
+    if (!agentDeviceId || typeof agentDeviceId !== 'string') {
+      throw httpError(400, 'X-Agent-ID header is required');
+    }
+
+    const result = await DocumentService.ScanDocument(
+      req.body.token,
+      agentDeviceId
+    ) as { Document: any; message: string };
+
+    res.status(201).json({
+      Document: result.Document,
+      message: result.message,
+    });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error });
+
+    const status = (error as any)?.status ?? 500;
+
+    res.status(status).json({
+      error,
+      message: (error as any)?.message ?? "failed to scan document",
+    });
   }
 };
 
