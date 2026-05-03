@@ -104,8 +104,6 @@ function LoginPageInner() {
 				router.push("/admin");
 			} else if (normalizedRoles.includes("MANAGER")) {
 				router.push("/manager");
-			} else if (normalizedRoles.includes("AGENT")) {
-				router.push("/agent");
 			} else {
 				router.push("/worker");
 			}

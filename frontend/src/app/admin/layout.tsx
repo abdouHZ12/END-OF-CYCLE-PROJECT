@@ -19,7 +19,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const roles     = currentUser?.roles ?? [];
   const isManager = roles.includes("MANAGER");
   const isWorker  = roles.includes("WORKER");
-  const isAgent   = roles.includes("AGENT");
 
   const items = [
     { label: "Dashboard",         href: "/admin",                    icon: <DashboardOutlinedIcon /> },
@@ -47,8 +46,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // admin + manager → go to /manager (manager layout handles /worker from there)
   // admin + worker only → go to /worker
-  const showToggle = isManager || isWorker || isAgent;
-  const toggleHref = isManager ? "/manager" : isWorker ? "/worker" : "/agent";
+  const showToggle = isManager || isWorker;
+  const toggleHref = isManager ? "/manager" : isWorker ? "/worker" : "";
 
   const toggleButton = showToggle ? (
     <Button
@@ -58,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
       sx={toggleSx}
     >
-      {isManager ? "Espace manager" : isWorker ? "Espace employé" : "Espace agent"}
+      {isManager ? "Espace manager" : isWorker ? "Espace employé" : ""}
     </Button>
   ) : undefined;
 

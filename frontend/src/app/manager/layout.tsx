@@ -15,8 +15,7 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   const router      = useRouter();
   const currentUser = useCurrentUser();
 
-  const roles = currentUser?.roles ?? [];
-  const employeeHref = roles.includes("WORKER") ? "/worker" : roles.includes("AGENT") ? "/agent" : "/worker";
+  const employeeHref = "/worker";
 
 
   const items = [
@@ -50,7 +49,7 @@ const toggleButton = (
     endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
     sx={toggleSx}
   >
-    {employeeHref === "/agent" ? "Espace agent" : "Espace employé"}
+    Espace worker
   </Button>
 );
 
