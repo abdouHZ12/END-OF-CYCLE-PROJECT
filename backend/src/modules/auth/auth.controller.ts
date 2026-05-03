@@ -30,6 +30,28 @@ export const authController = {
     }
   },
 
+  async signInAgent(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      res.status(400).json({ message: 'Username and password are required' });
+      return;
+    }
+    const result = await authService.signInAgent(username, password);
+    res.status(200).json({ message: 'Signed in successfully', ...result });
+  } catch (err) {
+    if (isError(err, 'INVALID_CREDENTIALS')) {
+      res.status(401).json({ message: 'Invalid credentials' });
+      return;
+    }
+    if (isError(err, 'NOT_AGENT')) {
+      res.status(403).json({ message: 'Access denied: agent role required' });
+      return;
+    }
+    next(err);
+  }
+},
+
   async signOut(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { refreshToken } = req.body;

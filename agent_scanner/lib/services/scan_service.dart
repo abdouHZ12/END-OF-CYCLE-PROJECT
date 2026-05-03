@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 import 'agent_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_service.dart';
 
 class ScanService {
   static Future<Map<String, dynamic>> scan(String raw) async {
     final agentId = await AgentService.getAgentId();
+    final token = await AuthService.getToken();
 
-    String token = raw;
+    String qrToken = raw;
     try {
       final uri = Uri.parse(raw);
       if (uri.queryParameters.containsKey('token')) {
-        token = uri.queryParameters['token']!;
+        qrToken = uri.queryParameters['token']!;
       }
     } catch (_) {}
 
@@ -21,8 +23,9 @@ class ScanService {
       headers: {
         'Content-Type': 'application/json',
         'x-agent-id': agentId,
+        'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'token': token}),
+      body: jsonEncode({'token': qrToken}),
     );
 
     final data = jsonDecode(response.body);
