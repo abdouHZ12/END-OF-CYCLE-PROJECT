@@ -91,7 +91,7 @@ export default function WorkerLayout({ children }: { children: React.ReactNode }
       user={currentUser ? {
         initials: currentUser.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2),
         name: currentUser.name,
-        role: "Employé",
+        role: roles.includes("AGENT") ? "Agent" : "Employé",
       } : undefined}
     >
       {children}

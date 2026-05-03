@@ -43,6 +43,36 @@ export const authService = {
     };
   },
 
+  async signInAgent(username: string, password: string) {
+  const employee = await prisma.employee.findUnique({
+    where: { username },
+    include: { roles: { include: { role: true } } },
+  });
+  if (!employee || !(await comparePassword(password, employee.password))) {
+    throw new Error('INVALID_CREDENTIALS');
+  }
+  const roleTypes = employee.roles.map((er) => er.role.type);
+  if (!roleTypes.includes('AGENT')) {
+    throw new Error('NOT_AGENT');
+  }
+  const accessToken = tokenService.generateAccessToken(employee.id, roleTypes);
+  const refreshToken = tokenService.generateRefreshToken(employee.id);
+  await prisma.employee.update({
+    where: { id: employee.id },
+    data: { refreshToken: await hashToken(refreshToken) },
+  });
+  return {
+    accessToken,
+    refreshToken,
+    employee: {
+      id: employee.id,
+      name: employee.name,
+      username: employee.username,
+      roles: roleTypes,
+    },
+  };
+},
+
   async signOut(refreshToken: string) {
     const payload = tokenService.verifyRefreshToken(refreshToken);
     await prisma.employee.update({

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'screens/scanner_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'services/auth_service.dart';
 
-void main() {
-  runApp(const AgentScannerApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final loggedIn = await AuthService.isLoggedIn();
+  runApp(AgentScannerApp(loggedIn: loggedIn));
 }
 
 class AgentScannerApp extends StatelessWidget {
-  const AgentScannerApp({super.key});
+  final bool loggedIn;
+  const AgentScannerApp({super.key, required this.loggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +19,7 @@ class AgentScannerApp extends StatelessWidget {
       title: 'Agent Scanner',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const HomeScreen(),
+      home: loggedIn ? const HomeScreen() : const LoginScreen(),
     );
   }
 }

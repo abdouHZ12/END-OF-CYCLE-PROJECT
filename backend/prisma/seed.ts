@@ -11,39 +11,34 @@ async function main() {
   const adminRole =
     (await prisma.role.findFirst({ where: { type: 'ADMIN' } })) ??
     (await prisma.role.create({
-      data: {
-        name: 'Administrator',
-        type: 'ADMIN',
-        permissions: '*',
-      },
+      data: { name: 'Administrator', type: 'ADMIN', permissions: '*' },
     }));
 
   const managerRole =
     (await prisma.role.findFirst({ where: { type: 'MANAGER' } })) ??
     (await prisma.role.create({
-      data: {
-        name: 'Manager',
-        type: 'MANAGER',
-        permissions: '*',
-      },
+      data: { name: 'Manager', type: 'MANAGER', permissions: '*' },
     }));
 
   const workerRole =
     (await prisma.role.findFirst({ where: { type: 'WORKER' } })) ??
     (await prisma.role.create({
-      data: {
-        name: 'Worker',
-        type: 'WORKER',
-        permissions: '*',
-      },
+      data: { name: 'Worker', type: 'WORKER', permissions: '*' },
     }));
 
-  const [adminPassword, managerPassword, adminManagerPassword, workerPassword] =
+  const agentRole =
+    (await prisma.role.findFirst({ where: { type: 'AGENT' } })) ??
+    (await prisma.role.create({
+      data: { name: 'Agent', type: 'AGENT', permissions: '*' },
+    }));
+
+  const [adminPassword, managerPassword, adminManagerPassword, workerPassword, agentPassword] =
     await Promise.all([
       bcrypt.hash('admin', 10),
       bcrypt.hash('manager', 10),
       bcrypt.hash('AdminManager', 10),
       bcrypt.hash('worker', 10),
+      bcrypt.hash('agent', 10),
     ]);
 
   const admin = await prisma.employee.upsert({
@@ -152,7 +147,32 @@ async function main() {
     include: { roles: { include: { role: true } } },
   });
 
-  console.log('✅ Seed complete:', { admin, manager, adminManager, worker });
+  const agent = await prisma.employee.upsert({
+    where: { username: 'agent' },
+    update: {
+      name: 'agent',
+      email: 'agent@example.com',
+      password: agentPassword,
+      structure: { connect: { id: structure.id } },
+      roles: {
+        deleteMany: {},
+        create: [{ role: { connect: { id: agentRole.id } } }],
+      },
+    },
+    create: {
+      name: 'agent',
+      username: 'agent',
+      email: 'agent@example.com',
+      password: agentPassword,
+      structure: { connect: { id: structure.id } },
+      roles: {
+        create: [{ role: { connect: { id: agentRole.id } } }],
+      },
+    },
+    include: { roles: { include: { role: true } } },
+  });
+
+  console.log('✅ Seed complete:', { admin, manager, adminManager, worker, agent });
 }
 
 main()

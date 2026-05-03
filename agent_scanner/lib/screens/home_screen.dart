@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/health_service.dart';
 import '../services/agent_service.dart';
+import '../services/auth_service.dart';
 import 'scanner_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _backendOnline = false;
   bool _loading = true;
   String _agentId = '';
+  String _agentName = '';
   String _lastScanEmployee = '';
   String _lastScanStatus = '';
   String _lastScanTime = '';
@@ -39,9 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _lastScanTime = prefs.getString('last_scan_time') ?? '';
 
     final id = await AgentService.getAgentId();
+    final name = await AuthService.getName();
     final online = await HealthService.check();
     setState(() {
       _agentId = id;
+      _agentName = name;
       _backendOnline = online;
       _loading = false;
     });
@@ -117,16 +122,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text('NAFTAL',
+                      children: [
+                        const Text('NAFTAL',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFFffa500),
                                 letterSpacing: 0.04)),
-                        Text('Agent Portal',
-                            style:
-                                TextStyle(fontSize: 11, color: Colors.white30)),
+                        Row(
+                          children: [
+                            Text(_agentName,
+                                style: const TextStyle(
+                                    fontSize: 11, color: Colors.white54)),
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: () async {
+                                await AuthService.logout();
+                                if (!mounted) return;
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginScreen()),
+                                );
+                              },
+                              child: const Icon(Icons.logout_rounded,
+                                  size: 18, color: Colors.white38),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
