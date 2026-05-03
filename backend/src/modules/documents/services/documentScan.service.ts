@@ -27,7 +27,7 @@ export const GetAllSessions = async () => {
   });
 };
 
-export const ScanDocument = async (token: any) => {
+export const ScanDocument = async (token: any, agentDeviceId: string) => {
   if (typeof token !== 'string' || !token.trim()) {
     throw httpError(400, 'token is required');
   }
@@ -69,6 +69,7 @@ export const ScanDocument = async (token: any) => {
             status: 'OUT',
             employeeId: document.issuedById,
             leaveTime: now,
+            agentDeviceId,
           },
         });
       } catch (err: any) {
@@ -111,7 +112,7 @@ export const ScanDocument = async (token: any) => {
         if (hour >= 16) {
           await prisma.leaveSession.update({
             where: { id: session.id },
-            data: { status: 'NOT_RETURNED' },
+            data: { status: 'NOT_RETURNED', agentDeviceId },
           });
 
           const refreshedDocument = await prisma.document.findUnique({
@@ -143,7 +144,7 @@ export const ScanDocument = async (token: any) => {
 
       await prisma.leaveSession.update({
         where: { id: session.id },
-        data: { returnTime: now, status: 'RETURNED' },
+        data: { returnTime: now, status: 'RETURNED', agentDeviceId },
       });
 
       const refreshedDocument = await prisma.document.findUnique({

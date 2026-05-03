@@ -117,6 +117,8 @@ model LeaveSession {
   returnTime  DateTime?
   createdAt   DateTime  @default(now())
 
+  agentDeviceId String?
+
   documentId  Int       @unique
   document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
 
