@@ -22,4 +22,6 @@ router.post('/structures',                    adminController.createStructure);
 router.put('/structures/:id',                 adminController.updateStructure);
 router.delete('/structures/:id',              adminController.deleteStructure);
 
+router.get('/managers', adminController.getManagers);
+
 export default router;

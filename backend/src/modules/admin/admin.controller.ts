@@ -33,6 +33,7 @@ export const registerEmployee = async (req: Request, res: Response, next: NextFu
     res.status(201).json(await adminService.registerEmployee({ name, email, structureId, roleIds }));
   } catch (err) {
     if (isError(err, 'EMPLOYEE_ALREADY_EXISTS')) { res.status(409).json({ message: 'Email already in use' }); return; }
+    if (isError(err, 'INVALID_ROLE_COMBINATION')) { res.status(400).json({ message: 'Invalid role combination' }); return; }
     next(err);
   }
 };
@@ -129,26 +130,43 @@ export const getAllStructures = async (_req: Request, res: Response, next: NextF
 
 export const createStructure = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, parentId } = req.body;
+    const { name, parentId, managerId } = req.body;
     if (!name) { res.status(400).json({ message: 'Name is required' }); return; }
-    res.status(201).json(await adminService.createStructure({ name, parentId }));
+    res.status(201).json(await adminService.createStructure({
+      name,
+      parentId,
+      ...(managerId ? { managerId: parseId(managerId) } : {}),
+    }));
   } catch (err) {
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    if (isError(err, 'NOT_A_MANAGER')) { res.status(400).json({ message: 'Selected employee does not have the Manager role' }); return; }
+    if (isError(err, 'MANAGER_ALREADY_ASSIGNED')) {
+      res.status(400).json({ message: 'This manager is already assigned to another department' });
+      return;
+    }
     next(err);
   }
 };
 
 export const updateStructure = async (req: Request<IdParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, parentId } = req.body;
+    const { name, parentId, managerId } = req.body;
     if (!name) { res.status(400).json({ message: 'Name is required' }); return; }
     res.status(200).json(
       await adminService.updateStructure(parseId(req.params.id), {
         name,
         parentId: parentId ? parseId(parentId) : null,
+        ...(managerId ? { managerId: parseId(managerId) } : { managerId: null }),
       })
     );
   } catch (err) {
     if (isError(err, 'SELF_PARENT')) { res.status(400).json({ message: 'A department cannot be its own parent' }); return; }
+    if (isError(err, 'EMPLOYEE_NOT_FOUND')) { res.status(404).json({ message: 'Employee not found' }); return; }
+    if (isError(err, 'NOT_A_MANAGER')) { res.status(400).json({ message: 'Selected employee does not have the Manager role' }); return; }
+    if (isError(err, 'MANAGER_ALREADY_ASSIGNED')) {
+      res.status(400).json({ message: 'This manager is already assigned to another department' });
+      return;
+    }
     next(err);
   }
 };
@@ -174,6 +192,14 @@ export const getWorkers = async (_req: Request, res: Response, next: NextFunctio
 export const getWorkerMissions = async (req: Request<WorkerParam>, res: Response, next: NextFunction): Promise<void> => {
   try {
     res.status(200).json(await adminService.getWorkerMissions(parseId(req.params.employeeId)));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getManagers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    res.status(200).json(await adminService.getManagers());
   } catch (err) {
     next(err);
   }
