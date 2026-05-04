@@ -93,7 +93,6 @@ export default function RegisterEmployeePage() {
     if (!email.trim()) return setError("Email is required.");
     if (!password.trim()) return setError("Password is required.");
     if (password.length < 8) return setError("Password must be at least 8 characters.");
-    if (!structureId) return setError("Department is required.");
     if (selectedRoleIds.length === 0) return setError("At least one role is required.");
 
     setIsLoading(true);
@@ -103,7 +102,7 @@ export default function RegisterEmployeePage() {
         username: username.trim(),
         email: email.trim(),
         password,
-        structureId: parseInt(structureId),
+        ...(structureId ? { structureId: parseInt(structureId) } : {}),
         roleIds: selectedRoleIds,
       });
       setSuccess(true);
@@ -274,17 +273,22 @@ export default function RegisterEmployeePage() {
             <FormControl fullWidth sx={fieldSx}>
               <InputLabel>Department</InputLabel>
               <Select
-                value={structureId}
-                label="Department"
-                onChange={(e) => setStructureId(e.target.value)}
-                MenuProps={{ sx: menuSx }}
-              >
-                {structures.map((s) => (
-                  <MenuItem key={s.id} value={String(s.id)}>
-                    {s.name}
+                  value={structureId}
+                  label="Department"
+                  onChange={(e) => setStructureId(e.target.value)}
+                  MenuProps={{ sx: menuSx }}
+                >
+                  <MenuItem value="">
+                    <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>
+                      No department
+                    </Typography>
                   </MenuItem>
-                ))}
-              </Select>
+                  {structures.map((s) => (
+                    <MenuItem key={s.id} value={String(s.id)}>
+                      {s.name}
+                    </MenuItem>
+                  ))}
+                </Select>
             </FormControl>
           </Grid>
 
