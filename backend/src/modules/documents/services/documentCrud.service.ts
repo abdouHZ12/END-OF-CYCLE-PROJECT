@@ -115,7 +115,7 @@ export const CreateMissionOrder = async (data: any) => {
     throw httpError(400, 'assignedToId must be a WORKER');
   }
 
-  return prisma.document.create({
+  const document = await prisma.document.create({
     data: {
       qrCode: Qrcode,
       type: Type,
@@ -128,6 +128,15 @@ export const CreateMissionOrder = async (data: any) => {
       },
     },
   });
+
+  await createNotification({
+    recipientId: assignedEmployeeId,
+    type: NotifType.DOCUMENT_APPROVED,
+    message: 'A mission order has been assigned to you.',
+    metadata: { documentId: document.id, docType: 'MISSION_ORDER' },
+  });
+
+  return document;
 };
 
 // ─── Read ─────────────────────────────────────────────────────────────────────
