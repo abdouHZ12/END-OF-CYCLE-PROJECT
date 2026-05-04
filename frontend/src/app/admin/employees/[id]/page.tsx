@@ -136,16 +136,21 @@ export default function ManageEmployeePage() {
     if (!name.trim()) return setError("Name is required.");
     if (!username.trim()) return setError("Username is required.");
     if (!email.trim()) return setError("Email is required.");
-    if (!structureId) return setError("Department is required.");
     if (selectedRoleIds.length === 0) return setError("At least one role is required.");
 
     setIsSaving(true);
     try {
+      console.log('PUT payload:', {
+        name: name.trim(),
+        username: username.trim(),
+        email: email.trim(),
+        ...(structureId ? { structureId: parseInt(structureId) } : { structureId: null }),
+      });
       await apiPut(`/api/admin/employees/${id}`, {
         name: name.trim(),
         username: username.trim(),
         email: email.trim(),
-        structureId: parseInt(structureId),
+        ...(structureId ? { structureId: parseInt(structureId) } : { structureId: null }),
       });
 
       const currentIds = employee!.roles.map((r) => r.role.id);
@@ -360,6 +365,11 @@ export default function ManageEmployeePage() {
                 onChange={(e) => setStructureId(e.target.value)}
                 MenuProps={{ sx: menuSx }}
               >
+                <MenuItem value="">
+                  <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>
+                    No department
+                  </Typography>
+                </MenuItem>
                 {structures.map((s) => (
                   <MenuItem key={s.id} value={String(s.id)}>
                     {s.name}
