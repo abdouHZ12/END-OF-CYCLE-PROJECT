@@ -1,8 +1,6 @@
 import { prisma } from '../../lib/prisma.js';
 import { NotifType, Prisma } from '../../../generated/prisma/client.js';
 
-// ─── Create ───────────────────────────────────────────────────────────────────
-
 export const createNotification = async ({
   recipientId,
   type,
@@ -24,7 +22,6 @@ export const createNotification = async ({
   });
 };
 
-// ─── Read ─────────────────────────────────────────────────────────────────────
 
 export const getNotificationsForEmployee = async (employeeId: number) => {
   return prisma.notification.findMany({
@@ -39,7 +36,6 @@ export const getUnreadCount = async (employeeId: number) => {
   });
 };
 
-// ─── Mark as read ─────────────────────────────────────────────────────────────
 
 export const markOneAsRead = async (notificationId: number, employeeId: number) => {
   return prisma.notification.updateMany({
