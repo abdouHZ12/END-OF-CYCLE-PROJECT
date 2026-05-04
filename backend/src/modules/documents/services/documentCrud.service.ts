@@ -271,3 +271,5 @@ export const DeleteDocumentById = async (data: any, employeeId: any) => {
     where: { id: documentId, issuedById },
   });
 };
+
+
