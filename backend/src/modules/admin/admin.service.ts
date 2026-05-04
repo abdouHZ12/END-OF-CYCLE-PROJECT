@@ -30,11 +30,30 @@ export const getEmployeeById = async (id: number) => {
 export const registerEmployee = async (data: {
   name: string;
   email: string;
-  structureId: number;
+  structureId?: number;
   roleIds: number[];
 }) => {
   const existing = await prisma.employee.findFirst({ where: { email: data.email } });
   if (existing) throw new Error('EMPLOYEE_ALREADY_EXISTS');
+
+  const roles = await prisma.role.findMany({
+    where: { id: { in: data.roleIds } },
+  });
+  const selectedTypes = roles.map((r) => r.type);
+
+  const INVALID_COMBINATIONS: [RoleType, RoleType][] = [
+    ['WORKER', 'MANAGER'],
+    ['WORKER', 'AGENT'],
+    ['WORKER', 'ADMIN'],
+    ['AGENT', 'MANAGER'],
+    ['AGENT', 'ADMIN'],
+  ];
+
+  for (const [a, b] of INVALID_COMBINATIONS) {
+    if (selectedTypes.includes(a) && selectedTypes.includes(b)) {
+      throw new Error('INVALID_ROLE_COMBINATION');
+    }
+  }
 
   const username = await generateUsername(data.name);
   const tempPassword = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
@@ -45,14 +64,13 @@ export const registerEmployee = async (data: {
       username,
       email: data.email,
       password: tempPassword,
-      structureId: data.structureId,
+      ...(data.structureId ? { structureId: data.structureId } : {}),
       roles: { create: data.roleIds.map((roleId) => ({ roleId })) },
     },
-    include: { roles: { include: { role: true } }, structure: true },
+    include: { roles: { include: { role: true } } },
   });
 
   const rawToken = generateResetToken();
-
   await prisma.passwordReset.create({
     data: {
       token: await hashToken(rawToken),
@@ -150,29 +168,86 @@ export const revokeRole = async (employeeId: number, roleId: number) => {
 
 export const getAllStructures = async () => {
   return prisma.structure.findMany({
-    include: { _count: { select: { employees: true } }, parent: true },
+    include: {
+      _count: { select: { employees: true } },
+      parent: true,
+      manager: { select: { id: true, name: true, username: true } },
+    },
     orderBy: { id: 'asc' },
   });
 };
 
-export const createStructure = async (data: { name: string; parentId?: number }) => {
-  return prisma.structure.create({
-    data: { name: data.name, parentId: data.parentId ?? null },
-    include: { _count: { select: { employees: true } }, parent: true },
-  });
+export const createStructure = async (data: { name: string; parentId?: number; managerId?: number }) => {
+  if (data.managerId) {
+    const employee = await prisma.employee.findUnique({
+      where: { id: data.managerId },
+      include: { roles: { include: { role: true } } },
+    });
+    if (!employee) throw new Error('EMPLOYEE_NOT_FOUND');
+    const isManager = employee.roles.some((er) => er.role.type === 'MANAGER');
+    if (!isManager) throw new Error('NOT_A_MANAGER');
+  }
+
+  try {
+    const structure = await prisma.structure.create({
+      data: { name: data.name, parentId: data.parentId ?? null, managerId: data.managerId ?? null },
+      include: {
+        _count: { select: { employees: true } },
+        parent: true,
+        manager: { select: { id: true, name: true, username: true } },
+      },
+    });
+
+    if (data.managerId) {
+      await prisma.employee.update({
+        where: { id: data.managerId },
+        data: { structureId: structure.id },
+      });
+    }
+
+    return structure;
+  } catch (err: any) {
+    if (err?.code === 'P2002') throw new Error('MANAGER_ALREADY_ASSIGNED');
+    throw err;
+  }
 };
 
 export const updateStructure = async (
   id: number,
-  data: { name: string; parentId?: number | null }
+  data: { name: string; parentId?: number | null; managerId?: number | null }
 ) => {
   if (data.parentId === id) throw new Error('SELF_PARENT');
 
-  return prisma.structure.update({
-    where: { id },
-    data: { name: data.name, parentId: data.parentId ?? null },
-    include: { _count: { select: { employees: true } }, parent: true },
-  });
+  if (data.managerId) {
+    const employee = await prisma.employee.findUnique({
+      where: { id: data.managerId },
+      include: { roles: { include: { role: true } } },
+    });
+    if (!employee) throw new Error('EMPLOYEE_NOT_FOUND');
+    const isManager = employee.roles.some((er) => er.role.type === 'MANAGER');
+    if (!isManager) throw new Error('NOT_A_MANAGER');
+
+    // automatically assign the manager to this department
+    await prisma.employee.update({
+      where: { id: data.managerId },
+      data: { structureId: id },
+    });
+  }
+
+  try {
+    return await prisma.structure.update({
+      where: { id },
+      data: { name: data.name, parentId: data.parentId ?? null, managerId: data.managerId ?? null },
+      include: {
+        _count: { select: { employees: true } },
+        parent: true,
+        manager: { select: { id: true, name: true, username: true } },
+      },
+    });
+  } catch (err: any) {
+    if (err?.code === 'P2002') throw new Error('MANAGER_ALREADY_ASSIGNED');
+    throw err;
+  }
 };
 
 export const deleteStructure = async (id: number) => {
@@ -198,5 +273,13 @@ export const getWorkerMissions = async (employeeId: number) => {
       decisionMadeBy: { select: { id: true, name: true, username: true } },
     },
     orderBy: { createdAt: 'desc' },
+  });
+};
+
+export const getManagers = async () => {
+  return prisma.employee.findMany({
+    where: { roles: { some: { role: { type: 'MANAGER' } } } },
+    select: { id: true, name: true, username: true },
+    orderBy: { name: 'asc' },
   });
 };

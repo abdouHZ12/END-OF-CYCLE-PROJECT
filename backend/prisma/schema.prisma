@@ -52,8 +52,10 @@ model Employee {
 
   roles             EmployeeRole[]
 
-  structureId      Int
-  structure        Structure  @relation(fields: [structureId], references: [id])
+  structureId      Int?
+  structure        Structure?  @relation(fields: [structureId], references: [id])
+
+  managedStructure Structure? @relation("StructureManager")
 
   issuedDocuments  Document[] @relation("IssuedDocuments")
   decidedDocuments Document[] @relation("DecidedDocuments")
@@ -76,6 +78,7 @@ model EmployeeRole {
   roleId     Int
   employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
   assignedAt DateTime @default(now())
 
   @@id([employeeId, roleId])
@@ -100,6 +103,9 @@ model PasswordReset {
 model Structure {
   id        Int         @id @default(autoincrement())
   name      String
+
+  managerId Int?        @unique
+  manager   Employee?   @relation("StructureManager", fields: [managerId], references: [id])
 
   parentId  Int?
   parent    Structure?  @relation("StructureHierarchy", fields: [parentId], references: [id])
@@ -134,11 +140,11 @@ model Document {
 
   managerComment   String?
 
-  issuedById       Int
-  employee         Employee     @relation("IssuedDocuments", fields: [issuedById], references: [id])
+  issuedById       Int?
+  employee         Employee?    @relation("IssuedDocuments", fields: [issuedById], references: [id], onDelete: SetNull)
 
   decisionMadeById Int?
-  decisionMadeBy   Employee?    @relation("DecidedDocuments", fields: [decisionMadeById], references: [id])
+  decisionMadeBy   Employee?    @relation("DecidedDocuments", fields: [decisionMadeById], references: [id], onDelete: SetNull)
 
   missionOrder     MissionOrder?
   absenceAuth      AbsenceAuth?
