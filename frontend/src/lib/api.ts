@@ -3,10 +3,12 @@ export type ApiError = {
   message: string;
 };
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 function getApiBaseUrl() {
-  const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
+  // Backend defaults to PORT=3001 (see backend/src/config/config.ts).
+  // Keep env override, but make the default work out-of-the-box.
+  const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/$/, "");
   
   if (typeof window !== "undefined") {
     return base.replace("localhost", window.location.hostname);
@@ -123,12 +125,12 @@ export async function apiGetBinary(path: string): Promise<Blob> {
   return await requestBinary({ path });
 }
 
-
-
-
-
-
-
+export async function apiPatch<TResponse>(
+  path: string,
+  body?: unknown
+): Promise<TResponse> {
+  return await requestJson<TResponse>({ method: "PATCH", path, body });
+}
 
 export async function scanPost<TResponse>(
   path: string,

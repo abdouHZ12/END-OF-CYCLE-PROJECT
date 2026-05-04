@@ -43,6 +43,13 @@ enum StatusLeave {
   NOT_RETURNED
 }
 
+enum NotifType {
+  NEW_PENDING_DOCUMENT
+  DOCUMENT_APPROVED
+  DOCUMENT_REJECTED
+  DOCUMENT_EXPIRING
+}
+
 model Employee {
   id               Int        @id @default(autoincrement()) 
   name             String
@@ -59,6 +66,8 @@ model Employee {
 
   issuedDocuments  Document[] @relation("IssuedDocuments")
   decidedDocuments Document[] @relation("DecidedDocuments")
+
+  notifications    Notification[]
 
   refreshToken     String?
   passwordResets   PasswordReset[]
@@ -182,4 +191,20 @@ model ExitSlip {
 
   documentId  Int       @unique
   document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+
+  recipientId Int
+  recipient   Employee  @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  type        NotifType
+  message     String
+  read        Boolean   @default(false)
+  metadata    Json?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([recipientId])
 }

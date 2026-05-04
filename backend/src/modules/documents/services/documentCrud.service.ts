@@ -4,6 +4,8 @@ import { httpError } from '../../../common/errors.js';
 import { toInt } from '../../../common/parsing.js';
 import { getEmployeeRoleTypes } from '../../employees/employeeRoles.service.js';
 import { RoleType } from '../../../../generated/prisma/client.js';
+import { createNotification } from '../../notifications/notification.service.js';
+import { NotifType } from '../../../../generated/prisma/client.js';
 
 const documentInclude = {
   missionOrder: true,
@@ -14,27 +16,50 @@ const documentInclude = {
   },
 } as const;
 
-// Creation
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+const getStructureManagerId = async (employeeId: number): Promise<number | null> => {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: {
+      structure: {
+        select: { managerId: true },
+      },
+    },
+  });
+  return employee?.structure?.managerId ?? null;
+};
+
+// ─── Creation ─────────────────────────────────────────────────────────────────
+
 export const CreateExitSlip = async (data: any) => {
   const { Qrcode, Type, EmployeeId, exitTime, returnTime, gate } = data;
 
   const employeeIdNum = toInt(EmployeeId, 'EmployeeId');
   await getEmployeeRoleTypes(employeeIdNum);
 
-  return prisma.document.create({
+  const document = await prisma.document.create({
     data: {
       qrCode: Qrcode,
       type: Type,
       issuedById: employeeIdNum,
       exitSlip: {
-        create: {
-          exitTime,
-          returnTime,
-          gate,
-        },
+        create: { exitTime, returnTime, gate },
       },
     },
   });
+
+  const managerId = await getStructureManagerId(employeeIdNum);
+  if (managerId) {
+    await createNotification({
+      recipientId: managerId,
+      type: NotifType.NEW_PENDING_DOCUMENT,
+      message: 'A new Exit Slip request is waiting for your approval.',
+      metadata: { documentId: document.id, docType: 'EXIT_SLIP' },
+    });
+  }
+
+  return document;
 };
 
 export const CreateAbsenceAuth = async (data: any) => {
@@ -43,20 +68,28 @@ export const CreateAbsenceAuth = async (data: any) => {
   const employeeIdNum = toInt(EmployeeId, 'EmployeeId');
   await getEmployeeRoleTypes(employeeIdNum);
 
-  return prisma.document.create({
+  const document = await prisma.document.create({
     data: {
       qrCode: Qrcode,
       type: Type,
       issuedById: employeeIdNum,
       absenceAuth: {
-        create: {
-          startDate,
-          endDate,
-          reason,
-        },
+        create: { startDate, endDate, reason },
       },
     },
   });
+
+  const managerId = await getStructureManagerId(employeeIdNum);
+  if (managerId) {
+    await createNotification({
+      recipientId: managerId,
+      type: NotifType.NEW_PENDING_DOCUMENT,
+      message: 'A new Absence Authorization request is waiting for your approval.',
+      metadata: { documentId: document.id, docType: 'ABSENCE_AUTH' },
+    });
+  }
+
+  return document;
 };
 
 export const CreateMissionOrder = async (data: any) => {
@@ -91,21 +124,16 @@ export const CreateMissionOrder = async (data: any) => {
       issuedById: assignedEmployeeId,
       decisionMadeById: managerId,
       missionOrder: {
-        create: {
-          travelMethod,
-          destination,
-          duration,
-          purpose,
-        },
+        create: { travelMethod, destination, duration, purpose },
       },
     },
   });
 };
 
-// Read
+// ─── Read ─────────────────────────────────────────────────────────────────────
+
 export const ReadAllDocuments = async (id: any) => {
   const employeeId = toInt(id, 'id');
-
   return prisma.document.findMany({
     where: { issuedById: employeeId },
     include: documentInclude,
@@ -115,12 +143,8 @@ export const ReadAllDocuments = async (id: any) => {
 export const ReadAllDocumentByState = async (data: any) => {
   const { state, EmployeeId } = data;
   const employeeId = toInt(EmployeeId, 'EmployeeId');
-
   return prisma.document.findMany({
-    where: {
-      issuedById: employeeId,
-      status: state,
-    },
+    where: { issuedById: employeeId, status: state },
     include: documentInclude,
   });
 };
@@ -128,12 +152,8 @@ export const ReadAllDocumentByState = async (data: any) => {
 export const ReadDocumentById = async (_data: any, id: any, employeeId: any) => {
   const documentId = toInt(id, 'id');
   const issuedById = toInt(employeeId, 'employeeId');
-
   return prisma.document.findUnique({
-    where: {
-      issuedById,
-      id: documentId,
-    },
+    where: { issuedById, id: documentId },
     include: documentInclude,
   });
 };
@@ -141,12 +161,8 @@ export const ReadDocumentById = async (_data: any, id: any, employeeId: any) => 
 export const ReadAllDocumentByType = async (data: any) => {
   const { Type, EmployeeId } = data;
   const employeeId = toInt(EmployeeId, 'EmployeeId');
-
   return prisma.document.findMany({
-    where: {
-      issuedById: employeeId,
-      type: Type,
-    },
+    where: { issuedById: employeeId, type: Type },
     include: documentInclude,
   });
 };
@@ -154,18 +170,14 @@ export const ReadAllDocumentByType = async (data: any) => {
 export const ReadAllDocumentByStatusAndType = async (data: any) => {
   const { state, Type, EmployeeId } = data;
   const employeeId = toInt(EmployeeId, 'EmployeeId');
-
   return prisma.document.findMany({
-    where: {
-      issuedById: employeeId,
-      type: Type,
-      status: state,
-    },
+    where: { issuedById: employeeId, type: Type, status: state },
     include: documentInclude,
   });
 };
 
-// Update
+// ─── Update ───────────────────────────────────────────────────────────────────
+
 export const UpdateDocumentState = async (data: any, id: any) => {
   const documentId = toInt(id, 'id');
   const issueDate: Date = new Date();
@@ -188,7 +200,7 @@ export const UpdateDocumentState = async (data: any, id: any) => {
     });
   }
 
-  return prisma.document.update({
+  const updated = await prisma.document.update({
     where: { id: documentId },
     data: {
       authIssuedAt: issueDate,
@@ -199,24 +211,31 @@ export const UpdateDocumentState = async (data: any, id: any) => {
       managerComment: normalizedComment,
     } as any,
   });
+
+  if (updated.issuedById) {
+    const isApproved = state === 'APPROVED';
+    await createNotification({
+      recipientId: updated.issuedById,
+      type: isApproved ? NotifType.DOCUMENT_APPROVED : NotifType.DOCUMENT_REJECTED,
+      message: isApproved
+        ? 'Your document has been approved.'
+        : `Your document has been rejected.${normalizedComment ? ` Reason: ${normalizedComment}` : ''}`,
+      metadata: { documentId: updated.id, docType: updated.type },
+    });
+  }
+
+  return updated;
 };
 
 export const UpdateWholeExitSlip = async (data: any, id: any) => {
   const documentId = toInt(id, 'id');
   const { Qrcode, Type, exitTime, returnTime, gate } = data;
-
   return prisma.document.update({
     where: { id: documentId },
     data: {
       qrCode: Qrcode,
       type: Type,
-      exitSlip: {
-        update: {
-          exitTime,
-          returnTime,
-          gate,
-        },
-      },
+      exitSlip: { update: { exitTime, returnTime, gate } },
     },
   });
 };
@@ -224,19 +243,12 @@ export const UpdateWholeExitSlip = async (data: any, id: any) => {
 export const UpdateWholeAbsenceAuth = async (data: any, id: any) => {
   const documentId = toInt(id, 'id');
   const { Qrcode, Type, startDate, endDate, reason } = data;
-
   return prisma.document.update({
     where: { id: documentId },
     data: {
       qrCode: Qrcode,
       type: Type,
-      absenceAuth: {
-        update: {
-          startDate,
-          endDate,
-          reason,
-        },
-      },
+      absenceAuth: { update: { startDate, endDate, reason } },
     },
   });
 };
@@ -244,29 +256,21 @@ export const UpdateWholeAbsenceAuth = async (data: any, id: any) => {
 export const UpdateWholeMissionOrder = async (data: any, id: any) => {
   const documentId = toInt(id, 'id');
   const { Qrcode, Type, destination, duration, purpose, travelMethod } = data;
-
   return prisma.document.update({
     where: { id: documentId },
     data: {
       qrCode: Qrcode,
       type: Type,
-      missionOrder: {
-        update: {
-          travelMethod,
-          destination,
-          duration,
-          purpose,
-        },
-      },
+      missionOrder: { update: { travelMethod, destination, duration, purpose } },
     },
   });
 };
 
-// Delete
+// ─── Delete ───────────────────────────────────────────────────────────────────
+
 export const DeleteDocumentById = async (data: any, employeeId: any) => {
   const documentId = toInt(data, 'id');
   const issuedById = toInt(employeeId, 'employeeId');
-
   return prisma.document.delete({
     where: { id: documentId, issuedById },
   });

@@ -14,13 +14,13 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Avatar from "@mui/material/Avatar";
-import Badge from "@mui/material/Badge";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { useLogout } from "@/hooks/useLogout";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import List from "@mui/material/List";
+import NotificationPanel from "@/components/NotificationPanel";
+
 
 const drawerWidth = 256;
 
@@ -48,7 +48,6 @@ export default function Dashboard({
   items,
   children,
   user: userProp,
-  notificationsCount = 3,
   viewToggle,
 }: DashboardProps) {
 
@@ -274,27 +273,9 @@ export default function Dashboard({
             }}
           >
             <div style={{ marginRight: "20px" }}>
-              <Badge
-                badgeContent={notificationsCount}
-                color="warning"
-                sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: "#ffa500", 
-                    color: "#222",
-                    fontWeight: "bold",
-                    fontSize: "15px",
-                    width: 18,
-                    height: 18,
-                    minWidth: 18,
-                    top: 5,
-                    right: 5,
-                  },
-                }}
-              >
-                <NotificationsNoneIcon
-                  sx={{ fontSize: "30px", color: "#fff" }}
-                />
-              </Badge>
+            <div style={{ marginRight: "20px" }}>
+              <NotificationPanel />
+            </div>
             </div>
 
             <Avatar
