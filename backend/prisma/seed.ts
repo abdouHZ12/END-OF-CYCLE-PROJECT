@@ -91,6 +91,13 @@ async function main() {
     include: { roles: { include: { role: true } } },
   });
 
+  // Ensure the default structure actually has a manager assigned.
+  // Many features (pending-doc notifications, manager scoping) rely on Structure.managerId.
+  await prisma.structure.update({
+    where: { id: structure.id },
+    data: { managerId: manager.id },
+  });
+
   const adminManager = await prisma.employee.upsert({
     where: { username: 'AdminManager' },
     update: {
