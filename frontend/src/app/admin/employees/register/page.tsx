@@ -158,10 +158,10 @@ export default function RegisterEmployeePage() {
       </Box>
 
       <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
-        Register Employee
+        Enregistrer Employee
       </Typography>
       <Typography sx={{ color: "gray", fontWeight: "bold", mb: 4 }}>
-        Create a new employee account
+        Creer un nouveau compte employee
       </Typography>
 
       {/* Alerts */}
@@ -211,7 +211,7 @@ export default function RegisterEmployeePage() {
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
-              label="Full Name"
+              label="Nom Complet"
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={fieldSx}
@@ -245,7 +245,7 @@ export default function RegisterEmployeePage() {
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
-              label="Password"
+              label="Mot de Passe"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -264,14 +264,14 @@ export default function RegisterEmployeePage() {
         />
 
         <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
-          Assignment
+          Assignement
         </Typography>
 
         <Grid container spacing={3}>
           {/* Department */}
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth sx={fieldSx}>
-              <InputLabel>Department</InputLabel>
+              <InputLabel>Departement</InputLabel>
               <Select
                   value={structureId}
                   label="Department"
@@ -355,7 +355,7 @@ export default function RegisterEmployeePage() {
             onClick={() => router.push("/admin/employees")}
             sx={{ color: "lightgray", textTransform: "none" }}
           >
-            Cancel
+            Annuler
           </Button>
           <Button
             variant="contained"
@@ -372,7 +372,7 @@ export default function RegisterEmployeePage() {
               "&:hover": { backgroundColor: "darkorange" },
             }}
           >
-            {isLoading ? "Registering..." : "Register Employee"}
+            {isLoading ? "Registering..." : "Enregistrer Employee"}
           </Button>
         </Box>
       </Box>

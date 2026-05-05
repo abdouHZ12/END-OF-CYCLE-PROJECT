@@ -299,7 +299,7 @@ export default function DepartmentsPage() {
       <Grid container spacing={3} sx={{ mb: 4, mt: 1 }} columns={{ sm: 8, md: 12 }}>
         <Grid size={{ sm: 4, md: 4 }}>
           <StatCard icon={<AccountTreeOutlinedIcon />} iconBg="rgba(127,179,255,0.1)"
-            iconColor="#7fb3ff" value={structures.length} label="Total Departments" />
+            iconColor="#7fb3ff" value={structures.length} label="Departments" />
         </Grid>
         <Grid size={{ sm: 4, md: 4 }}>
           <StatCard icon={<CorporateFareOutlinedIcon />} iconBg="rgba(255,165,0,0.1)"
@@ -307,7 +307,7 @@ export default function DepartmentsPage() {
         </Grid>
         <Grid size={{ sm: 4, md: 4 }}>
           <StatCard icon={<AccountTreeOutlinedIcon />} iconBg="rgba(76,175,80,0.1)"
-            iconColor="#4caf50" value={subCount} label="Sub-Departments" />
+            iconColor="#4caf50" value={subCount} label="Sous-Departments" />
         </Grid>
       </Grid>
 
@@ -445,16 +445,16 @@ export default function DepartmentsPage() {
 
       {/* Create Dialog */}
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} slotProps={{ paper: { sx: dialogPaperSx } }}>
-        <DialogTitle sx={{ color: "#fff" }}>New Department</DialogTitle>
+        <DialogTitle sx={{ color: "#fff" }}>Nouveau Department</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: "20px !important" }}>
-          <TextField fullWidth label="Department Name" value={createName}
+          <TextField fullWidth label="Nom de Department" value={createName}
             onChange={(e) => setCreateName(e.target.value)} sx={fieldSx} />
           <FormControl fullWidth sx={fieldSx}>
-            <InputLabel>Parent Department (optional)</InputLabel>
+            <InputLabel> Department Parent (optional)</InputLabel>
             <Select value={createParentId} label="Parent Department (optional)"
               onChange={(e) => setCreateParentId(e.target.value)} MenuProps={{ sx: menuSx }}>
               <MenuItem value="">
-                <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>None (Root Department)</Typography>
+                <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>None ( Department d&apos;origine)</Typography>
               </MenuItem>
               {structures.map((s) => (
                 <MenuItem key={s.id} value={String(s.id)}>{s.name}</MenuItem>
@@ -464,12 +464,12 @@ export default function DepartmentsPage() {
           {managerDropdown(createManagerId, setCreateManagerId)}
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={() => setCreateOpen(false)} sx={{ color: "lightgray", textTransform: "none" }}>Cancel</Button>
+          <Button onClick={() => setCreateOpen(false)} sx={{ color: "lightgray", textTransform: "none" }}>Annuler</Button>
           <Button variant="contained" onClick={handleCreate} disabled={isCreating} sx={{
             backgroundColor: "orange", color: "black", textTransform: "none",
             fontWeight: "bold", "&:hover": { backgroundColor: "darkorange" },
           }}>
-            {isCreating ? "Creating..." : "Create Department"}
+            {isCreating ? "Creating..." : "Creer Department"}
           </Button>
         </DialogActions>
       </Dialog>

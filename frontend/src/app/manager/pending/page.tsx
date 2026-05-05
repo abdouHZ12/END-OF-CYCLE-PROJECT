@@ -293,8 +293,9 @@ export default function PendingPage() {
                       variant="outlined"
                       color="primary"
                       onClick={() => router.push(`/manager/pending/${doc.id}`)}
+                      sx={{textTransform: "none"}}
                     >
-                      Review
+                      Voir les détails
                     </Button>
                   </Stack>
                   </CardActions>

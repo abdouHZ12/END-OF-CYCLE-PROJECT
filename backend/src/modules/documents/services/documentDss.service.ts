@@ -63,7 +63,7 @@ function evaluateAbsenceAuth(
     const notReturnedNb = notReturned.length;
 
     if (notReturnedNb > 3) {
-        reasons.push("Employee has more than 3 not returned leave sessions");
+        reasons.push("l'employee y a plus de 3 seances de sortie non retournées");
         score += 40;
     }    
 
@@ -82,7 +82,7 @@ function evaluateAbsenceAuth(
         const ratio = overlappingTeamMembersCount / teamSize;
         if (ratio >= THRESHOLDS.TEAM_OVERLAP_RATIO) {
             score += 20;
-            reasons.push(`${overlappingTeamMembersCount} of ${teamSize} team members already absent during this period`);
+            reasons.push(`${overlappingTeamMembersCount} de ${teamSize} l'equipe est absente durant cette periode`);
         }
     }
 
@@ -90,7 +90,7 @@ function evaluateAbsenceAuth(
     const durationDays = daysBetween(absence.startDate, absence.endDate);
     if (durationDays > THRESHOLDS.ABSENCE_DURATION_MAX) {
         score += 40;
-        reasons.push(`Absence duration is ${Math.round(durationDays)} days (above ${THRESHOLDS.ABSENCE_DURATION_MAX}-day limit)`);
+        reasons.push(`Period d'absene est ${Math.round(durationDays)} jours (superieur a ${THRESHOLDS.ABSENCE_DURATION_MAX}-jours limite)`);
     }
 
 
@@ -107,7 +107,7 @@ function evaluateAbsenceAuth(
     );
     if (recentApproved.length > THRESHOLDS.ABSENCE_FREQUENCY_MAX) {
         score += 30;
-        reasons.push(`${recentApproved.length} absences approved in the last ${THRESHOLDS.ABSENCE_WINDOW_DAYS} days`);
+        reasons.push(`${recentApproved.length} absences approuves ce ${THRESHOLDS.ABSENCE_WINDOW_DAYS} jours`);
     }
 
 
@@ -116,7 +116,7 @@ function evaluateAbsenceAuth(
     const rejectionsNb = rejections.length;
     if (rejectionsNb > 0) {
         score += Math.min(rejectionsNb * 10, 30);
-        reasons.push(`${rejectionsNb} previous request(s) were rejected this day`);
+        reasons.push(`${rejectionsNb} demandes de absences précédentes ont été refusées ce jour`);
     }
 
 
@@ -150,7 +150,7 @@ function evaluateExitSlip(
     const hoursCheck : string | null =    
          (doc.exitSlip?.returnTime && doc.exitSlip?.exitTime && 
          (doc.exitSlip.returnTime.getHours() - doc.exitSlip.exitTime.getHours()) > 4) ?
-            "Duration > 4 hours" : null;
+            "Durée > 4 hours" : null;
 
     if (hoursCheck) {
         reasons.push(hoursCheck);
@@ -165,7 +165,7 @@ function evaluateExitSlip(
     }, 0);
 
     if (notReturnedNb > 3) {
-        reasons.push("Employee has more than 3 not returned leave sessions");
+        reasons.push("l'employee y a plus de 3 seances de sortie non retournées");
         score += 40;
     }
     
@@ -173,7 +173,7 @@ function evaluateExitSlip(
     const rejectionsNb = rejections.length;
     if (rejectionsNb > 0) {
         score += Math.min(rejectionsNb * 10, 30);
-        reasons.push(`${rejectionsNb} previous request(s) were rejected this day`);
+        reasons.push(`${rejectionsNb} demandes de absences précédentes ont été refusées ce jour`);
     }
 
 
@@ -189,7 +189,7 @@ function evaluateExitSlip(
     );
     if (recentApproved.length > 5) {
         score += 30;
-        reasons.push(`${recentApproved.length} absences approved in the last 10 days`);
+        reasons.push(`${recentApproved.length} absences approuves ce dernier 10 jours`);
     }
 
     return {

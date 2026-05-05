@@ -164,7 +164,7 @@ useEffect(() => {
       <Box sx={{ width: "100%" }}>
         {/* Header */}
         <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "#fff", margin: 0 }}>
-          Mission Order
+          Assignement des Missions
         </h1>
         <p
           style={{
@@ -175,7 +175,7 @@ useEffect(() => {
             marginTop: "6px",
           }}
         >
-          Assign a mission order to a worker
+          Assigne une nouvelle mission a un employee
         </p>
 
         {/* Tab-style header bar to match worker page aesthetic */}
@@ -191,7 +191,7 @@ useEffect(() => {
           }}
         >
           <span style={{ color: "#fff", fontWeight: 600, fontSize: "15px" }}>
-            New Mission Order
+            Nouvelle order de mission
           </span>
         </Box>
 
@@ -228,7 +228,7 @@ useEffect(() => {
             )}
 
             {/* Assign to Worker */}
-            <label style={labelStyle}>Assign to Worker *</label>
+            <label style={labelStyle}>Assigné un Employee *</label>
             <select
               value={assignedToId}
               onChange={(e) => setAssignedToId(e.target.value)}
@@ -241,7 +241,7 @@ useEffect(() => {
               }}
             >
               <option value="" disabled>
-                {workersLoading ? "Loading workers..." : "Select a worker"}
+                {workersLoading ? "Loading workers..." : "Choisir un employé"}
               </option>
               {workers.map((worker) => (
                 <option key={worker.id} value={worker.id} style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
@@ -264,33 +264,33 @@ useEffect(() => {
             {/* Duration + Purpose */}
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <label style={labelStyle}>Duration (days) *</label>
+                <label style={labelStyle}>Durré (jours) *</label>
                 <input
                   type="number"
                   required
                   min={1}
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
-                  placeholder="Number of days"
+                  placeholder="Nombre de jours"
                   style={inputStyle}
                 />
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
-                <label style={labelStyle}>Purpose *</label>
+                <label style={labelStyle}>Motif *</label>
                 <input
                   type="text"
                   required
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="Purpose of the mission"
+                  placeholder="Motif de la mission"
                   style={inputStyle}
                 />
               </Grid>
             </Grid>
 
             {/* Travel Method */}
-            <label style={labelStyle}>Travel Method *</label>
+            <label style={labelStyle}>Méthode de Transport *</label>
             <select
               value={travelMethod}
               onChange={(e) => setTravelMethod(e.target.value)}
@@ -302,16 +302,16 @@ useEffect(() => {
               }}
             >
               <option value="" disabled>
-                Select Travel Method
+                Sélectionner la méthode de transport
               </option>
               <option value="PERSONAL" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Personal
+                Personnel
               </option>
               <option value="COMPANY" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Company
+                Entreprise
               </option>
               <option value="AIRPLANE" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Airplane
+                Avion
               </option>
             </select>
 
@@ -339,7 +339,7 @@ useEffect(() => {
                     },
                   }}
                 >
-                  {isLoading ? "Assigning..." : "Assign Mission Order"}
+                  {isLoading ? "Assigning..." : "Assigné l'Ordre de Mission"}
                 </Button>
               </Grid>
 
@@ -361,7 +361,7 @@ useEffect(() => {
                     },
                   }}
                 >
-                  Cancel
+                  Annuler
                 </Button>
               </Grid>
             </Grid>

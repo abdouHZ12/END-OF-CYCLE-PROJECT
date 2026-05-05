@@ -346,7 +346,7 @@ export default function RolesPage() {
             Roles
           </Typography>
           <Typography sx={{ color: "gray", fontWeight: "bold", mt: 0.5 }}>
-            {roles.length} role{roles.length !== 1 ? "s" : ""} defined
+            {roles.length} role{roles.length !== 1 ? "s" : ""} definees
           </Typography>
         </Box>
         <Button
@@ -362,7 +362,7 @@ export default function RolesPage() {
             "&:hover": { backgroundColor: "darkorange" },
           }}
         >
-          New Role
+          Nouveau Role
         </Button>
       </Box>
 
@@ -424,7 +424,7 @@ export default function RolesPage() {
             <TableHead sx={{ bgcolor: "#10223A" }}>
               <TableRow>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>ID</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Name</TableCell>
+                <TableCell sx={{ color: "lightgray", border: "none" }}>Nom</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Type</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Permissions</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Employees</TableCell>
@@ -573,7 +573,7 @@ export default function RolesPage() {
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
           <Button onClick={() => setCreateOpen(false)} sx={{ color: "lightgray", textTransform: "none" }}>
-            Cancel
+            Annuler
           </Button>
           <Button
             variant="contained"
@@ -601,12 +601,12 @@ export default function RolesPage() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <Typography sx={{ color: "lightgray", fontSize: 14 }}>Type:</Typography>
               <RoleChip type={editTarget.type} />
-              <Typography sx={{ color: "gray", fontSize: 12 }}>(cannot be changed)</Typography>
+              <Typography sx={{ color: "gray", fontSize: 12 }}>(ne peux pas t&apos;etre modifie)</Typography>
             </Box>
           )}
           <TextField
             fullWidth
-            label="Role Name"
+            label="Nom du Role"
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
             sx={fieldSx}
@@ -618,7 +618,7 @@ export default function RolesPage() {
             onChange={(e) => setEditPerms(e.target.value)}
             placeholder="e.g. read:documents, approve:requests"
             sx={fieldSx}
-            helperText="Optional — describe what this role can do"
+            helperText="Optional — decrivez ce que ce role peut faire"
             slotProps={{ formHelperText: { sx: { color: "gray" } } }}
           />
         </DialogContent>
@@ -635,7 +635,7 @@ export default function RolesPage() {
               fontWeight: "bold", "&:hover": { backgroundColor: "darkorange" },
             }}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? "Saving..." : "Enregistrer les Modifications"}
           </Button>
         </DialogActions>
       </Dialog>

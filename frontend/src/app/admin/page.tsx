@@ -193,7 +193,7 @@ export default function AdminPage() {
             iconBg="rgba(127,179,255,0.1)"
             iconColor="#7fb3ff"
             value={employees.length}
-            label="Total Employees"
+            label="Employees Totales"
             trend="+2 this month"
           />
         </Grid>
@@ -232,7 +232,7 @@ export default function AdminPage() {
 
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4, mb: 3 }}>
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#fff" }}>
-          Recent Employees
+          Employees Recents
         </Typography>
               <Button
                 variant="outlined"
@@ -250,7 +250,7 @@ export default function AdminPage() {
                   },
                 }}
               >
-                See all
+                Voir tout
               </Button>
       </Box>
 
@@ -281,7 +281,7 @@ export default function AdminPage() {
             <TableHead sx={{ bgcolor: "#10223A", boxShadow: "0px 0px 1px 0px gray" }}>
               <TableRow>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>ID</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Name</TableCell>
+                <TableCell sx={{ color: "lightgray", border: "none" }}>Nom</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Username</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Department</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Roles</TableCell>
@@ -317,7 +317,7 @@ export default function AdminPage() {
                       }}
                       onClick={() => router.push(`/admin/employees/${emp.id}`)}
                     >
-                      Manage
+                      gerer
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -373,7 +373,7 @@ export default function AdminPage() {
           onClick={() => router.push("/admin/employees/register")}
         >
           <Typography sx={{ mr: "15px" }}>+</Typography>
-          <Typography>New Employee</Typography>
+          <Typography>Nouveau Employee</Typography>
         </Button>
       </Box>
     </Box>

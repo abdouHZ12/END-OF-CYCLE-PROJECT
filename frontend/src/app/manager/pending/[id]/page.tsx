@@ -196,7 +196,7 @@ return (
         <Box sx={{width:"100% ", height: "100%"}}>
             <ArrowBackOutlinedIcon onClick={handleBack} style={{ cursor: "pointer" , color:"lightgray"}} />
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Dashboard
+              Détails de la demande
             </h1>
             <p
               style={{
@@ -206,7 +206,7 @@ return (
                 marginBottom: "20px",
               }}
             >
-              Welcome to your dashboard
+              vous pouvez approuver ou refuser cette demande après avoir consulté les détails et la recommendation de system d&apos;aide
             </p>
 
             {isLoading ? (
@@ -389,7 +389,7 @@ return (
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                             <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              Leave sessions not returned
+                              Les seances de sortie non retournées
                             </Typography>
                             <Chip
                               size="small"
@@ -457,7 +457,7 @@ return (
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                             <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              Previous rejections
+                              Les refus precedents de ce jour
                             </Typography>
                             <Chip
                               size="small"
@@ -522,7 +522,7 @@ return (
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                             <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              Recent approved documents this last 90 days
+                              les demandes approuvées précédemment ce dernier 90 jours
                             </Typography>
                             <Chip
                               size="small"
@@ -588,7 +588,7 @@ return (
                  )
               }            
 
-                  <CardActions sx={{ px: 2, pb: 2 }}>
+                  <CardActions sx={{  pb: 2 }}>
                               <Stack direction="column" spacing={1.5} sx={{ width: "100%" }}>
                                 <Stack direction="row" spacing={1.5} sx={{ width: "100%" }}>
                                   <Button
@@ -618,7 +618,7 @@ return (
                                   color="primary"
                                   onClick={() => setRequest(prev => !prev)}
                                 >
-                                  {request ? "Review" : "Request employee details"} les détails
+                                  {request ? "Reviser la recommendation de system d'analyse " : "Voir l'analyse de ce employee"}
                                 </Button>
                               </Stack>
                   </CardActions>

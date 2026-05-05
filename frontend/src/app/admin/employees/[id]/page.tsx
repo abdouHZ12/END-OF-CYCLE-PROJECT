@@ -322,7 +322,7 @@ export default function ManageEmployeePage() {
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
-              label="Full Name"
+              label="Nom Complet"
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={fieldSx}
@@ -352,13 +352,13 @@ export default function ManageEmployeePage() {
         <Divider sx={{ bgcolor: "rgba(255,255,255,0.08)", my: 4 }} />
 
         <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
-          Assignment
+          Assignement
         </Typography>
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth sx={fieldSx}>
-              <InputLabel>Department</InputLabel>
+              <InputLabel>Departement</InputLabel>
               <Select
                 value={structureId}
                 label="Department"
@@ -452,7 +452,7 @@ export default function ManageEmployeePage() {
               "&:hover": { backgroundColor: "darkorange" },
             }}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? "Saving..." : "Enregistrer les Modifications"}
           </Button>
         </Box>
       </Box>
@@ -479,7 +479,7 @@ export default function ManageEmployeePage() {
             onClick={() => setDeleteDialog(false)}
             sx={{ color: "lightgray", textTransform: "none" }}
           >
-            Cancel
+            Annuler
           </Button>
           <Button
             onClick={handleDelete}

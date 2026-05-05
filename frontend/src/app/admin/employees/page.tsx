@@ -166,7 +166,7 @@ export default function EmployeesPage() {
             Employees
           </Typography>
           <Typography sx={{ color: "gray", fontWeight: "bold", mt: 0.5 }}>
-            {filtered.length} employee{filtered.length !== 1 ? "s" : ""} found
+            {filtered.length} employee{filtered.length !== 1 ? "s" : ""} trouvés
           </Typography>
         </Box>
         <Button
@@ -182,7 +182,7 @@ export default function EmployeesPage() {
           }}
           onClick={() => router.push("/admin/employees/register")}
         >
-          New Employee
+          Nouveau Employee
         </Button>
       </Box>
 
@@ -191,7 +191,7 @@ export default function EmployeesPage() {
         <Grid size={{ xs: 12, sm: 6, md: 5 }}>
           <TextField
             fullWidth
-            placeholder="Search by name, username or email..."
+            placeholder="Chercher par nom, username ou email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             sx={filterSx}
@@ -216,7 +216,7 @@ export default function EmployeesPage() {
               onChange={(e) => setRoleFilter(e.target.value)}
               MenuProps={{ sx: menuSx }}
             >
-              <MenuItem value="ALL">All Roles</MenuItem>
+              <MenuItem value="ALL">Tous les Rôles</MenuItem>
               <MenuItem value="ADMIN">Admin</MenuItem>
               <MenuItem value="MANAGER">Manager</MenuItem>
               <MenuItem value="WORKER">Worker</MenuItem>
@@ -234,7 +234,7 @@ export default function EmployeesPage() {
               onChange={(e) => setDeptFilter(e.target.value)}
               MenuProps={{ sx: menuSx }}
             >
-              <MenuItem value="ALL">All Departments</MenuItem>
+              <MenuItem value="ALL">Touts les Departments</MenuItem>
               {structures.map((s) => (
                 <MenuItem key={s.id} value={String(s.id)}>
                   {s.name}
@@ -275,7 +275,7 @@ export default function EmployeesPage() {
             <TableHead sx={{ bgcolor: "#10223A" }}>
               <TableRow>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>ID</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Name</TableCell>
+                <TableCell sx={{ color: "lightgray", border: "none" }}>Nom</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Username</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Email</TableCell>
                 <TableCell sx={{ color: "lightgray", border: "none" }}>Department</TableCell>

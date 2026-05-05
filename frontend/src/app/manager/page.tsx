@@ -218,7 +218,7 @@ export default function ManagerHomePage() {
                     {stats.total}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Total demandes
+                    Les demandes totales
                   </Typography>
                 </CardContent>
               </Card>
@@ -262,7 +262,7 @@ export default function ManagerHomePage() {
                     {stats.pending}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
               </Card>
@@ -306,7 +306,7 @@ export default function ManagerHomePage() {
                     {stats.approved}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Approved
+                    Approuves
                   </Typography>
                 </CardContent>
               </Card>
@@ -350,7 +350,7 @@ export default function ManagerHomePage() {
                     {stats.rejected}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Rejected
+                    Refuse
                   </Typography>
                 </CardContent>
               </Card>
@@ -367,7 +367,7 @@ export default function ManagerHomePage() {
             }}
           >
             <Typography variant="h5" sx={{ fontSize: "25px", fontWeight: "bold", color: "#fff" }}>
-              Recent Requests
+              Demandes récentes
             </Typography>
               <Button
                 variant="outlined"
@@ -385,7 +385,7 @@ export default function ManagerHomePage() {
                   },
                 }}
               >
-                See all
+                Voir tout
               </Button>
           </Box>
 
