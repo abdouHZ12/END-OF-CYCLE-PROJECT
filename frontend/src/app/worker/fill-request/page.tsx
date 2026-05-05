@@ -50,6 +50,32 @@ export default function Page() {
           setError("Please sign in");
           return;
         }
+
+        const parseTodayTime = (time: string): Date | null => {
+          // expects HH:MM
+          const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(time);
+          if (!match) return null;
+          const hours = Number(match[1]);
+          const minutes = Number(match[2]);
+          const today = new Date();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes, 0, 0);
+        };
+
+        const exitDateTime = parseTodayTime(exitTime);
+        const returnDateTime = parseTodayTime(returnTime);
+        if (!exitDateTime) {
+          setError("Leave time is invalid");
+          return;
+        }
+        if (!returnDateTime) {
+          setError("Return time is invalid");
+          return;
+        }
+        if (returnDateTime.getTime() < exitDateTime.getTime()) {
+          setError("Return time must be after leave time (same day)");
+          return;
+        }
+
         setIsLoading(true) ;
         setError(null) ;
 
@@ -57,8 +83,8 @@ export default function Page() {
           await apiPost<DocumentResponse>("/api/documents/ExitSlip" , {
             Type : "EXIT_SLIP" , 
             EmployeeId : employeeId ,
-            exitTime : new Date(exitTime) ,
-            returnTime : new Date(returnTime) ,
+            exitTime : exitDateTime ,
+            returnTime : returnDateTime ,
             gate
         }) ; 
 
@@ -166,9 +192,9 @@ export default function Page() {
             <Grid
               container 
               spacing={{ md: 1, lg: 1 }}
-              columns={{ md: 12, lg: 12 }}
+              columns={{ md: 12, lg: 16 }}
             >
-              <Grid key={1} size={{ md: 4 , lg:4 }}>
+              <Grid key={1} size={{ md: 6 , lg:8 }}>
                 <Button
                   fullWidth
                   onClick={() => setIsSelected("ExitSlip")}
@@ -189,7 +215,7 @@ export default function Page() {
                   Exit Slip
                 </Button>
               </Grid>
-              <Grid key={2} size={{ xs: 2, sm: 4, md: 4 }}>
+              <Grid key={2} size={{ md: 6 , lg:8  }}>
                 <Button
                   fullWidth
                   onClick={() => setIsSelected("AbsenceAuthorization")}
@@ -256,7 +282,8 @@ export default function Page() {
                           Leave Hour *
                         </label>
                         <input
-                          type="datetime-local"
+                          type="time"
+                          step={60}
                           required
                           value ={exitTime}
                           onChange={(e) => setExitTime(e.target.value)}
@@ -280,7 +307,8 @@ export default function Page() {
                       <Grid size={{ xs: 12, md: 6 }}>
                         <label htmlFor="" style={{ color: "#fff" }}>Return Hour *</label>
                         <input
-                          type="datetime-local"
+                          type="time"
+                          step={60}
                           required
                           value ={returnTime}
                           onChange={(e) => setReturnTime(e.target.value)}

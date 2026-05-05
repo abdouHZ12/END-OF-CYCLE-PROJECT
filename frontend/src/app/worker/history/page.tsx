@@ -29,6 +29,10 @@ import {
   TableRow,
   Paper,
   Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 
@@ -96,7 +100,7 @@ export default function Page() {
         >
           <Box sx={{width:"100% ", height: "100%"}}>
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Dashboard
+              History
             </h1>
             <p
               style={{
@@ -106,7 +110,7 @@ export default function Page() {
                 marginBottom: "20px",
               }}
             >
-              Welcome to your dashboard
+              View and filter your request history
             </p>
             <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:9, lg: 9 }}>
 
@@ -251,90 +255,190 @@ export default function Page() {
                 padding: "16px",
                 mt:3,
             }}>
-                <Box>
-                    <FilterAltOutlinedIcon />
-                    <Typography variant="h6" sx={{ color: "#fff", mb: 2 }}>
-                        Filter
-                    </Typography>
-                </Box>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
+                  <FilterAltOutlinedIcon sx={{ color: "rgba(255,255,255,0.65)" }} />
+                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800 }}>
+                    Filter
+                  </Typography>
+                  <Typography sx={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>
+                    Affinez la liste par type, année et mois
+                  </Typography>
+                </Stack>
                 <Grid container spacing={{ sm :3 ,md: 2, lg: 3 }} columns={{ sm : 8 , md:12, lg: 12 }}>
 
                     <Grid key={1} size={{ md: 6 , lg:4 }}>
-                        <label htmlFor="" style={{color:"lightgray" }}>Sort By Type</label>
-                        <select
-                            id="sort"
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                            style={{
-                                marginTop:"10px",
-                                width: "100%",
-                                padding: "12px",
-                                borderRadius: "5px",
-                                backgroundColor: "rgb(10, 22, 40)",
-                                color: "white",
-                        }}
+                      <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+                        <InputLabel
+                          id="type-label"
+                          sx={{
+                            color: "rgba(255,255,255,0.65)",
+                            transition: "color 160ms ease",
+                            "&.Mui-focused": { color: "#ffa500" },
+                          }}
                         >
-                        <option value="" style={{color:"white"}} >All Types</option>
-                        <option value="EXIT_SLIP">Exit Slip</option>
-                        <option value="ABSENCE_AUTH">Absence Authorization</option>
-                        <option value="MISSION_ORDER">Mission Order</option>
-                        </select>
+                          Sort By Type
+                        </InputLabel>
+                        <Select
+                          labelId="type-label"
+                          id="type-select"
+                          value={type}
+                          label="Sort By Type"
+                          onChange={(e) => setType(e.target.value)}
+                          sx={{
+                            color: "#fff",
+                            backgroundColor: "rgb(10, 22, 40)",
+                            borderRadius: 2,
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "rgba(255,255,255,0.12)",
+                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#ffa500",
+                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                            },
+                            "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                          }}
+                          MenuProps={{
+                            slotProps: {
+                              paper: {
+                                sx: {
+                                  mt: 1,
+                                  backgroundColor: "#10223A",
+                                  color: "#fff",
+                                  border: "1px solid rgba(255,255,255,0.08)",
+                                  borderRadius: 2,
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">All Types</MenuItem>
+                          <MenuItem value="EXIT_SLIP">Exit Slip</MenuItem>
+                          <MenuItem value="ABSENCE_AUTH">Absence Authorization</MenuItem>
+                          <MenuItem value="MISSION_ORDER">Mission Order</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
 
                     <Grid key={2} size={{ md: 6 , lg:4 }}>
-                        <label htmlFor="" style={{color:"lightgray"}}>Sort By Year</label>
-                        <select
-                            id="sort"
-                            value={year}
-                            onChange={(e) => setYear(e.target.value)}
-                            style={{
-                                marginTop:"10px",
-                                width: "100%",
-                                padding: "12px",
-                                borderRadius: "5px",
-                                backgroundColor: "rgb(10, 22, 40)",
-                                color: "white",
-                        }}
+                      <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+                        <InputLabel
+                          id="year-label"
+                          sx={{
+                            color: "rgba(255,255,255,0.65)",
+                            transition: "color 160ms ease",
+                            "&.Mui-focused": { color: "#ffa500" },
+                          }}
                         >
-                        <option value="">All Years</option>
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2023</option>
-
-                        </select>
+                          Sort By Year
+                        </InputLabel>
+                        <Select
+                          labelId="year-label"
+                          id="year-select"
+                          value={year}
+                          label="Sort By Year"
+                          onChange={(e) => setYear(e.target.value)}
+                          sx={{
+                            color: "#fff",
+                            backgroundColor: "rgb(10, 22, 40)",
+                            borderRadius: 2,
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "rgba(255,255,255,0.12)",
+                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#ffa500",
+                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                            },
+                            "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                          }}
+                          MenuProps={{
+                            slotProps: {
+                              paper: {
+                                sx: {
+                                  mt: 1,
+                                  backgroundColor: "#10223A",
+                                  color: "#fff",
+                                  border: "1px solid rgba(255,255,255,0.08)",
+                                  borderRadius: 2,
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">All Years</MenuItem>
+                          <MenuItem value="2026">2026</MenuItem>
+                          <MenuItem value="2025">2025</MenuItem>
+                          <MenuItem value="2024">2024</MenuItem>
+                          <MenuItem value="2023">2023</MenuItem>
+                        </Select>
+                      </FormControl>
 
                     </Grid>
                     <Grid key={3} size={{ md: 6 , lg:4 }}>
-                        <label htmlFor="" style={{color:"lightgray"}}>Sort By Month</label>
-                        <select
-                            id="month"
-                            value={month}
-                            onChange={(e) => setMonth(e.target.value)}
-                            style={{
-                                marginTop:"10px",
-                                width: "100%",
-                                padding: "12px",
-                                borderRadius: "5px",
-                                backgroundColor: "rgb(10, 22, 40)",
-                                color: "white",
-                        }}
+                      <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+                        <InputLabel
+                          id="month-label"
+                          sx={{
+                            color: "rgba(255,255,255,0.65)",
+                            transition: "color 160ms ease",
+                            "&.Mui-focused": { color: "#ffa500" },
+                          }}
                         >
-                        <option value="">All months</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-
-                        </select>
+                          Sort By Month
+                        </InputLabel>
+                        <Select
+                          labelId="month-label"
+                          id="month-select"
+                          value={month}
+                          label="Sort By Month"
+                          onChange={(e) => setMonth(e.target.value)}
+                          sx={{
+                            color: "#fff",
+                            backgroundColor: "rgb(10, 22, 40)",
+                            borderRadius: 2,
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "rgba(255,255,255,0.12)",
+                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#ffa500",
+                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                            },
+                            "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                          }}
+                          MenuProps={{
+                            slotProps: {
+                              paper: {
+                                sx: {
+                                  mt: 1,
+                                  backgroundColor: "#10223A",
+                                  color: "#fff",
+                                  border: "1px solid rgba(255,255,255,0.08)",
+                                  borderRadius: 2,
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">All months</MenuItem>
+                          <MenuItem value="1">January</MenuItem>
+                          <MenuItem value="2">February</MenuItem>
+                          <MenuItem value="3">March</MenuItem>
+                          <MenuItem value="4">April</MenuItem>
+                          <MenuItem value="5">May</MenuItem>
+                          <MenuItem value="6">June</MenuItem>
+                          <MenuItem value="7">July</MenuItem>
+                          <MenuItem value="8">August</MenuItem>
+                          <MenuItem value="9">September</MenuItem>
+                          <MenuItem value="10">October</MenuItem>
+                          <MenuItem value="11">November</MenuItem>
+                          <MenuItem value="12">December</MenuItem>
+                        </Select>
+                      </FormControl>
 
                     </Grid>                    
 
@@ -398,7 +502,7 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+getDate(row.exitSlip.returnTime) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+row.exitSlip.returnTime.substring(11,16) : 
                                                  row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
@@ -420,7 +524,7 @@ export default function Page() {
 
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
-                                            <Typography>{row.authIssuedAt || "N/A"}</Typography>
+                                            <Typography>{getDate(row.authIssuedAt) || "N/A"}</Typography>
                                           </TableCell>
 
                                         </TableRow>

@@ -6,12 +6,13 @@ import Avatar from "@mui/material/Avatar";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { apiGet ,apiDelete, type ApiError} from "@/lib/api";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { apiGet ,apiDelete, apiPut, type ApiError} from "@/lib/api";
 import { usePathname, useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { getDate, getFullDate } from "@/lib/datetime";
+import { getFullDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
@@ -25,6 +26,18 @@ import {
   TableRow,
   Paper,
   Typography,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Divider,
 } from "@mui/material";
 
 export default function Page() {        
@@ -37,11 +50,128 @@ export default function Page() {
   const [status , setStatus] = useState<string >("");
   const [toast , setToast] = useState<string | null>(null) ;
 
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingDoc, setEditingDoc] = useState<Document | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [editExitTime, setEditExitTime] = useState("");
+  const [editReturnTime, setEditReturnTime] = useState("");
+  const [editGate, setEditGate] = useState("");
+
+  const [editStartDate, setEditStartDate] = useState("");
+  const [editEndDate, setEditEndDate] = useState("");
+  const [editReason, setEditReason] = useState("");
+
   const router = useRouter();
   const pathname = usePathname();
   const routePrefix = pathname?.startsWith("/manager") ? "/manager" : "/worker";
 
   const toastTimerRef = useRef<number | null>(null) ;
+
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+  const toLocalDateTimeInput = (iso: string) => {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  };
+
+  const toLocalDateInput = (iso: string) => {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  };
+
+  const parseLocalDate = (value: string): Date | null => {
+    // expects YYYY-MM-DD
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!m) return null;
+    const y = Number(m[1]);
+    const mo = Number(m[2]);
+    const da = Number(m[3]);
+    if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(da)) return null;
+    return new Date(y, mo - 1, da, 0, 0, 0, 0);
+  };
+
+  const openEdit = (doc: Document) => {
+    if (doc.status !== "PENDING") return;
+    if (doc.type === "MISSION_ORDER") return;
+
+    setEditingDoc(doc);
+    setError(null);
+
+    if (doc.type === "EXIT_SLIP") {
+      setEditExitTime(doc.exitSlip?.exitTime ? toLocalDateTimeInput(doc.exitSlip.exitTime) : "");
+      setEditReturnTime(doc.exitSlip?.returnTime ? toLocalDateTimeInput(doc.exitSlip.returnTime) : "");
+      setEditGate(doc.exitSlip?.gate ?? "");
+    }
+
+    if (doc.type === "ABSENCE_AUTH") {
+      setEditStartDate(doc.absenceAuth?.startDate ? toLocalDateInput(doc.absenceAuth.startDate) : "");
+      setEditEndDate(doc.absenceAuth?.endDate ? toLocalDateInput(doc.absenceAuth.endDate) : "");
+      setEditReason(doc.absenceAuth?.reason ?? "");
+    }
+
+    setEditOpen(true);
+  };
+
+  const closeEdit = () => {
+    if (isSaving) return;
+    setEditOpen(false);
+    setEditingDoc(null);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingDoc) return;
+    if (editingDoc.status !== "PENDING") return;
+    if (editingDoc.type === "MISSION_ORDER") return;
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      if (editingDoc.type === "EXIT_SLIP") {
+        if (!editExitTime || !editReturnTime || !editGate.trim()) {
+          setError("Please fill all fields.");
+          return;
+        }
+
+        await apiPut(`/api/document/ExitSlip/${editingDoc.id}`, {
+          Type: "EXIT_SLIP",
+          exitTime: new Date(editExitTime),
+          returnTime: new Date(editReturnTime),
+          gate: editGate,
+        });
+      } else if (editingDoc.type === "ABSENCE_AUTH") {
+        const start = parseLocalDate(editStartDate);
+        const end = parseLocalDate(editEndDate);
+        if (!start || !end || !editReason.trim()) {
+          setError("Please fill all fields.");
+          return;
+        }
+        if (end.getTime() < start.getTime()) {
+          setError("End date must be after start date.");
+          return;
+        }
+
+        await apiPut(`/api/document/AbsenceAuth/${editingDoc.id}`, {
+          Type: "ABSENCE_AUTH",
+          startDate: start,
+          endDate: end,
+          reason: editReason,
+        });
+      }
+
+      showToast("Request updated successfully", 2500);
+      setEditOpen(false);
+      setEditingDoc(null);
+      await fetchDocuments();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      setError(apiErr.message || "An error occurred while updating the document.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
 
   const handleDelete = async (id: number) => {
@@ -135,7 +265,7 @@ export default function Page() {
                     ) : null}
 
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Dashboard
+              Mes demandes
             </h1>
             <p
               style={{
@@ -145,67 +275,126 @@ export default function Page() {
                 marginBottom: "20px",
               }}
             >
-              Welcome to your dashboard
+              Consultez et gérez vos demandes de documents administratifs
             </p>
-            <Box sx={{
+            <Box
+              sx={{
                 backgroundColor: "#1a2942",
                 borderRadius: "12px",
                 padding: "16px",
-            }}>
-                <Box>
-                    <FilterAltOutlinedIcon />
-                    <Typography variant="h6" sx={{ color: "#fff", mb: 2 }}>
-                        Filter
-                    </Typography>
-                </Box>
-                <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
+                <FilterAltOutlinedIcon sx={{ color: "rgba(255,255,255,0.65)" }} />
+                <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800 }}>
+                  Filter
+                </Typography>
+                <Typography sx={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>
+                  Affinez la liste par statut et tri
+                </Typography>
+              </Stack>
 
-                    <Grid key={1} size={{ md: 6 , lg:8 }}>
-                        <label htmlFor="" style={{color:"lightgray" }}>Status</label>
-                        <select
-                            id="sort"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            required
-                            style={{
-                                marginTop:"10px",
-                                width: "100%",
-                                padding: "12px",
-                                borderRadius: "5px",
-                                backgroundColor: "rgb(10, 22, 40)",
-                                color: "white",
-                        }}
-                        >
-                        <option value="" style={{color:"white"}} >All Status</option>
-                        <option value="PENDING">Pending</option>
-                        <option value="APPROVED">Approved</option>
-                        <option value="REJECTED">Rejected</option>
-                        </select>
-                    </Grid>
+              <Grid container spacing={{ sm: 3, md: 3, lg: 3 }} columns={{ sm: 8, md: 12, lg: 16 }}>
+                <Grid key={1} size={{ md: 6, lg: 8 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel
+                      id="status-label"
+                      sx={{
+                        color: "rgba(255,255,255,0.65)",
+                        "&.Mui-focused": { color: "#fbbf24" },
+                      }}
+                    >
+                      Status
+                    </InputLabel>
 
-                    <Grid key={2} size={{ md: 6 , lg:8 }}>
-                        <label htmlFor="" style={{color:"lightgray"}}>Sort By</label>
-                        <select
-                            id="sort"
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                            required
-                            style={{
-                                marginTop:"10px",
-                                width: "100%",
-                                padding: "12px",
-                                borderRadius: "5px",
-                                backgroundColor: "rgb(10, 22, 40)",
-                                color: "white",
-                        }}
-                        >
-                        <option value="Recent" >Recent  -&gt; Oldest</option>
-                        <option value="oldest">Oldest -&gt; Recent</option>
-                        </select>
-
-                    </Grid>
-
+                    <Select
+                      labelId="status-label"
+                      id="status-select"
+                      value={status}
+                      label="Status"
+                      onChange={(e) => setStatus(e.target.value)}
+                      sx={{
+                        color: "#fff",
+                        backgroundColor: "rgb(10, 22, 40)",
+                        borderRadius: 2,
+                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.12)" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fbbf24" },
+                        "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                      }}
+                      MenuProps={{
+                        slotProps: {
+                          paper: {
+                            sx: {
+                              mt: 1,
+                              backgroundColor: "#10223A",
+                              color: "#fff",
+                              border: "1px solid rgba(255,255,255,0.08)",
+                              borderRadius: 2,
+                            },
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem value="">
+                        <Typography sx={{ color: "rgba(255,255,255,0.85)" }}>All Status</Typography>
+                      </MenuItem>
+                      <MenuItem value="PENDING">Pending</MenuItem>
+                      <MenuItem value="APPROVED">Approved</MenuItem>
+                      <MenuItem value="REJECTED">Rejected</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
+
+                <Grid key={2} size={{ md: 6, lg: 8 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel
+                      id="sort-label"
+                      sx={{
+                        color: "rgba(255,255,255,0.65)",
+                        "&.Mui-focused": { color: "#fbbf24" },
+                      }}
+                    >
+                      Sort By
+                    </InputLabel>
+
+                    <Select
+                      labelId="sort-label"
+                      id="sort-select"
+                      value={sort}
+                      label="Sort By"
+                      onChange={(e) => setSort(e.target.value)}
+                      sx={{
+                        color: "#fff",
+                        backgroundColor: "rgb(10, 22, 40)",
+                        borderRadius: 2,
+                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.12)" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fbbf24" },
+                        "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                      }}
+                      MenuProps={{
+                        slotProps: {
+                          paper: {
+                            sx: {
+                              mt: 1,
+                              backgroundColor: "#10223A",
+                              color: "#fff",
+                              border: "1px solid rgba(255,255,255,0.08)",
+                              borderRadius: 2,
+                            },
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem value="Recent">Recent → Oldest</MenuItem>
+                      <MenuItem value="oldest">Oldest → Recent</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
             </Box>
             
             <Box sx={{mt:4}}>
@@ -263,7 +452,7 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+getDate(row.exitSlip.returnTime) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+ row.exitSlip.returnTime.substring(11,16) : 
                                                  row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
@@ -282,6 +471,20 @@ export default function Page() {
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
+                                              {row.status === "PENDING" && row.type !== "MISSION_ORDER" ? (
+                                                <Avatar
+                                                  onClick={() => openEdit(row)}
+                                                  sx={{
+                                                    bgcolor: "transparent",
+                                                    width: 40,
+                                                    height: 40,
+                                                    "&:hover": { backgroundColor: "rgba(59, 130, 246, 0.18)" },
+                                                    cursor: "pointer",
+                                                  }}
+                                                >
+                                                  <EditOutlinedIcon sx={{ color: "#60a5fa" }} />
+                                                </Avatar>
+                                              ) : null}
                                               <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
                                                     <VisibilityOutlinedIcon />
                                                 </Avatar>
@@ -298,6 +501,236 @@ export default function Page() {
                                   </Table>
                                 </TableContainer> ) }                
             </Box>
+
+
+            <Dialog
+              open={editOpen}
+              onClose={closeEdit}
+              fullWidth
+              maxWidth="sm"
+              slotProps={{
+                paper: {
+                  sx: {
+                    backgroundColor: "#1a2942",
+                    color: "#fff",
+                    borderRadius: 3,
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    overflow: "hidden",
+                    boxShadow: "0px 18px 45px rgba(0, 0, 0, 0.45)",
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      height: "4px",
+                      backgroundColor: "#ffa500",
+                    },
+                  },
+                },
+              }}
+            >
+              <DialogTitle
+                sx={{
+                  fontWeight: 900,
+                  py: 2,
+                  backgroundColor: "#10223A",
+                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Box sx={{ width: 9, height: 9, borderRadius: "50%", backgroundColor: "#ffa500" }} />
+                  <Box>
+                    <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>Modify request</Typography>
+                  </Box>
+                </Stack>
+              </DialogTitle>
+              <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+              <DialogContent sx={{ pt: 2 }}>
+                {editingDoc?.type === "EXIT_SLIP" ? (
+                  <Stack spacing={2} sx={{ mt: 1 }}>
+                    <TextField
+                      label="Leave time"
+                      type="datetime-local"
+                      value={editExitTime}
+                      onChange={(e) => setEditExitTime(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                    <TextField
+                      label="Return time"
+                      type="datetime-local"
+                      value={editReturnTime}
+                      onChange={(e) => setEditReturnTime(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                    <TextField
+                      label="Gate"
+                      value={editGate}
+                      onChange={(e) => setEditGate(e.target.value)}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                  </Stack>
+                ) : null}
+
+                {editingDoc?.type === "ABSENCE_AUTH" ? (
+                  <Stack spacing={2} sx={{ mt: 1 }}>
+                    <TextField
+                      label="Start date"
+                      type="date"
+                      value={editStartDate}
+                      onChange={(e) => setEditStartDate(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                    <TextField
+                      label="End date"
+                      type="date"
+                      value={editEndDate}
+                      onChange={(e) => setEditEndDate(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                    <TextField
+                      label="Reason"
+                      value={editReason}
+                      onChange={(e) => setEditReason(e.target.value)}
+                      multiline
+                      minRows={3}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "#fff" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.12)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#ffa500",
+                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                        },
+                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                      }}
+                    />
+                  </Stack>
+                ) : null}
+
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  px: 3,
+                  pb: 2,
+                  pt: 1.5,
+                  backgroundColor: "rgba(16, 34, 58, 0.65)",
+                  borderTop: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <Button
+                  onClick={closeEdit}
+                  disabled={isSaving}
+                  sx={{
+                    color: "rgba(255,255,255,0.85)",
+                    border: "1px solid rgba(255,255,255,0.22)",
+                    borderRadius: 2,
+                    textTransform: "none",
+                    px: 2,
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.3)" },
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveEdit}
+                  disabled={isSaving}
+                  sx={{
+                    backgroundColor: "#ffa500",
+                    color: "#0a1628",
+                    fontWeight: 900,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    px: 2,
+                    "&:hover": { backgroundColor: "#ffb733" },
+                  }}
+                >
+                  {isSaving ? "Saving..." : "Save changes"}
+                </Button>
+              </DialogActions>
+            </Dialog>
 
 
         </Box>
