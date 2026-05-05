@@ -90,7 +90,7 @@ export default function MyMissionsPage() {
     >
       <Box sx={{ width: "100%", height: "100%" }}>
         <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "#fff" }}>
-          My Missions
+          Mes missions
         </h1>
         <p
           style={{
@@ -100,7 +100,7 @@ export default function MyMissionsPage() {
             marginBottom: "20px",
           }}
         >
-          Mission orders assigned to you
+          Order de Mission qui vous sont assignés 
         </p>
 
         <Box sx={{ mt: 2 }}>
@@ -122,7 +122,7 @@ export default function MyMissionsPage() {
             >
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <Typography variant="h6" sx={{ color: "lightgray", fontSize: "20px" }}>
-                  No mission orders assigned to you yet
+                  Aucun Ordre de Mission Assigne a vous pour le moment
                 </Typography>
               </Box>
             </Box>

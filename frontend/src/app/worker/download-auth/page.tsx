@@ -120,7 +120,7 @@ return(
                 marginBottom: "20px",
               }}
             >
-              Vous pouver telecharger les autorisations de tout vos documents de sortie
+              Vous pouver telecharger les autorisations de tout vos documents de sortie approuvés en format PDF
             </p>
             <Box sx={{
                 backgroundColor: "#1a2942",
@@ -151,10 +151,10 @@ return(
                                 color: "white",
                         }}
                         >
-                        <option value="" style={{color:"white"}} >All Types</option>
-                        <option value="EXIT_SLIP">Exit Slip</option>
-                        <option value="ABSENCE_AUTH">Absence Authorization</option>
-                        <option value="MISSION_ORDER">Mission Order</option>
+                        <option value="" style={{color:"white"}} >Tout les types</option>
+                        <option value="EXIT_SLIP">Bon de sortie</option>
+                        <option value="ABSENCE_AUTH">Autorisation d&apos;absence</option>
+                        <option value="MISSION_ORDER">Ordre de mission</option>
                         </select>
                     </Grid>
                 </Grid>
@@ -177,7 +177,7 @@ return(
                                     }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                         <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
-                                            No documents found
+                                            Aucun Document trouve
                                         </Typography>
                                     </Box>
                                  </Box>   ) 
@@ -197,8 +197,8 @@ return(
                                       <TableRow>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Type</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Submission Date</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Actions</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Date de soumission</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Telecharger</TableCell>
 
                                       </TableRow>
                                     </TableHead>
