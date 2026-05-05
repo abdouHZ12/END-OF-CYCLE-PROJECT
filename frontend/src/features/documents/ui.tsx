@@ -5,7 +5,7 @@ export const getStatusChip = (status: string) => {
     case 'PENDING':
       return (
         <Chip
-          label={'Pending'}
+          label={'En attente'}
           sx={{
             backgroundColor: 'rgba(255, 165, 0, 0.1)',
             color: 'orange',
@@ -18,7 +18,7 @@ export const getStatusChip = (status: string) => {
     case 'APPROVED':
       return (
         <Chip
-          label={'Approved'}
+          label={'Approuvé'}
           sx={{
             backgroundColor: 'rgba(0, 128, 0, 0.1)',
             color: '#4caf50',
@@ -31,7 +31,7 @@ export const getStatusChip = (status: string) => {
     case 'REJECTED':
       return (
         <Chip
-          label={'Rejected'}
+          label={'Rejeté'}
           sx={{
             backgroundColor: 'rgba(255, 0, 0, 0.1)',
             color: '#f44336',
@@ -49,11 +49,11 @@ export const getStatusChip = (status: string) => {
 export const gettype = (type: string) => {
   switch (type) {
     case 'MISSION_ORDER':
-      return 'Mission Order';
+      return 'Order of Mission';
     case 'ABSENCE_AUTH':
-      return 'Absence Authorization';
+      return 'Autorisation d\'absence';
     case 'EXIT_SLIP':
-      return 'Exit Slip';
+      return 'Bon de sortie';
     default:
       return type;
   }

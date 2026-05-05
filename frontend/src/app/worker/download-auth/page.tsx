@@ -7,7 +7,7 @@ import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { apiGet ,apiGetBinary ,type ApiError} from "@/lib/api";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { getDate, getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDate, formatAlgeriaDateTime, formatAlgeriaTime } from "@/lib/datetime";
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype } from "@/features/documents/ui";
 import { getStoredEmployeeId } from "@/lib/authStorage";
@@ -110,7 +110,7 @@ return(
         >
           <Box sx={{width:"100% ", height: "100%"}}>
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Download Authorization
+              Telecharger Autorisation
             </h1>
             <p
               style={{
@@ -120,7 +120,7 @@ return(
                 marginBottom: "20px",
               }}
             >
-              You can download authorization of all your documents 
+              Vous pouver telecharger les autorisations de tout vos documents de sortie
             </p>
             <Box sx={{
                 backgroundColor: "#1a2942",
@@ -129,9 +129,9 @@ return(
                 mt:3,
             }}>
                 <Box>
-                    <FilterAltOutlinedIcon />
+                    <FilterAltOutlinedIcon sx={{color:"dark  orange "}}/>
                     <Typography variant="h6" sx={{ color: "#fff", mb: 2 }}>
-                        Filter
+                        Filtre
                     </Typography>
                 </Box>
                 <Grid container spacing={{ sm :3 ,md: 2, lg: 3 }} columns={{ sm : 8 , md:12, lg: 12 }}>
@@ -215,8 +215,8 @@ return(
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+getDate(row.exitSlip.returnTime) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+formatAlgeriaTime(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDateTime(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDateTime(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
@@ -225,7 +225,7 @@ return(
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                              {getDate(row.createdAt)}  {/* Display only the date part */}
+                                              {formatAlgeriaDate(row.createdAt)}
                                               </Typography>
                                             </Box>
                                           </TableCell>

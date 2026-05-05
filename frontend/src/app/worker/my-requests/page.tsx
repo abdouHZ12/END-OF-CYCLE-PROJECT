@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDate , formatAlgeriaDateTime  , formatAlgeriaTime } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
@@ -215,19 +215,29 @@ export default function Page() {
         }
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         const documentsArray = Object.values(res);
-        if (documentsArray.length === 0) {
+        
+        // Filter documents from last 30 days
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const filteredByDate = documentsArray.filter(doc => {
+          const docDate = new Date(doc.createdAt);
+          return docDate >= thirtyDaysAgo;
+        });
+        
+        if (filteredByDate.length === 0) {
           setEmpty(true);
         } else {
           if(status == "")  
-          setRows(documentsArray);
+          setRows(filteredByDate);
           else if(status == "PENDING") {
-          setRows(documentsArray.filter(doc => doc.status === "PENDING"));  
+          setRows(filteredByDate.filter(doc => doc.status === "PENDING"));  
           }
           else if(status == "APPROVED") {
-            setRows(documentsArray.filter(doc => doc.status === "APPROVED"));  
+            setRows(filteredByDate.filter(doc => doc.status === "APPROVED"));  
           }
           else if(status == "REJECTED") {
-            setRows(documentsArray.filter(doc => doc.status === "REJECTED"));  
+            setRows(filteredByDate.filter(doc => doc.status === "REJECTED"));  
           }
         }
       }catch (err:unknown) {
@@ -275,7 +285,7 @@ export default function Page() {
                 marginBottom: "20px",
               }}
             >
-              Consultez et gérez vos demandes de documents administratifs
+              Consultez et gérez vos demandes de documents administratifs des 30 derniers jours.
             </p>
             <Box
               sx={{
@@ -287,9 +297,9 @@ export default function Page() {
               }}
             >
               <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
-                <FilterAltOutlinedIcon sx={{ color: "rgba(255,255,255,0.65)" }} />
+                <FilterAltOutlinedIcon sx={{ color: " darkorange" }} />
                 <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800 }}>
-                  Filter
+                  Filtre 
                 </Typography>
                 <Typography sx={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>
                   Affinez la liste par statut et tri
@@ -341,9 +351,9 @@ export default function Page() {
                       <MenuItem value="">
                         <Typography sx={{ color: "rgba(255,255,255,0.85)" }}>All Status</Typography>
                       </MenuItem>
-                      <MenuItem value="PENDING">Pending</MenuItem>
-                      <MenuItem value="APPROVED">Approved</MenuItem>
-                      <MenuItem value="REJECTED">Rejected</MenuItem>
+                      <MenuItem value="PENDING">En attente</MenuItem>
+                      <MenuItem value="APPROVED">Approuvé</MenuItem>
+                      <MenuItem value="REJECTED">Rejeté</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -357,7 +367,7 @@ export default function Page() {
                         "&.Mui-focused": { color: "#fbbf24" },
                       }}
                     >
-                      Sort By
+                      Trie par
                     </InputLabel>
 
                     <Select
@@ -389,8 +399,8 @@ export default function Page() {
                         },
                       }}
                     >
-                      <MenuItem value="Recent">Recent → Oldest</MenuItem>
-                      <MenuItem value="oldest">Oldest → Recent</MenuItem>
+                      <MenuItem value="Recent">Nouveaux → Anciens</MenuItem>
+                      <MenuItem value="oldest">Anciens → Nouveaux</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -414,7 +424,7 @@ export default function Page() {
                                     }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                         <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
-                                            No documents found
+                                            Il ya aucun document trouve
                                         </Typography>
                                     </Box>
                                  </Box>   ) 
@@ -434,7 +444,7 @@ export default function Page() {
                                       <TableRow>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Type</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Submission Date</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Date de soumission</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Actions</TableCell>
                                       </TableRow>
@@ -452,8 +462,8 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+ row.exitSlip.returnTime.substring(11,16) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDate(row.exitSlip.exitTime)+" "+" -> "+ formatAlgeriaTime(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDate(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
@@ -462,7 +472,7 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
+                                              {formatAlgeriaDate(row.createdAt)}  {/* Display only the date part */}
                                               </Typography>
                                             </Box>
                                           </TableCell>
@@ -488,10 +498,12 @@ export default function Page() {
                                               <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
                                                     <VisibilityOutlinedIcon />
                                                 </Avatar>
-
-                                                <Avatar onClick={() => {handleDelete(row.id)}} sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
+                                              {row.status === "PENDING" ? (
+                                                  <Avatar onClick={() => {handleDelete(row.id)}} sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
                                                     <CancelOutlinedIcon sx={{ color: "#f44336" }} />
                                                 </Avatar>
+                                              ): null}
+
                                             </Box>
                                           </TableCell>
 
@@ -503,234 +515,234 @@ export default function Page() {
             </Box>
 
 
-            <Dialog
-              open={editOpen}
-              onClose={closeEdit}
-              fullWidth
-              maxWidth="sm"
-              slotProps={{
-                paper: {
-                  sx: {
-                    backgroundColor: "#1a2942",
-                    color: "#fff",
-                    borderRadius: 3,
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    overflow: "hidden",
-                    boxShadow: "0px 18px 45px rgba(0, 0, 0, 0.45)",
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      height: "4px",
-                      backgroundColor: "#ffa500",
-                    },
-                  },
-                },
-              }}
-            >
-              <DialogTitle
-                sx={{
-                  fontWeight: 900,
-                  py: 2,
-                  backgroundColor: "#10223A",
-                  borderBottom: "1px solid rgba(255,255,255,0.08)",
-                }}
-              >
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <Box sx={{ width: 9, height: 9, borderRadius: "50%", backgroundColor: "#ffa500" }} />
-                  <Box>
-                    <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>Modify request</Typography>
-                  </Box>
-                </Stack>
-              </DialogTitle>
-              <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
-              <DialogContent sx={{ pt: 2 }}>
-                {editingDoc?.type === "EXIT_SLIP" ? (
-                  <Stack spacing={2} sx={{ mt: 1 }}>
-                    <TextField
-                      label="Leave time"
-                      type="datetime-local"
-                      value={editExitTime}
-                      onChange={(e) => setEditExitTime(e.target.value)}
-                      slotProps={{ inputLabel: { shrink: true } }}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                    <TextField
-                      label="Return time"
-                      type="datetime-local"
-                      value={editReturnTime}
-                      onChange={(e) => setEditReturnTime(e.target.value)}
-                      slotProps={{ inputLabel: { shrink: true } }}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                    <TextField
-                      label="Gate"
-                      value={editGate}
-                      onChange={(e) => setEditGate(e.target.value)}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                  </Stack>
-                ) : null}
+                                <Dialog
+                                  open={editOpen}
+                                  onClose={closeEdit}
+                                  fullWidth
+                                  maxWidth="sm"
+                                  slotProps={{
+                                    paper: {
+                                      sx: {
+                                        backgroundColor: "#1a2942",
+                                        color: "#fff",
+                                        borderRadius: 3,
+                                        border: "1px solid rgba(255,255,255,0.08)",
+                                        overflow: "hidden",
+                                        boxShadow: "0px 18px 45px rgba(0, 0, 0, 0.45)",
+                                        "&:before": {
+                                          content: '""',
+                                          display: "block",
+                                          height: "4px",
+                                          backgroundColor: "#ffa500",
+                                        },
+                                      },
+                                    },
+                                  }}
+                                >
+                                  <DialogTitle
+                                    sx={{
+                                      fontWeight: 900,
+                                      py: 2,
+                                      backgroundColor: "#10223A",
+                                      borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                    }}
+                                  >
+                                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                                      <Box sx={{ width: 9, height: 9, borderRadius: "50%", backgroundColor: "#ffa500" }} />
+                                      <Box>
+                                        <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>Modify request</Typography>
+                                      </Box>
+                                    </Stack>
+                                  </DialogTitle>
+                                  <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+                                  <DialogContent sx={{ pt: 2 }}>
+                                    {editingDoc?.type === "EXIT_SLIP" ? (
+                                      <Stack spacing={2} sx={{ mt: 1 }}>
+                                        <TextField
+                                          label="Leave time"
+                                          type="datetime-local"
+                                          value={editExitTime}
+                                          onChange={(e) => setEditExitTime(e.target.value)}
+                                          slotProps={{ inputLabel: { shrink: true } }}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                        <TextField
+                                          label="Return time"
+                                          type="datetime-local"
+                                          value={editReturnTime}
+                                          onChange={(e) => setEditReturnTime(e.target.value)}
+                                          slotProps={{ inputLabel: { shrink: true } }}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                        <TextField
+                                          label="Gate"
+                                          value={editGate}
+                                          onChange={(e) => setEditGate(e.target.value)}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                      </Stack>
+                                    ) : null}
 
-                {editingDoc?.type === "ABSENCE_AUTH" ? (
-                  <Stack spacing={2} sx={{ mt: 1 }}>
-                    <TextField
-                      label="Start date"
-                      type="date"
-                      value={editStartDate}
-                      onChange={(e) => setEditStartDate(e.target.value)}
-                      slotProps={{ inputLabel: { shrink: true } }}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                    <TextField
-                      label="End date"
-                      type="date"
-                      value={editEndDate}
-                      onChange={(e) => setEditEndDate(e.target.value)}
-                      slotProps={{ inputLabel: { shrink: true } }}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                    <TextField
-                      label="Reason"
-                      value={editReason}
-                      onChange={(e) => setEditReason(e.target.value)}
-                      multiline
-                      minRows={3}
-                      fullWidth
-                      sx={{
-                        "& .MuiInputBase-input": { color: "#fff" },
-                        "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "rgba(255,255,255,0.12)",
-                          transition: "border-color 160ms ease, box-shadow 160ms ease",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#ffa500",
-                          boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                      }}
-                    />
-                  </Stack>
-                ) : null}
+                                    {editingDoc?.type === "ABSENCE_AUTH" ? (
+                                      <Stack spacing={2} sx={{ mt: 1 }}>
+                                        <TextField
+                                          label="Start date"
+                                          type="date"
+                                          value={editStartDate}
+                                          onChange={(e) => setEditStartDate(e.target.value)}
+                                          slotProps={{ inputLabel: { shrink: true } }}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                        <TextField
+                                          label="End date"
+                                          type="date"
+                                          value={editEndDate}
+                                          onChange={(e) => setEditEndDate(e.target.value)}
+                                          slotProps={{ inputLabel: { shrink: true } }}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                        <TextField
+                                          label="Reason"
+                                          value={editReason}
+                                          onChange={(e) => setEditReason(e.target.value)}
+                                          multiline
+                                          minRows={3}
+                                          fullWidth
+                                          sx={{
+                                            "& .MuiInputBase-input": { color: "#fff" },
+                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "rgba(255,255,255,0.12)",
+                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
+                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                              borderColor: "#ffa500",
+                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
+                                            },
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
+                                          }}
+                                        />
+                                      </Stack>
+                                    ) : null}
 
-              </DialogContent>
-              <DialogActions
-                sx={{
-                  px: 3,
-                  pb: 2,
-                  pt: 1.5,
-                  backgroundColor: "rgba(16, 34, 58, 0.65)",
-                  borderTop: "1px solid rgba(255,255,255,0.08)",
-                }}
-              >
-                <Button
-                  onClick={closeEdit}
-                  disabled={isSaving}
-                  sx={{
-                    color: "rgba(255,255,255,0.85)",
-                    border: "1px solid rgba(255,255,255,0.22)",
-                    borderRadius: 2,
-                    textTransform: "none",
-                    px: 2,
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.3)" },
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveEdit}
-                  disabled={isSaving}
-                  sx={{
-                    backgroundColor: "#ffa500",
-                    color: "#0a1628",
-                    fontWeight: 900,
-                    borderRadius: 2,
-                    textTransform: "none",
-                    px: 2,
-                    "&:hover": { backgroundColor: "#ffb733" },
-                  }}
-                >
-                  {isSaving ? "Saving..." : "Save changes"}
-                </Button>
-              </DialogActions>
-            </Dialog>
+                                  </DialogContent>
+                                  <DialogActions
+                                    sx={{
+                                      px: 3,
+                                      pb: 2,
+                                      pt: 1.5,
+                                      backgroundColor: "rgba(16, 34, 58, 0.65)",
+                                      borderTop: "1px solid rgba(255,255,255,0.08)",
+                                    }}
+                                  >
+                                    <Button
+                                      onClick={closeEdit}
+                                      disabled={isSaving}
+                                      sx={{
+                                        color: "rgba(255,255,255,0.85)",
+                                        border: "1px solid rgba(255,255,255,0.22)",
+                                        borderRadius: 2,
+                                        textTransform: "none",
+                                        px: 2,
+                                        "&:hover": { backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.3)" },
+                                      }}
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      onClick={handleSaveEdit}
+                                      disabled={isSaving}
+                                      sx={{
+                                        backgroundColor: "#ffa500",
+                                        color: "#0a1628",
+                                        fontWeight: 900,
+                                        borderRadius: 2,
+                                        textTransform: "none",
+                                        px: 2,
+                                        "&:hover": { backgroundColor: "#ffb733" },
+                                      }}
+                                    >
+                                      {isSaving ? "Saving..." : "Save changes"}
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
 
 
         </Box>

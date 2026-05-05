@@ -16,7 +16,8 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { apiGet , type ApiError} from "@/lib/api";
 import { useRouter } from "next/navigation";
 import {useMediaQuery , useTheme} from "@mui/material";
-import { getStoredEmployeeId } from "@/lib/authStorage";
+import { getStoredEmployeeId, getStoredPrimaryRole } from "@/lib/authStorage";
+import { formatAlgeriaDate } from "@/lib/datetime";
 
 import {
   Box,
@@ -99,6 +100,12 @@ export const gettype = (type: string) => {
 export default function Page() {
 
   const [Rows , setRows] = useState<Document[]>([]);
+  const [cardDeltas, setCardDeltas] = useState<{
+    totalDelta: number;
+    pendingDelta: number;
+    approvedRateDeltaPct: number;
+    rejectedRateDeltaPct: number;
+  }>({ totalDelta: 0, pendingDelta: 0, approvedRateDeltaPct: 0, rejectedRateDeltaPct: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [empty , setEmpty] = useState(false);
@@ -107,6 +114,17 @@ export default function Page() {
 const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm")) ;
   
 const router = useRouter() ;
+
+  function formatSigned(value: number): string {
+    if (value > 0) return `+${value}`;
+    return String(value);
+  }
+
+  function getSeeAllPath(): string {
+    const role = getStoredPrimaryRole();
+    if (role === "MANAGER") return "/manager/my-requests";
+    return "/worker/my-requests";
+  }
 
   useEffect(() => {
 
@@ -126,10 +144,53 @@ const router = useRouter() ;
         }
         const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
         const documentsArray = Object.values(res);
-        if (documentsArray.length === 0) {
+
+        const now = Date.now();
+        const tenDaysMs = 10 * 24 * 60 * 60 * 1000;
+        const currentStart = new Date(now - tenDaysMs);
+        const prevStart = new Date(now - 2 * tenDaysMs);
+
+        const withinLast10Days = documentsArray.filter((doc) => {
+          const created = new Date(doc.createdAt);
+          if (Number.isNaN(created.getTime())) return false;
+          return created.getTime() >= currentStart.getTime();
+        });
+
+        const withinPrev10Days = documentsArray.filter((doc) => {
+          const created = new Date(doc.createdAt);
+          if (Number.isNaN(created.getTime())) return false;
+          return created.getTime() >= prevStart.getTime() && created.getTime() < currentStart.getTime();
+        });
+
+        const currentPending = withinLast10Days.filter((d) => d.status === "PENDING").length;
+        const prevPending = withinPrev10Days.filter((d) => d.status === "PENDING").length;
+
+        const currentApproved = withinLast10Days.filter((d) => d.status === "APPROVED").length;
+        const currentRejected = withinLast10Days.filter((d) => d.status === "REJECTED").length;
+        const prevApproved = withinPrev10Days.filter((d) => d.status === "APPROVED").length;
+        const prevRejected = withinPrev10Days.filter((d) => d.status === "REJECTED").length;
+
+        const currentDecided = currentApproved + currentRejected;
+        const prevDecided = prevApproved + prevRejected;
+
+        const currentApprovedRate = currentDecided > 0 ? currentApproved / currentDecided : 0;
+        const prevApprovedRate = prevDecided > 0 ? prevApproved / prevDecided : 0;
+        const currentRejectedRate = currentDecided > 0 ? currentRejected / currentDecided : 0;
+        const prevRejectedRate = prevDecided > 0 ? prevRejected / prevDecided : 0;
+
+        setCardDeltas({
+          totalDelta: withinLast10Days.length - withinPrev10Days.length,
+          pendingDelta: currentPending - prevPending,
+          approvedRateDeltaPct: Math.round((currentApprovedRate - prevApprovedRate) * 100),
+          rejectedRateDeltaPct: Math.round((currentRejectedRate - prevRejectedRate) * 100),
+        });
+
+        if (withinLast10Days.length === 0) {
           setEmpty(true);
+          setRows([]);
         } else {
-          setRows(documentsArray);
+          setEmpty(false);
+          setRows(withinLast10Days);
         }
       }catch (err:unknown) {
         
@@ -158,7 +219,7 @@ const router = useRouter() ;
         >
           <Box sx={{width:"100% ", height: "100%"}}>
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Dashboard
+              Tableau de bord
             </h1>
             <p
               style={{
@@ -168,7 +229,7 @@ const router = useRouter() ;
                 marginBottom: "20px",
               }}
             >
-              Welcome to your dashboard
+              Bienvenue sur votre tableau de bord, où vous pouvez suivre vos demandes dans les 10 derniers jours.
             </p>
             <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
               <Grid size={{  sm : 4 , md: 6, lg: 4 }} >
@@ -199,7 +260,7 @@ const router = useRouter() ;
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
                         <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
                         <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          +3 ce mois
+                          {formatSigned(cardDeltas.totalDelta)} (10j)
                         </Typography>
                       </Stack>
                     </Box>
@@ -243,7 +304,7 @@ const router = useRouter() ;
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
                         <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
                         <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          + 2 new 
+                          {formatSigned(cardDeltas.pendingDelta)} new
                         </Typography>
                       </Stack>
                     </Box>
@@ -253,7 +314,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "PENDING").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
                 </Card>
@@ -289,7 +350,7 @@ const router = useRouter() ;
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
                         <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
                         <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          + 62%
+                          {formatSigned(cardDeltas.approvedRateDeltaPct)}%
                         </Typography>
                       </Stack>
                     </Box>
@@ -299,7 +360,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "APPROVED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Approved
+                    Approuve
                   </Typography>
                 </CardContent>
                 </Card>
@@ -333,7 +394,7 @@ const router = useRouter() ;
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
                         <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
                         <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          +12% 
+                          {formatSigned(cardDeltas.rejectedRateDeltaPct)}%
                         </Typography>
                       </Stack>
                     </Box>
@@ -343,7 +404,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "REJECTED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Rejected
+                    Rejete
                   </Typography>
                 </CardContent>
                 </Card>
@@ -366,10 +427,11 @@ const router = useRouter() ;
                   color: "#fff",
                 }}
               >
-                Recent Requests
+                Demandes récentes
               </Typography>
               <Button
                 variant="outlined"
+                onClick={() => router.push(getSeeAllPath())}
                 sx={{
                   backgroundColor: "transparent",
                   color: "lightgray",
@@ -384,7 +446,7 @@ const router = useRouter() ;
                   },
                 }}
               >
-                See all
+                Voir tout
               </Button>
             </Box>
             {isLoading ? (
@@ -403,7 +465,7 @@ const router = useRouter() ;
                                                   }}>
                       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                          <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
-                             No documents found
+                             No documents found in the last 10 days
                           </Typography>
                       </Box>
                   </Box>   ) 
@@ -452,7 +514,7 @@ const router = useRouter() ;
                         <Box sx={{ display: "flex", alignItems: "center"  }}>
                           <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
                           <Typography sx={{color:"lightgray"}}>
-                          {row.createdAt.split("T")[0]} {/* Display only the date part */}
+                          {formatAlgeriaDate(row.createdAt)}
                           </Typography>
                         </Box>
                       </TableCell>
@@ -494,7 +556,7 @@ const router = useRouter() ;
                       sx={{ color: "gray", marginRight: "8px" }}
                     />
                     <Typography sx={{ color: "lightgray" }}>
-                      {row.createdAt.split("T")[0]}
+                      {formatAlgeriaDate(row.createdAt)}
                     </Typography>
                   </Box>
                   <Box sx={{ mt: 2 }}>{getStatusChip(row.status)}</Box>
@@ -526,14 +588,14 @@ const router = useRouter() ;
                 }}
 
                 onClick={() => {
-                  router.push("/worker/fill-request");
+                  router.push(getSeeAllPath());
                 }}
               >
                 <Typography sx={{mr:"15px"}}>
                   +
                 </Typography>
                 <Typography>
-                  New request
+                  Nouvelle demande
 
                 </Typography>                
               </Button>

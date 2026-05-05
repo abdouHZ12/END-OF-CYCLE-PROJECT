@@ -177,7 +177,7 @@ export default function Page() {
         >
           <Box sx={{width:"100%"}}>
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              New Request
+              Nouvelle demande
             </h1>
             <p
               style={{
@@ -187,7 +187,7 @@ export default function Page() {
                 marginBottom: "20px",
               }}
             >
-              Submit a new authorization request
+              Soumettre une nouvelle demande d&apos;autorisation
             </p>
             <Grid
               container 
@@ -212,7 +212,7 @@ export default function Page() {
                     padding: "12px 16px",
                   }}
                 >
-                  Exit Slip
+                  Bon de sortie
                 </Button>
               </Grid>
               <Grid key={2} size={{ md: 6 , lg:8  }}>
@@ -240,7 +240,7 @@ export default function Page() {
                     padding: "12px 16px",
                   }}
                 >
-                  Absence Authorization{" "}
+                  Authorisation d&apos;absence
                 </Button>
               </Grid>
             </Grid>
@@ -279,7 +279,7 @@ export default function Page() {
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <label htmlFor="" style={{ color: "#fff" }}>
-                          Leave Hour *
+                          l&apos;heur de sortie *
                         </label>
                         <input
                           type="time"
@@ -297,7 +297,7 @@ export default function Page() {
                             paddingTop: "2px",
                             paddingBottom: "8px",
                             paddingLeft: "8px",
-                            paddingRight: "110px",
+                            paddingRight: "10px",
                             color: "#fff"
                             
                           }}
@@ -305,7 +305,7 @@ export default function Page() {
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>Return Hour *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>l&apos;heur de retour *</label>
                         <input
                           type="time"
                           step={60}
@@ -322,18 +322,18 @@ export default function Page() {
                             paddingTop: "2px",
                             paddingBottom: "8px",
                             paddingLeft: "8px",
-                            paddingRight: "110px",
+                            paddingRight: "10px",
                             color:"#fff"
                           }}
                         />
                       </Grid>
                     </Grid>
 
-                    <label htmlFor="" style={{ color: "#fff" }}>Gate  of leave *</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>La raison et la porte    *</label>
                     <br />
                     <input
                       type="text"
-                      placeholder="    Gate"
+                      placeholder="    Raison de la sortie et la porte de sortie (ex: rendez-vous médical, porte 3) "
                       required
                       value ={gate}
                       onChange={(e) => setGate(e.target.value)}
@@ -368,7 +368,7 @@ export default function Page() {
                             },
                           }}
                         >
-                          {isLoading ? "Submitting..." : "Submit Request"}
+                          {isLoading ? "Enregistrement..." : "Enregistrer la demande"}
                         </Button>
                       </Grid>
 
@@ -389,7 +389,7 @@ export default function Page() {
                             },
                           }}
                         >
-                          Cancel
+                          Annuler
                         </Button>
                       </Grid>
                     </Grid>
@@ -430,7 +430,7 @@ export default function Page() {
                     ) : null}
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>Start Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Date de debut *</label>
                         <input
                           type="date"
                           required
@@ -446,14 +446,14 @@ export default function Page() {
                             paddingTop: "2px",
                             paddingBottom: "8px",
                             paddingLeft: "8px",
-                            paddingRight: "190px",
+                            paddingRight: "10px",
                             color: "#fff"
                           }}
                         />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <label htmlFor="" style={{ color: "#fff" }}>End Date *</label>
+                        <label htmlFor="" style={{ color: "#fff" }}>Date de fin *</label>
                         <input
                           type="date"
                           required
@@ -469,18 +469,18 @@ export default function Page() {
                             paddingTop: "2px",
                             paddingBottom: "8px",
                             paddingLeft: "8px",
-                            paddingRight: "190px",
+                            paddingRight: "10px",
                             color:"#fff"
                           }}
                         />
                       </Grid>
                     </Grid>
 
-                    <label htmlFor="" style={{ color: "#fff" }}>Absence Reason *</label>
+                    <label htmlFor="" style={{ color: "#fff" }}>Raison de l&apos;absence *</label>
                     <br />
                     <input
                       type="text"
-                      placeholder="Please describe the Absence Reason"
+                      placeholder="Veuillez décrire la raison de votre absence"
                       required
                       value ={reason}
                       onChange={(e) => setReason(e.target.value)}
@@ -516,7 +516,7 @@ export default function Page() {
                             },
                           }}
                         >
-                          {isLoading ? "Submitting..." : "Submit Request"}
+                          {isLoading ? "Enregistrement..." : "Enregistrer la demande"}
                         </Button>
                       </Grid>
 
@@ -537,7 +537,7 @@ export default function Page() {
                             },
                           }}
                         >
-                          Cancel
+                          Annuler
                         </Button>
                       </Grid>
                     </Grid>

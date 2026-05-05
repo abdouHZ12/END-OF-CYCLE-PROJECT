@@ -23,6 +23,7 @@ import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { apiPost, apiPut } from "@/lib/api";
 import { getStoredEmployeeId } from "@/lib/authStorage";
+import { formatAlgeriaDate, formatAlgeriaDateTime } from "@/lib/datetime";
 import { useRouter } from "next/navigation";
 
 type Employee = { id: number; name: string; username: string };
@@ -107,22 +108,6 @@ export default function PendingPage() {
     }
   };
 
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("fr-DZ", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-
-  const formatDateTime = (iso: string) =>
-    new Date(iso).toLocaleString("fr-DZ", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
   const typeLabel: Record<string, string> = {
     EXIT_SLIP: "Bon de sortie",
     ABSENCE_AUTH: "Autorisation d'absence",
@@ -156,10 +141,10 @@ export default function PendingPage() {
       return (
         <Stack spacing={0.25}>
           <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
-            Sortie: {formatDateTime(doc.exitSlip.exitTime)}
+            Sortie: {formatAlgeriaDateTime(doc.exitSlip.exitTime)}
           </Typography>
           <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
-            Retour: {formatDateTime(doc.exitSlip.returnTime)}
+            Retour: {formatAlgeriaDateTime(doc.exitSlip.returnTime)}
           </Typography>
           <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
             Porte: {doc.exitSlip.gate}
@@ -172,7 +157,7 @@ export default function PendingPage() {
       return (
         <Stack spacing={0.25}>
           <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
-            Du {formatDate(doc.absenceAuth.startDate)} au {formatDate(doc.absenceAuth.endDate)}
+            Du {formatAlgeriaDate(doc.absenceAuth.startDate)} au {formatAlgeriaDate(doc.absenceAuth.endDate)}
           </Typography>
           <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
             Motif: {doc.absenceAuth.reason}
@@ -263,7 +248,7 @@ export default function PendingPage() {
                             {doc.employee.name}
                           </Typography>
                           <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.55)" }}>
-                            Soumis le {formatDate(doc.createdAt)}
+                            Soumis le {formatAlgeriaDateTime(doc.createdAt)}
                           </Typography>
                         </Box>
 

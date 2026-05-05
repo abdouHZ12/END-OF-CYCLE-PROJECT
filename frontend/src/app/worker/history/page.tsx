@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Stack from "@mui/material/Stack";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
@@ -15,8 +14,10 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { apiGet , type ApiError} from "@/lib/api";
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { getDate, getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDate, formatAlgeriaDateTime, formatAlgeriaTime, getDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { usePathname, useRouter } from "next/navigation";
 
 
 import {
@@ -46,7 +47,13 @@ export default function Page() {
   const [type , setType] = useState<string >("");
   const [Rows1 , setRows1] = useState<Document[]>([]);
   const [month , setMonth] = useState<string>(""); 
+
+  const pathname = usePathname();
+  const routePrefix = pathname?.startsWith("/manager") ? "/manager" : "/worker";
   
+  const router = useRouter();
+  
+
   const fetchDocuments = useCallback(async () => {
       setIsLoading(true);
       setError(null);
@@ -141,12 +148,6 @@ export default function Page() {
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          + 62%
-                        </Typography>
-                      </Stack>
                     </Box>
                   </Stack>
 
@@ -154,7 +155,7 @@ export default function Page() {
                     {Rows1.filter(row => row.status === "APPROVED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Approved
+                    Approuve
                   </Typography>
                 </CardContent>
                 </Card>
@@ -183,22 +184,13 @@ export default function Page() {
                     <Avatar sx={{ bgcolor: "rgba(255, 0, 0, 0.1)", width: 48, height: 48 }}>
                       <CancelOutlinedIcon sx={{ color: "#f44336" }} />
                     </Avatar>
-
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          +12% 
-                        </Typography>
-                      </Stack>
-                    </Box>
                   </Stack>
 
                   <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
                     {Rows1.filter(row => row.status === "REJECTED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Rejected
+                    Rejete
                   </Typography>
                 </CardContent>
                 </Card>
@@ -227,22 +219,13 @@ export default function Page() {
                     <Avatar sx={{ bgcolor: "rgba(255, 165, 0, 0.1)", width: 48, height: 48 }}>
                       <AccessTimeIcon sx={{ color: "#ffa500" }} />
                     </Avatar>
-
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          + 2 new 
-                        </Typography>
-                      </Stack>
-                    </Box>
                   </Stack>
 
                   <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
                     {Rows1.filter(row => row.status === "PENDING").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
                 </Card>
@@ -258,10 +241,10 @@ export default function Page() {
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
                   <FilterAltOutlinedIcon sx={{ color: "rgba(255,255,255,0.65)" }} />
                   <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800 }}>
-                    Filter
+                    Filtre
                   </Typography>
                   <Typography sx={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>
-                    Affinez la liste par type, année et mois
+                    Affichez la liste par type, année et mois
                   </Typography>
                 </Stack>
                 <Grid container spacing={{ sm :3 ,md: 2, lg: 3 }} columns={{ sm : 8 , md:12, lg: 12 }}>
@@ -276,7 +259,7 @@ export default function Page() {
                             "&.Mui-focused": { color: "#ffa500" },
                           }}
                         >
-                          Sort By Type
+                          Trie par Type 
                         </InputLabel>
                         <Select
                           labelId="type-label"
@@ -331,7 +314,7 @@ export default function Page() {
                             "&.Mui-focused": { color: "#ffa500" },
                           }}
                         >
-                          Sort By Year
+                          Trie par Année
                         </InputLabel>
                         <Select
                           labelId="year-label"
@@ -368,7 +351,7 @@ export default function Page() {
                             },
                           }}
                         >
-                          <MenuItem value="">All Years</MenuItem>
+                          <MenuItem value="">Toutes les années</MenuItem>
                           <MenuItem value="2026">2026</MenuItem>
                           <MenuItem value="2025">2025</MenuItem>
                           <MenuItem value="2024">2024</MenuItem>
@@ -387,7 +370,7 @@ export default function Page() {
                             "&.Mui-focused": { color: "#ffa500" },
                           }}
                         >
-                          Sort By Month
+                          Trie par Mois
                         </InputLabel>
                         <Select
                           labelId="month-label"
@@ -424,17 +407,17 @@ export default function Page() {
                             },
                           }}
                         >
-                          <MenuItem value="">All months</MenuItem>
-                          <MenuItem value="1">January</MenuItem>
-                          <MenuItem value="2">February</MenuItem>
-                          <MenuItem value="3">March</MenuItem>
-                          <MenuItem value="4">April</MenuItem>
-                          <MenuItem value="5">May</MenuItem>
-                          <MenuItem value="6">June</MenuItem>
-                          <MenuItem value="7">July</MenuItem>
-                          <MenuItem value="8">August</MenuItem>
-                          <MenuItem value="9">September</MenuItem>
-                          <MenuItem value="10">October</MenuItem>
+                          <MenuItem value="">Tous les mois</MenuItem>
+                          <MenuItem value="1">Janvier</MenuItem>
+                          <MenuItem value="2">Février</MenuItem>
+                          <MenuItem value="3">Mars</MenuItem>
+                          <MenuItem value="4">Avril</MenuItem>
+                          <MenuItem value="5">Mai</MenuItem>
+                          <MenuItem value="6">Juin</MenuItem>
+                          <MenuItem value="7">Juillet</MenuItem>
+                          <MenuItem value="8">Août</MenuItem>
+                          <MenuItem value="9">Septembre</MenuItem>
+                          <MenuItem value="10">Octobre</MenuItem>
                           <MenuItem value="11">November</MenuItem>
                           <MenuItem value="12">December</MenuItem>
                         </Select>
@@ -486,6 +469,7 @@ export default function Page() {
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Made By</TableCell>
                                         <TableCell sx={{ color: "lightgray" , border:"none" }}>Decision Date</TableCell>
+                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Detail</TableCell>
 
                                       </TableRow>
                                     </TableHead>
@@ -502,8 +486,8 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+row.exitSlip.returnTime.substring(11,16) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+formatAlgeriaTime(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDateTime(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDateTime(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
@@ -512,7 +496,7 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
+                                              {formatAlgeriaDateTime(row.createdAt)}
                                               </Typography>
                                             </Box>
                                           </TableCell>
@@ -524,7 +508,17 @@ export default function Page() {
 
 
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
-                                            <Typography>{getDate(row.authIssuedAt) || "N/A"}</Typography>
+                                            <Typography>{formatAlgeriaDate(row.authIssuedAt) || "N/A"}</Typography>
+                                          </TableCell>
+
+                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                            <Box sx={{ display: "flex", alignItems: "center"  }}>
+                                              <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
+                                                    <VisibilityOutlinedIcon />
+                                                </Avatar>
+
+
+                                            </Box>
                                           </TableCell>
 
                                         </TableRow>

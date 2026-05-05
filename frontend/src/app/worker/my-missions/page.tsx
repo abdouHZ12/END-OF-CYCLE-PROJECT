@@ -15,7 +15,7 @@ import {
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { apiGet, type ApiError } from "@/lib/api";
 import { getStatusChip } from "@/features/documents/ui";
-import { getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDateTime } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type MissionOrder = {
@@ -190,7 +190,7 @@ export default function MyMissionsPage() {
 
                       <TableCell sx={{ border: "none" }}>
                         <Typography sx={{ color: "lightgray" }}>
-                          {getFullDate(mission.createdAt)}
+                          {formatAlgeriaDateTime(mission.createdAt)}
                         </Typography>
                       </TableCell>
 
