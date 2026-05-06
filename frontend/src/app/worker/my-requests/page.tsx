@@ -462,7 +462,7 @@ export default function Page() {
                                           <TableCell sx={{ color: "#fff" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                               <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDate(row.exitSlip.exitTime)+" "+" -> "+ formatAlgeriaTime(row.exitSlip.returnTime) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+ formatAlgeriaTime(row.exitSlip.returnTime) : 
                                                  row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDate(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
