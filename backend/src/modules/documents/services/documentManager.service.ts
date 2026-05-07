@@ -9,6 +9,7 @@ async function getManagerStructureId(managerId: number): Promise<number> {
   });
 
   if (!manager) throw httpError(404, 'Manager not found');
+  if (!manager.structureId) throw httpError(400, 'Manager structure not found');
   return manager.structureId;
 }
 
@@ -43,6 +44,7 @@ export const ReadEmployeesHistoryForManager = async (data: any) => {
     where: {
       structureId,
       id: { not: managerId },
+      roles: { some: { role: { type: 'WORKER' } } },
     },
     select: {
       id: true,

@@ -1,7 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
+  --naftal-bg: #12213a;
+  --naftal-surface-0: #10223a;
+  --naftal-surface-1: #1a2742;
+  --naftal-surface-2: #1a2942;
+  --naftal-surface-2-hover: #1a2540;
+  --naftal-surface-3: #20314e;
+  --naftal-border: #243652;
+  --naftal-border-subtle: rgba(255, 255, 255, 0.12);
+  --naftal-text-primary: #ffffff;
+  --naftal-text-secondary: #c9d1e1;
+  --naftal-text-muted: #9aa3b2;
+  --naftal-brand: #ffa500;
+  --naftal-brand-strong: #ff9800;
+  --naftal-brand-hover: #ffb733;
+  --naftal-brand-muted: rgba(255, 165, 0, 0.12);
+  --naftal-brand-muted-strong: rgba(255, 165, 0, 0.18);
+  --naftal-brand-ghost: rgba(255, 165, 0, 0.06);
+  --naftal-brand-border: rgba(255, 165, 0, 0.3);
+  --naftal-brand-border-strong: rgba(255, 165, 0, 0.45);
+  --naftal-on-brand: #0a1628;
+  --naftal-info: #7fb3ff;
+  --naftal-info-muted: rgba(127, 179, 255, 0.1);
+  --naftal-success: #4caf50;
+  --naftal-success-muted: rgba(76, 175, 80, 0.1);
+  --naftal-warning: #f97316;
+  --naftal-warning-muted: rgba(249, 115, 22, 0.12);
+  --naftal-error: #f44336;
+  --naftal-error-muted: rgba(244, 67, 54, 0.1);
+  --naftal-hover: rgba(255, 255, 255, 0.05);
+  --naftal-shadow-strong: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  --naftal-shadow-soft: 0px 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="dark"] {
+  --naftal-bg: #12213a;
+  --naftal-surface-0: #10223a;
+  --naftal-surface-1: #1a2742;
+  --naftal-surface-2: #1a2942;
+  --naftal-surface-2-hover: #1a2540;
+  --naftal-surface-3: #20314e;
+  --naftal-border: #243652;
+  --naftal-border-subtle: rgba(255, 255, 255, 0.12);
+  --naftal-text-primary: #ffffff;
+  --naftal-text-secondary: #c9d1e1;
+  --naftal-text-muted: #9aa3b2;
+  --naftal-brand: #ffa500;
+  --naftal-brand-strong: #ff9800;
+  --naftal-brand-hover: #ffb733;
+  --naftal-brand-muted: rgba(255, 165, 0, 0.12);
+  --naftal-brand-muted-strong: rgba(255, 165, 0, 0.18);
+  --naftal-brand-ghost: rgba(255, 165, 0, 0.06);
+  --naftal-brand-border: rgba(255, 165, 0, 0.3);
+  --naftal-brand-border-strong: rgba(255, 165, 0, 0.45);
+  --naftal-on-brand: #0a1628;
+  --naftal-info: #7fb3ff;
+  --naftal-info-muted: rgba(127, 179, 255, 0.1);
+  --naftal-success: #4caf50;
+  --naftal-success-muted: rgba(76, 175, 80, 0.1);
+  --naftal-warning: #f97316;
+  --naftal-warning-muted: rgba(249, 115, 22, 0.12);
+  --naftal-error: #f44336;
+  --naftal-error-muted: rgba(244, 67, 54, 0.1);
+  --naftal-hover: rgba(255, 255, 255, 0.05);
+  --naftal-shadow-strong: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  --naftal-shadow-soft: 0px 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="light"] {
+  --naftal-bg: #f7f9fc;
+  --naftal-surface-0: #ffffff;
+  --naftal-surface-1: #ffffff;
+  --naftal-surface-2: #ffffff;
+  --naftal-surface-2-hover: #f1f5f9;
+  --naftal-surface-3: #ffffff;
+  --naftal-border: #e5e7eb;
+  --naftal-border-subtle: #e5e7eb;
+  --naftal-text-primary: #1f2937;
+  --naftal-text-secondary: #4b5563;
+  --naftal-text-muted: #6b7280;
+  --naftal-brand: #f5a000;
+  --naftal-brand-strong: #d98d00;
+  --naftal-brand-hover: #ffb21a;
+  --naftal-brand-muted: rgba(245, 160, 0, 0.14);
+  --naftal-brand-muted-strong: rgba(245, 160, 0, 0.22);
+  --naftal-brand-ghost: rgba(245, 160, 0, 0.08);
+  --naftal-brand-border: rgba(245, 160, 0, 0.35);
+  --naftal-brand-border-strong: rgba(245, 160, 0, 0.55);
+  --naftal-on-brand: #0b3c5d;
+  --naftal-info: #0b3c5d;
+  --naftal-info-muted: rgba(11, 60, 93, 0.1);
+  --naftal-success: #16a34a;
+  --naftal-success-muted: rgba(22, 163, 74, 0.1);
+  --naftal-warning: #f97316;
+  --naftal-warning-muted: rgba(249, 115, 22, 0.12);
+  --naftal-error: #dc2626;
+  --naftal-error-muted: rgba(220, 38, 38, 0.1);
+  --naftal-hover: rgba(31, 41, 55, 0.05);
+  --naftal-shadow-strong: 0px 10px 22px rgba(15, 23, 42, 0.1);
+  --naftal-shadow-soft: 0px 6px 18px rgba(15, 23, 42, 0.08);
 }
 
 html,

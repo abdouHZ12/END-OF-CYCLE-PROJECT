@@ -38,7 +38,6 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import EngineeringOutlinedIcon from "@mui/icons-material/EngineeringOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { apiGet, apiPost, apiPut, apiDelete, type ApiError } from "@/lib/api";
 import { useMediaQuery, useTheme } from "@mui/material";
 
@@ -68,17 +67,17 @@ const roleTypeLabel: Record<string, string> = {
 };
 
 const roleTypeColor: Record<string, string> = {
-  ADMIN: "#f44336",
-  MANAGER: "#ffa500",
-  WORKER: "#4caf50",
-  AGENT: "#7fb3ff",
+  ADMIN: "var(--naftal-error)",
+  MANAGER: "var(--naftal-brand)",
+  WORKER: "var(--naftal-success)",
+  AGENT: "var(--naftal-info)",
 };
 
 const roleTypeBg: Record<string, string> = {
-  ADMIN: "rgba(244,67,54,0.1)",
-  MANAGER: "rgba(255,165,0,0.1)",
-  WORKER: "rgba(76,175,80,0.1)",
-  AGENT: "rgba(127,179,255,0.1)",
+  ADMIN: "var(--naftal-error-muted)",
+  MANAGER: "var(--naftal-brand-muted)",
+  WORKER: "var(--naftal-success-muted)",
+  AGENT: "var(--naftal-info-muted)",
 };
 
 const roleTypeIcon: Record<string, React.ReactNode> = {
@@ -92,25 +91,25 @@ const roleTypeIcon: Record<string, React.ReactNode> = {
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
-    color: "#fff",
+    color: "var(--naftal-text-primary)",
     borderRadius: "10px",
-    "& fieldset": { borderColor: "rgba(255,255,255,0.15)" },
-    "&:hover fieldset": { borderColor: "#ffa500" },
-    "&.Mui-focused fieldset": { borderColor: "#ffa500" },
+    "& fieldset": { borderColor: "var(--naftal-border-subtle)" },
+    "&:hover fieldset": { borderColor: "var(--naftal-brand)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--naftal-brand)" },
   },
-  "& .MuiInputLabel-root": { color: "lightgray" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-  "& .MuiSvgIcon-root": { color: "lightgray" },
+  "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+  "& .MuiSvgIcon-root": { color: "var(--naftal-text-secondary)" },
 };
 
 const menuSx = {
-  "& .MuiPaper-root": { bgcolor: "#1a2942", color: "#fff" },
-  "& .MuiMenuItem-root:hover": { bgcolor: "rgba(255,165,0,0.1)" },
+  "& .MuiPaper-root": { bgcolor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)" },
+  "& .MuiMenuItem-root:hover": { bgcolor: "var(--naftal-brand-muted)" },
 };
 
 const dialogPaperSx = {
-  backgroundColor: "#1a2942",
-  color: "#fff",
+  backgroundColor: "var(--naftal-surface-2)",
+  color: "var(--naftal-text-primary)",
   borderRadius: 2,
   minWidth: 400,
 };
@@ -133,15 +132,15 @@ function StatCard({
   return (
     <Card
       sx={{
-        bgcolor: "#1a2942",
-        color: "#fff",
+        bgcolor: "var(--naftal-surface-2)",
+        color: "var(--naftal-text-primary)",
         borderRadius: 2,
         boxShadow: "none",
         p: 2,
         width: "100%",
         border: "0.1px solid transparent",
         transition: "transform 0.1s",
-        "&:hover": { borderColor: "darkorange", transform: "scale(1.01)" },
+        "&:hover": { borderColor: "var(--naftal-brand-strong)", transform: "scale(1.01)" },
       }}
     >
       <CardContent sx={{ p: 2 }}>
@@ -150,10 +149,10 @@ function StatCard({
             <Box sx={{ color: iconColor, display: "flex" }}>{icon}</Box>
           </Avatar>
         </Stack>
-        <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+        <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
           {value}
         </Typography>
-        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+        <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
           {label}
         </Typography>
       </CardContent>
@@ -170,9 +169,9 @@ function RoleChip({ type }: { type: string }) {
       size="small"
       sx={{
         backgroundColor: roleTypeBg[type] ?? "transparent",
-        color: roleTypeColor[type] ?? "#fff",
+        color: roleTypeColor[type] ?? "var(--naftal-text-primary)",
         fontWeight: "bold",
-        border: `1px solid ${roleTypeColor[type] ?? "#fff"}`,
+        border: `1px solid ${roleTypeColor[type] ?? "var(--naftal-text-primary)"}`,
         borderRadius: "8px",
       }}
     />
@@ -333,7 +332,7 @@ export default function RolesPage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         padding: "36px",
         overflowY: "auto",
         overflowX: "hidden",
@@ -342,11 +341,12 @@ export default function RolesPage() {
       {/* Header */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
             Roles
           </Typography>
-          <Typography sx={{ color: "gray", fontWeight: "bold", mt: 0.5 }}>
-            {roles.length} role{roles.length !== 1 ? "s" : ""} definees
+
+          <Typography sx={{ color: "var(--naftal-text-muted)", fontWeight: "bold", mt: 0.5 }}>
+            {roles.length} role{roles.length !== 1 ? "s" : ""} defined
           </Typography>
         </Box>
         <Button
@@ -354,12 +354,12 @@ export default function RolesPage() {
           startIcon={<AddOutlinedIcon />}
           onClick={openCreate}
           sx={{
-            backgroundColor: "orange",
+            backgroundColor: "var(--naftal-brand)",
             color: "black",
             textTransform: "none",
             borderRadius: 2,
             fontWeight: "bold",
-            "&:hover": { backgroundColor: "darkorange" },
+            "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
           }}
         >
           Nouveau Role
@@ -371,7 +371,7 @@ export default function RolesPage() {
         <Alert
           severity="error"
           onClose={() => setError(null)}
-          sx={{ mb: 3, mt: 2, bgcolor: "rgba(244,67,54,0.1)", color: "#f44336", "& .MuiAlert-icon": { color: "#f44336" } }}
+          sx={{ mb: 3, mt: 2, bgcolor: "var(--naftal-error-muted)", color: "var(--naftal-error)", "& .MuiAlert-icon": { color: "var(--naftal-error)" } }}
         >
           {error}
         </Alert>
@@ -380,7 +380,7 @@ export default function RolesPage() {
         <Alert
           severity="success"
           onClose={() => setSuccess(null)}
-          sx={{ mb: 3, mt: 2, bgcolor: "rgba(76,175,80,0.1)", color: "#4caf50", "& .MuiAlert-icon": { color: "#4caf50" } }}
+          sx={{ mb: 3, mt: 2, bgcolor: "var(--naftal-success-muted)", color: "var(--naftal-success)", "& .MuiAlert-icon": { color: "var(--naftal-success)" } }}
         >
           {success}
         </Alert>
@@ -403,44 +403,45 @@ export default function RolesPage() {
 
       {/* Table */}
       {isLoading ? (
-        <Typography sx={{ color: "gray", textAlign: "center", mt: 6 }}>
+        <Typography sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 6 }}>
           Loading roles...
         </Typography>
       ) : roles.length === 0 ? (
-        <Box sx={{ backgroundColor: "#1a2942", borderRadius: "12px", p: 4, textAlign: "center" }}>
-          <Typography sx={{ color: "lightgray", fontSize: "20px" }}>No roles defined yet</Typography>
+        <Box sx={{ backgroundColor: "var(--naftal-surface-2)", borderRadius: "12px", p: 4, textAlign: "center" }}>
+          <Typography sx={{ color: "var(--naftal-text-secondary)", fontSize: "20px" }}>No roles defined yet</Typography>
         </Box>
       ) : !isSmallScreen ? (
         <TableContainer
           component={Paper}
           sx={{
-            backgroundColor: "#1a2942",
+            backgroundColor: "var(--naftal-surface-2)",
             borderRadius: 2,
-            boxShadow: "0px 4px 10px rgba(0,0,0,0.5)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "var(--naftal-shadow-strong)",
+            border: "1px solid var(--naftal-border-subtle)",
           }}
         >
           <Table>
-            <TableHead sx={{ bgcolor: "#10223A" }}>
+            <TableHead sx={{ bgcolor: "var(--naftal-surface-0)" }}>
               <TableRow>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>ID</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Nom</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Type</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Permissions</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Employees</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }} align="right">Actions</TableCell>
+
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>ID</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Name</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Type</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Permissions</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Employees</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }} align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {roles.map((role) => (
                 <TableRow
                   key={role.id}
-                  sx={{ boxShadow: "0px 0px 1px 0px gray", "&:hover": { backgroundColor: "#1a2540" } }}
+                  sx={{ boxShadow: "0px 0px 1px 0px var(--naftal-border)", "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" } }}
                 >
-                  <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-brand)", fontWeight: "bold", border: "none" }}>
                     {role.id}
                   </TableCell>
-                  <TableCell sx={{ color: "#fff", fontWeight: "bold", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", border: "none" }}>
                     {role.name}
                   </TableCell>
                   <TableCell sx={{ border: "none" }}>
@@ -448,7 +449,7 @@ export default function RolesPage() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: "lightgray",
+                      color: "var(--naftal-text-secondary)",
                       border: "none",
                       maxWidth: 260,
                       overflow: "hidden",
@@ -463,9 +464,9 @@ export default function RolesPage() {
                       label={`${empCount(role.id)} employee${empCount(role.id) !== 1 ? "s" : ""}`}
                       size="small"
                       sx={{
-                        backgroundColor: "rgba(127,179,255,0.1)",
-                        color: "#7fb3ff",
-                        border: "1px solid #7fb3ff",
+                        backgroundColor: "var(--naftal-info-muted)",
+                        color: "var(--naftal-info)",
+                        border: "1px solid var(--naftal-info)",
                         borderRadius: "8px",
                         fontWeight: "bold",
                       }}
@@ -475,14 +476,14 @@ export default function RolesPage() {
                     <IconButton
                       size="small"
                       onClick={() => openEdit(role)}
-                      sx={{ color: "#7fb3ff", "&:hover": { color: "orange" } }}
+                      sx={{ color: "var(--naftal-info)", "&:hover": { color: "var(--naftal-brand)" } }}
                     >
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => setDeleteTarget(role)}
-                      sx={{ color: "#f44336", "&:hover": { color: "#ff7961" }, ml: 1 }}
+                      sx={{ color: "var(--naftal-error)", "&:hover": { color: "var(--naftal-error)" }, ml: 1 }}
                     >
                       <DeleteOutlinedIcon fontSize="small" />
                     </IconButton>
@@ -497,24 +498,24 @@ export default function RolesPage() {
         <Grid container spacing={2}>
           {roles.map((role) => (
             <Grid size={{ xs: 12 }} key={role.id}>
-              <Card sx={{ backgroundColor: "#1a2942", color: "#fff", borderRadius: 2, p: 2 }}>
+              <Card sx={{ backgroundColor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)", borderRadius: 2, p: 2 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <Box>
-                    <Typography sx={{ fontWeight: "bold", color: "#ffa500" }}>#{role.id}</Typography>
+                    <Typography sx={{ fontWeight: "bold", color: "var(--naftal-brand)" }}>#{role.id}</Typography>
                     <Typography variant="body1" sx={{ fontWeight: "bold" }}>{role.name}</Typography>
                     <Box sx={{ mt: 0.5 }}><RoleChip type={role.type} /></Box>
-                    <Typography variant="body2" sx={{ color: "lightgray", mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)", mt: 0.5 }}>
                       {role.permissions || "No permissions set"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#7fb3ff", mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-info)", mt: 0.5 }}>
                       {empCount(role.id)} employee{empCount(role.id) !== 1 ? "s" : ""}
                     </Typography>
                   </Box>
                   <Box>
-                    <IconButton size="small" onClick={() => openEdit(role)} sx={{ color: "#7fb3ff" }}>
+                    <IconButton size="small" onClick={() => openEdit(role)} sx={{ color: "var(--naftal-info)" }}>
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" onClick={() => setDeleteTarget(role)} sx={{ color: "#f44336" }}>
+                    <IconButton size="small" onClick={() => setDeleteTarget(role)} sx={{ color: "var(--naftal-error)" }}>
                       <DeleteOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Box>
@@ -531,7 +532,7 @@ export default function RolesPage() {
         onClose={() => setCreateOpen(false)}
         slotProps={{ paper: { sx: dialogPaperSx } }}
       >
-        <DialogTitle sx={{ color: "#fff" }}>New Role</DialogTitle>
+        <DialogTitle sx={{ color: "var(--naftal-text-primary)" }}>New Role</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 1 }}>
           <TextField
             fullWidth
@@ -568,20 +569,21 @@ export default function RolesPage() {
             placeholder="e.g. read:documents, approve:requests"
             sx={fieldSx}
             helperText="Optional — describe what this role can do"
-            slotProps={{ formHelperText: { sx: { color: "gray" } } }}
+            slotProps={{ formHelperText: { sx: { color: "var(--naftal-text-muted)" } } }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={() => setCreateOpen(false)} sx={{ color: "lightgray", textTransform: "none" }}>
-            Annuler
+
+          <Button onClick={() => setCreateOpen(false)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
+            Cancel
           </Button>
           <Button
             variant="contained"
             onClick={handleCreate}
             disabled={isCreating}
             sx={{
-              backgroundColor: "orange", color: "black", textTransform: "none",
-              fontWeight: "bold", "&:hover": { backgroundColor: "darkorange" },
+              backgroundColor: "var(--naftal-brand)", color: "black", textTransform: "none",
+              fontWeight: "bold", "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
             }}
           >
             {isCreating ? "Creating..." : "Create Role"}
@@ -595,13 +597,14 @@ export default function RolesPage() {
         onClose={() => setEditTarget(null)}
         slotProps={{ paper: { sx: dialogPaperSx } }}
       >
-        <DialogTitle sx={{ color: "#fff" }}>Edit Role</DialogTitle>
+        <DialogTitle sx={{ color: "var(--naftal-text-primary)" }}>Edit Role</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 1 }}>
           {editTarget && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-              <Typography sx={{ color: "lightgray", fontSize: 14 }}>Type:</Typography>
+              <Typography sx={{ color: "var(--naftal-text-secondary)", fontSize: 14 }}>Type:</Typography>
               <RoleChip type={editTarget.type} />
-              <Typography sx={{ color: "gray", fontSize: 12 }}>(ne peux pas t&apos;etre modifie)</Typography>
+
+              <Typography sx={{ color: "var(--naftal-text-muted)", fontSize: 12 }}>(cannot be changed)</Typography>
             </Box>
           )}
           <TextField
@@ -618,12 +621,13 @@ export default function RolesPage() {
             onChange={(e) => setEditPerms(e.target.value)}
             placeholder="e.g. read:documents, approve:requests"
             sx={fieldSx}
-            helperText="Optional — decrivez ce que ce role peut faire"
-            slotProps={{ formHelperText: { sx: { color: "gray" } } }}
+
+            helperText="Optional — describe what this role can do"
+            slotProps={{ formHelperText: { sx: { color: "var(--naftal-text-muted)" } } }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={() => setEditTarget(null)} sx={{ color: "lightgray", textTransform: "none" }}>
+          <Button onClick={() => setEditTarget(null)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
             Cancel
           </Button>
           <Button
@@ -631,8 +635,8 @@ export default function RolesPage() {
             onClick={handleSave}
             disabled={isSaving}
             sx={{
-              backgroundColor: "orange", color: "black", textTransform: "none",
-              fontWeight: "bold", "&:hover": { backgroundColor: "darkorange" },
+              backgroundColor: "var(--naftal-brand)", color: "black", textTransform: "none",
+              fontWeight: "bold", "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
             }}
           >
             {isSaving ? "Saving..." : "Enregistrer les Modifications"}
@@ -646,15 +650,15 @@ export default function RolesPage() {
         onClose={() => setDeleteTarget(null)}
         slotProps={{ paper: { sx: dialogPaperSx } }}
       >
-        <DialogTitle sx={{ color: "#fff" }}>Delete Role</DialogTitle>
+        <DialogTitle sx={{ color: "var(--naftal-text-primary)" }}>Delete Role</DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: "lightgray" }}>
+          <DialogContentText sx={{ color: "var(--naftal-text-secondary)" }}>
             Are you sure you want to delete the role{" "}
-            <strong style={{ color: "#fff" }}>{deleteTarget?.name}</strong>?
+            <strong style={{ color: "var(--naftal-text-primary)" }}>{deleteTarget?.name}</strong>?
             {deleteTarget && empCount(deleteTarget.id) > 0 && (
               <Box
                 component="span"
-                sx={{ display: "block", mt: 1, color: "#f44336" }}
+                sx={{ display: "block", mt: 1, color: "var(--naftal-error)" }}
               >
                 ⚠ This role is currently assigned to {empCount(deleteTarget.id)} employee(s) and cannot be deleted.
               </Box>
@@ -662,7 +666,7 @@ export default function RolesPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setDeleteTarget(null)} sx={{ color: "lightgray", textTransform: "none" }}>
+          <Button onClick={() => setDeleteTarget(null)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
             Cancel
           </Button>
           <Button
@@ -670,9 +674,9 @@ export default function RolesPage() {
             disabled={isDeleting || (!!deleteTarget && empCount(deleteTarget.id) > 0)}
             variant="contained"
             sx={{
-              backgroundColor: "#f44336", textTransform: "none",
-              "&:hover": { backgroundColor: "#d32f2f" },
-              "&.Mui-disabled": { backgroundColor: "rgba(244,67,54,0.3)", color: "rgba(255,255,255,0.3)" },
+              backgroundColor: "var(--naftal-error)", textTransform: "none",
+              "&:hover": { backgroundColor: "var(--naftal-error)" },
+              "&.Mui-disabled": { backgroundColor: "var(--naftal-error-muted)", color: "var(--naftal-text-muted)" },
             }}
           >
             {isDeleting ? "Deleting..." : "Delete"}

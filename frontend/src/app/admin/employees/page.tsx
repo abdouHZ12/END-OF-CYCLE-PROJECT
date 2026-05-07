@@ -53,11 +53,11 @@ type Structure = { id: number; name: string };
 
 const menuSx = {
   "& .MuiPaper-root": {
-    bgcolor: "#1a2942",
-    color: "#fff",
+    bgcolor: "var(--naftal-surface-2)",
+    color: "var(--naftal-text-primary)",
   },
   "& .MuiMenuItem-root:hover": {
-    bgcolor: "rgba(255,165,0,0.1)",
+    bgcolor: "var(--naftal-brand-muted)",
   },
 };
 
@@ -135,15 +135,15 @@ export default function EmployeesPage() {
 
   const filterSx = {
     "& .MuiOutlinedInput-root": {
-      color: "#fff",
+      color: "var(--naftal-text-primary)",
       borderRadius: "10px",
-      "& fieldset": { borderColor: "rgba(255,255,255,0.15)" },
-      "&:hover fieldset": { borderColor: "#ffa500" },
-      "&.Mui-focused fieldset": { borderColor: "#ffa500" },
+      "& fieldset": { borderColor: "var(--naftal-border-subtle)" },
+      "&:hover fieldset": { borderColor: "var(--naftal-brand)" },
+      "&.Mui-focused fieldset": { borderColor: "var(--naftal-brand)" },
     },
-    "& .MuiInputLabel-root": { color: "lightgray" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-    "& .MuiSvgIcon-root": { color: "lightgray" },
+    "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+    "& .MuiSvgIcon-root": { color: "var(--naftal-text-secondary)" },
   };
 
   return (
@@ -151,7 +151,7 @@ export default function EmployeesPage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         padding: "36px",
         overflowY: "auto",
         overflowX: "hidden",
@@ -162,23 +162,24 @@ export default function EmployeesPage() {
         sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
             Employees
           </Typography>
-          <Typography sx={{ color: "gray", fontWeight: "bold", mt: 0.5 }}>
-            {filtered.length} employee{filtered.length !== 1 ? "s" : ""} trouvés
+
+          <Typography sx={{ color: "var(--naftal-text-muted)", fontWeight: "bold", mt: 0.5 }}>
+            {filtered.length} employee{filtered.length !== 1 ? "s" : ""} found
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<PersonAddOutlinedIcon />}
           sx={{
-            backgroundColor: "orange",
+            backgroundColor: "var(--naftal-brand)",
             color: "black",
             textTransform: "none",
             borderRadius: 2,
             fontWeight: "bold",
-            "&:hover": { backgroundColor: "darkorange" },
+            "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
           }}
           onClick={() => router.push("/admin/employees/register")}
         >
@@ -199,7 +200,7 @@ export default function EmployeesPage() {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "lightgray" }} />
+                    <SearchIcon sx={{ color: "var(--naftal-text-secondary)" }} />
                   </InputAdornment>
                 ),
               },
@@ -246,7 +247,7 @@ export default function EmployeesPage() {
       </Grid>
 
       {isLoading ? (
-        <Typography sx={{ color: "gray", textAlign: "center", mt: 6 }}>
+        <Typography sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 6 }}>
           Loading employees...
         </Typography>
       ) : error ? (
@@ -255,9 +256,9 @@ export default function EmployeesPage() {
         </Typography>
       ) : filtered.length === 0 ? (
         <Box
-          sx={{ backgroundColor: "#1a2942", borderRadius: "12px", p: 4, textAlign: "center" }}
+          sx={{ backgroundColor: "var(--naftal-surface-2)", borderRadius: "12px", p: 4, textAlign: "center" }}
         >
-          <Typography sx={{ color: "lightgray", fontSize: "20px" }}>
+          <Typography sx={{ color: "var(--naftal-text-secondary)", fontSize: "20px" }}>
             No employees match your filters
           </Typography>
         </Box>
@@ -265,22 +266,23 @@ export default function EmployeesPage() {
         <TableContainer
           component={Paper}
           sx={{
-            backgroundColor: "#1a2942",
+            backgroundColor: "var(--naftal-surface-2)",
             borderRadius: 2,
-            boxShadow: "0px 4px 10px rgba(0,0,0,0.5)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "var(--naftal-shadow-strong)",
+            border: "1px solid var(--naftal-border-subtle)",
           }}
         >
           <Table>
-            <TableHead sx={{ bgcolor: "#10223A" }}>
+            <TableHead sx={{ bgcolor: "var(--naftal-surface-0)" }}>
               <TableRow>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>ID</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Nom</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Username</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Email</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Department</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }}>Roles</TableCell>
-                <TableCell sx={{ color: "lightgray", border: "none" }} align="right">
+
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>ID</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Name</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Username</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Email</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Department</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Roles</TableCell>
+                <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }} align="right">
                   Actions
                 </TableCell>
               </TableRow>
@@ -290,21 +292,21 @@ export default function EmployeesPage() {
                 <TableRow
                   key={emp.id}
                   sx={{
-                    boxShadow: "0px 0px 1px 0px gray",
-                    "&:hover": { backgroundColor: "#1a2540" },
+                    boxShadow: "0px 0px 1px 0px var(--naftal-border)",
+                    "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" },
                   }}
                 >
-                  <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-brand)", fontWeight: "bold", border: "none" }}>
                     {emp.id}
                   </TableCell>
-                  <TableCell sx={{ color: "#fff", border: "none" }}>{emp.name}</TableCell>
-                  <TableCell sx={{ color: "lightgray", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>{emp.name}</TableCell>
+                  <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>
                     @{emp.username}
                   </TableCell>
-                  <TableCell sx={{ color: "lightgray", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>
                     {emp.email}
                   </TableCell>
-                  <TableCell sx={{ color: "lightgray", border: "none" }}>
+                  <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>
                     {emp.structure?.name ?? "—"}
                   </TableCell>
                   <TableCell sx={{ border: "none" }}>
@@ -316,14 +318,14 @@ export default function EmployeesPage() {
                     <IconButton
                       size="small"
                       onClick={() => router.push(`/admin/employees/${emp.id}`)}
-                      sx={{ color: "#7fb3ff", "&:hover": { color: "orange" } }}
+                      sx={{ color: "var(--naftal-info)", "&:hover": { color: "var(--naftal-brand)" } }}
                     >
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => setDeleteTarget(emp)}
-                      sx={{ color: "#f44336", "&:hover": { color: "#ff7961" }, ml: 1 }}
+                      sx={{ color: "var(--naftal-error)", "&:hover": { color: "var(--naftal-error)" }, ml: 1 }}
                     >
                       <DeleteOutlinedIcon fontSize="small" />
                     </IconButton>
@@ -338,7 +340,7 @@ export default function EmployeesPage() {
           {filtered.map((emp) => (
             <Grid size={{ xs: 12 }} key={emp.id}>
               <Card
-                sx={{ backgroundColor: "#1a2942", color: "#fff", borderRadius: 2, p: 2 }}
+                sx={{ backgroundColor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)", borderRadius: 2, p: 2 }}
               >
                 <Box
                   sx={{
@@ -348,19 +350,19 @@ export default function EmployeesPage() {
                   }}
                 >
                   <Box>
-                    <Typography sx={{ fontWeight: "bold", color: "#ffa500" }}>
+                    <Typography sx={{ fontWeight: "bold", color: "var(--naftal-brand)" }}>
                       #{emp.id}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: "bold" }}>
                       {emp.name}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "lightgray" }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                       @{emp.username}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "lightgray" }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                       {emp.email}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "lightgray", mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)", mt: 0.5 }}>
                       {emp.structure?.name ?? "—"}
                     </Typography>
                   </Box>
@@ -368,14 +370,14 @@ export default function EmployeesPage() {
                     <IconButton
                       size="small"
                       onClick={() => router.push(`/admin/employees/${emp.id}`)}
-                      sx={{ color: "#7fb3ff" }}
+                      sx={{ color: "var(--naftal-info)" }}
                     >
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => setDeleteTarget(emp)}
-                      sx={{ color: "#f44336" }}
+                      sx={{ color: "var(--naftal-error)" }}
                     >
                       <DeleteOutlinedIcon fontSize="small" />
                     </IconButton>
@@ -397,22 +399,22 @@ export default function EmployeesPage() {
         onClose={() => setDeleteTarget(null)}
         slotProps={{
           paper: {
-            sx: { backgroundColor: "#1a2942", color: "#fff", borderRadius: 2 },
+            sx: { backgroundColor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)", borderRadius: 2 },
           },
         }}
       >
-        <DialogTitle sx={{ color: "#fff" }}>Delete Employee</DialogTitle>
+        <DialogTitle sx={{ color: "var(--naftal-text-primary)" }}>Delete Employee</DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: "lightgray" }}>
+          <DialogContentText sx={{ color: "var(--naftal-text-secondary)" }}>
             Are you sure you want to delete{" "}
-            <strong style={{ color: "#fff" }}>{deleteTarget?.name}</strong> (@
+            <strong style={{ color: "var(--naftal-text-primary)" }}>{deleteTarget?.name}</strong> (@
             {deleteTarget?.username})? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button
             onClick={() => setDeleteTarget(null)}
-            sx={{ color: "lightgray", textTransform: "none" }}
+            sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
             Cancel
           </Button>
@@ -421,9 +423,9 @@ export default function EmployeesPage() {
             disabled={isDeleting}
             variant="contained"
             sx={{
-              backgroundColor: "#f44336",
+              backgroundColor: "var(--naftal-error)",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#d32f2f" },
+              "&:hover": { backgroundColor: "var(--naftal-error)" },
             }}
           >
             {isDeleting ? "Deleting..." : "Delete"}

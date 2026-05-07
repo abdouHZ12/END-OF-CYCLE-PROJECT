@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import Button from "@mui/material/Button";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
@@ -9,7 +8,8 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
-import Dashboard from "@/components/Dashboard";
+import DashboardShell from "@/components/naftal/DashboardShell";
+import Button from "@/components/naftal/Button";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -27,22 +27,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Roles",             href: "/admin/roles",              icon: <ManageAccountsOutlinedIcon /> },
     { label: "Departments",       href: "/admin/departments",        icon: <AccountTreeOutlinedIcon /> },
   ];
-  
-  const toggleSx = {
-    justifyContent: "space-between",
-    px: 1.5, py: 1,
-    backgroundColor: "rgba(255,165,0,0.12)",
-    color: "#ffa500",
-    borderColor: "rgba(255,165,0,0.3)",
-    borderRadius: "10px",
-    textTransform: "none",
-    fontSize: "13px",
-    fontWeight: 700,
-    "&:hover": {
-      backgroundColor: "rgba(255,165,0,0.18)",
-      borderColor: "rgba(255,165,0,0.45)",
-    },
-  } as const;
 
   // admin + manager → go to /manager (manager layout handles /worker from there)
   // admin + worker only → go to /worker
@@ -52,17 +36,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const toggleButton = showToggle ? (
     <Button
       onClick={() => router.push(toggleHref)}
-      fullWidth variant="outlined"
-      startIcon={<AdminPanelSettingsOutlinedIcon fontSize="small" />}
-      endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
-      sx={toggleSx}
+      variant="outline"
+      className="w-full justify-between border-(--naftal-brand-border) bg-(--naftal-brand-ghost) text-(--naftal-info) hover:bg-(--naftal-brand-muted)"
     >
-      {isManager ? "Espace manager" : isWorker ? "Espace employé" : ""}
+      <span className="inline-flex items-center gap-2">
+        <AdminPanelSettingsOutlinedIcon fontSize="small" />
+        {isManager ? "Espace manager" : isWorker ? "Espace employé" : ""}
+      </span>
+      <SwapHorizOutlinedIcon fontSize="small" />
     </Button>
   ) : undefined;
 
   return (
-    <Dashboard
+    <DashboardShell
       items={items}
       viewToggle={toggleButton}
       user={currentUser ? {
@@ -72,6 +58,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       } : undefined}
     >
       {children}
-    </Dashboard>
+    </DashboardShell>
   );
 }

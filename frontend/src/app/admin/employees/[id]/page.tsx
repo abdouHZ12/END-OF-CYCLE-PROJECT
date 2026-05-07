@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -48,20 +48,20 @@ type Employee = {
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
-    color: "#fff",
+    color: "var(--naftal-text-primary)",
     borderRadius: "10px",
-    "& fieldset": { borderColor: "rgba(255,255,255,0.15)" },
-    "&:hover fieldset": { borderColor: "#ffa500" },
-    "&.Mui-focused fieldset": { borderColor: "#ffa500" },
+    "& fieldset": { borderColor: "var(--naftal-border-subtle)" },
+    "&:hover fieldset": { borderColor: "var(--naftal-brand)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--naftal-brand)" },
   },
-  "& .MuiInputLabel-root": { color: "lightgray" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-  "& .MuiSvgIcon-root": { color: "lightgray" },
+  "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+  "& .MuiSvgIcon-root": { color: "var(--naftal-text-secondary)" },
 };
 
 const menuSx = {
-  "& .MuiPaper-root": { bgcolor: "#1a2942", color: "#fff" },
-  "& .MuiMenuItem-root:hover": { bgcolor: "rgba(255,165,0,0.1)" },
+  "& .MuiPaper-root": { bgcolor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)" },
+  "& .MuiMenuItem-root:hover": { bgcolor: "var(--naftal-brand-muted)" },
 };
 
 const roleTypeLabel: Record<string, string> = {
@@ -72,10 +72,10 @@ const roleTypeLabel: Record<string, string> = {
 };
 
 const roleTypeColor: Record<string, string> = {
-  ADMIN: "#f44336",
-  MANAGER: "#ffa500",
-  WORKER: "#4caf50",
-  AGENT: "#7fb3ff",
+  ADMIN: "var(--naftal-error)",
+  MANAGER: "var(--naftal-brand)",
+  WORKER: "var(--naftal-success)",
+  AGENT: "var(--naftal-info)",
 };
 
 
@@ -101,11 +101,7 @@ export default function ManageEmployeePage() {
   const [structureId, setStructureId] = useState("");
   const [selectedRoleIds, setSelectedRoleIds] = useState<number[]>([]);
 
-  useEffect(() => {
-    fetchAll();
-  }, [id]);
-
-  async function fetchAll() {
+  const fetchAll = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -128,7 +124,11 @@ export default function ManageEmployeePage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [id]);
+
+  useEffect(() => {
+    void fetchAll();
+  }, [fetchAll]);
 
   async function handleSaveInfo() {
     setError(null);
@@ -199,8 +199,8 @@ export default function ManageEmployeePage() {
 
   if (isLoading) {
     return (
-      <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "rgb(10, 22, 40)", padding: "36px" }}>
-        <Typography sx={{ color: "gray", textAlign: "center", mt: 6 }}>
+      <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "var(--naftal-bg)", padding: "36px" }}>
+        <Typography sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 6 }}>
           Loading employee...
         </Typography>
       </Box>
@@ -209,7 +209,7 @@ export default function ManageEmployeePage() {
 
   if (!employee) {
     return (
-      <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "rgb(10, 22, 40)", padding: "36px" }}>
+      <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "var(--naftal-bg)", padding: "36px" }}>
         <Typography sx={{ color: "red", textAlign: "center", mt: 6 }}>
           Employee not found.
         </Typography>
@@ -222,7 +222,7 @@ export default function ManageEmployeePage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         padding: "36px",
         overflowY: "auto",
         overflowX: "hidden",
@@ -233,7 +233,7 @@ export default function ManageEmployeePage() {
         <Button
           startIcon={<ArrowBackOutlinedIcon />}
           onClick={() => router.push("/admin/employees")}
-          sx={{ color: "lightgray", textTransform: "none", "&:hover": { color: "#ffa500" } }}
+          sx={{ color: "var(--naftal-text-secondary)", textTransform: "none", "&:hover": { color: "var(--naftal-brand)" } }}
         >
           Back
         </Button>
@@ -246,8 +246,8 @@ export default function ManageEmployeePage() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Avatar
             sx={{
-              bgcolor: "darkorange",
-              color: "#222",
+              bgcolor: "var(--naftal-brand-strong)",
+              color: "var(--naftal-on-brand)",
               width: 56,
               height: 56,
               fontSize: "20px",
@@ -257,20 +257,20 @@ export default function ManageEmployeePage() {
             {initials}
           </Avatar>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
+            <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
               {employee.name}
             </Typography>
-            <Typography sx={{ color: "gray" }}>@{employee.username}</Typography>
+            <Typography sx={{ color: "var(--naftal-text-muted)" }}>@{employee.username}</Typography>
           </Box>
         </Box>
 
         <IconButton
           onClick={() => setDeleteDialog(true)}
           sx={{
-            color: "#f44336",
-            border: "1px solid rgba(244,67,54,0.3)",
+            color: "var(--naftal-error)",
+            border: "1px solid var(--naftal-error-muted)",
             borderRadius: 2,
-            "&:hover": { bgcolor: "rgba(244,67,54,0.1)" },
+            "&:hover": { bgcolor: "var(--naftal-error-muted)" },
           }}
         >
           <DeleteOutlinedIcon />
@@ -283,9 +283,9 @@ export default function ManageEmployeePage() {
           onClose={() => setError(null)}
           sx={{
             mb: 3,
-            bgcolor: "rgba(244,67,54,0.1)",
-            color: "#f44336",
-            "& .MuiAlert-icon": { color: "#f44336" },
+            bgcolor: "var(--naftal-error-muted)",
+            color: "var(--naftal-error)",
+            "& .MuiAlert-icon": { color: "var(--naftal-error)" },
           }}
         >
           {error}
@@ -297,9 +297,9 @@ export default function ManageEmployeePage() {
           onClose={() => setSuccess(null)}
           sx={{
             mb: 3,
-            bgcolor: "rgba(76,175,80,0.1)",
-            color: "#4caf50",
-            "& .MuiAlert-icon": { color: "#4caf50" },
+            bgcolor: "var(--naftal-success-muted)",
+            color: "var(--naftal-success)",
+            "& .MuiAlert-icon": { color: "var(--naftal-success)" },
           }}
         >
           {success}
@@ -308,13 +308,13 @@ export default function ManageEmployeePage() {
 
       <Box
         sx={{
-          backgroundColor: "#1a2942",
+          backgroundColor: "var(--naftal-surface-2)",
           borderRadius: 3,
           p: 4,
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid var(--naftal-border-subtle)",
         }}
       >
-        <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
+        <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
           Personal Information
         </Typography>
 
@@ -349,10 +349,11 @@ export default function ManageEmployeePage() {
           </Grid>
         </Grid>
 
-        <Divider sx={{ bgcolor: "rgba(255,255,255,0.08)", my: 4 }} />
+        <Divider sx={{ bgcolor: "var(--naftal-border-subtle)", my: 4 }} />
 
-        <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
-          Assignement
+
+        <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
+          Assignment
         </Typography>
 
         <Grid container spacing={3}>
@@ -366,7 +367,7 @@ export default function ManageEmployeePage() {
                 MenuProps={{ sx: menuSx }}
               >
                 <MenuItem value="">
-                  <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>
+                  <Typography sx={{ color: "var(--naftal-text-secondary)", fontStyle: "italic" }}>
                     No department
                   </Typography>
                 </MenuItem>
@@ -402,8 +403,8 @@ export default function ManageEmployeePage() {
                           size="small"
                           sx={{
                             backgroundColor: role ? `${roleTypeColor[role.type]}22` : "transparent",
-                            color: role ? roleTypeColor[role.type] : "#fff",
-                            border: `1px solid ${role ? roleTypeColor[role.type] : "#fff"}`,
+                            color: role ? roleTypeColor[role.type] : "var(--naftal-text-primary)",
+                            border: `1px solid ${role ? roleTypeColor[role.type] : "var(--naftal-text-primary)"}`,
                             borderRadius: "8px",
                             fontWeight: "bold",
                           }}
@@ -417,11 +418,11 @@ export default function ManageEmployeePage() {
                   <MenuItem key={role.id} value={role.id}>
                     <Checkbox
                       checked={selectedRoleIds.includes(role.id)}
-                      sx={{ color: "lightgray", "&.Mui-checked": { color: "#ffa500" } }}
+                      sx={{ color: "var(--naftal-text-secondary)", "&.Mui-checked": { color: "var(--naftal-brand)" } }}
                     />
                     <ListItemText
                       primary={roleTypeLabel[role.type] ?? role.name}
-                      sx={{ color: roleTypeColor[role.type] ?? "#fff" }}
+                      sx={{ color: roleTypeColor[role.type] ?? "var(--naftal-text-primary)" }}
                     />
                   </MenuItem>
                 ))}
@@ -433,7 +434,7 @@ export default function ManageEmployeePage() {
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}>
           <Button
             onClick={() => router.push("/admin/employees")}
-            sx={{ color: "lightgray", textTransform: "none" }}
+            sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
             Cancel
           </Button>
@@ -443,13 +444,13 @@ export default function ManageEmployeePage() {
             onClick={handleSaveInfo}
             disabled={isSaving}
             sx={{
-              backgroundColor: "orange",
+              backgroundColor: "var(--naftal-brand)",
               color: "black",
               textTransform: "none",
               fontWeight: "bold",
               borderRadius: 2,
               px: 4,
-              "&:hover": { backgroundColor: "darkorange" },
+              "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
             }}
           >
             {isSaving ? "Saving..." : "Enregistrer les Modifications"}
@@ -462,22 +463,22 @@ export default function ManageEmployeePage() {
         onClose={() => setDeleteDialog(false)}
         slotProps={{
           paper: {
-            sx: { backgroundColor: "#1a2942", color: "#fff", borderRadius: 2 },
+            sx: { backgroundColor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)", borderRadius: 2 },
           },
         }}
       >
-        <DialogTitle sx={{ color: "#fff" }}>Delete Employee</DialogTitle>
+        <DialogTitle sx={{ color: "var(--naftal-text-primary)" }}>Delete Employee</DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: "lightgray" }}>
+          <DialogContentText sx={{ color: "var(--naftal-text-secondary)" }}>
             Are you sure you want to delete{" "}
-            <strong style={{ color: "#fff" }}>{employee.name}</strong> (@{employee.username})?
+            <strong style={{ color: "var(--naftal-text-primary)" }}>{employee.name}</strong> (@{employee.username})?
             This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button
             onClick={() => setDeleteDialog(false)}
-            sx={{ color: "lightgray", textTransform: "none" }}
+            sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
             Annuler
           </Button>
@@ -486,9 +487,9 @@ export default function ManageEmployeePage() {
             disabled={isDeleting}
             variant="contained"
             sx={{
-              backgroundColor: "#f44336",
+              backgroundColor: "var(--naftal-error)",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#d32f2f" },
+              "&:hover": { backgroundColor: "var(--naftal-error)" },
             }}
           >
             {isDeleting ? "Deleting..." : "Delete"}

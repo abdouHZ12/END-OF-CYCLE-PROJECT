@@ -30,7 +30,7 @@ type ScanResponse = {
     }
   }
 }
-function formatDateTime(value?: string) {
+function formatAlgeriaDateTime(value?: string) {
   if (!value) return "—";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value; // fallback if backend sends non-ISO
@@ -129,7 +129,7 @@ const scan = useCallback(async () => {
                             Leave time
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatDateTime(leaveSession?.leaveTime)}
+                            {formatAlgeriaDateTime(leaveSession?.leaveTime)}
                           </Typography>
                         </Stack>
 
@@ -140,7 +140,7 @@ const scan = useCallback(async () => {
                             Return time
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatDateTime(leaveSession?.returnTime)}
+                            {formatAlgeriaDateTime(leaveSession?.returnTime)}
                           </Typography>
                         </Stack>
 

@@ -140,13 +140,14 @@ export default function PendingPage() {
     if (doc.exitSlip) {
       return (
         <Stack spacing={0.25}>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Sortie: {formatAlgeriaDateTime(doc.exitSlip.exitTime)}
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Retour: {formatAlgeriaDateTime(doc.exitSlip.returnTime)}
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Porte: {doc.exitSlip.gate}
           </Typography>
         </Stack>
@@ -156,10 +157,11 @@ export default function PendingPage() {
     if (doc.absenceAuth) {
       return (
         <Stack spacing={0.25}>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Du {formatAlgeriaDate(doc.absenceAuth.startDate)} au {formatAlgeriaDate(doc.absenceAuth.endDate)}
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Motif: {doc.absenceAuth.reason}
           </Typography>
         </Stack>
@@ -169,13 +171,13 @@ export default function PendingPage() {
     if (doc.missionOrder) {
       return (
         <Stack spacing={0.25}>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Destination: {doc.missionOrder.destination}
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Durée: {doc.missionOrder.duration} jours
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+          <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Objet: {doc.missionOrder.purpose}
           </Typography>
         </Stack>
@@ -183,14 +185,14 @@ export default function PendingPage() {
     }
 
     return (
-      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+      <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
         Aucun détail disponible.
       </Typography>
     );
   };
 
   return (
-    <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "rgb(10, 22, 40)", minHeight: "100vh", py: 4 }}>
+    <Box sx={{ flexGrow: 1, mt: "70px", backgroundColor: "var(--naftal-bg)", minHeight: "100vh", py: 4 }}>
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Box>
@@ -198,15 +200,15 @@ export default function PendingPage() {
               direction="row"
               sx={{ alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5 }}
             >
-              <Typography variant="h4" sx={{ fontWeight: 800, color: "#fff" }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: "var(--naftal-text-primary)" }}>
                 Demandes en attente
               </Typography>
               <Chip
                 label={`${documents.length} en attente`}
-                sx={{ backgroundColor: "rgba(255,165,0,0.15)", color: "#ffa500", fontWeight: 800 }}
+                sx={{ backgroundColor: "var(--naftal-brand-muted)", color: "var(--naftal-brand)", fontWeight: 800 }}
               />
             </Stack>
-            <Typography variant="body2" sx={{ mt: 1, color: "rgba(255,255,255,0.65)" }}>
+            <Typography variant="body2" sx={{ mt: 1, color: "var(--naftal-text-secondary)" }}>
               Approuver ou refuser les demandes de vos employés (commentaire optionnel).
             </Typography>
           </Box>
@@ -214,7 +216,7 @@ export default function PendingPage() {
           {error ? <Alert severity="error">{error}</Alert> : null}
 
           {loading ? (
-            <Stack direction="row" spacing={2} sx={{ alignItems: "center", color: "rgba(255,255,255,0.75)" }}>
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center", color: "var(--naftal-text-secondary)" }}>
               <CircularProgress size={20} />
               <Typography variant="body2">Chargement…</Typography>
             </Stack>
@@ -229,8 +231,8 @@ export default function PendingPage() {
                   variant="outlined"
                   sx={{
                     borderRadius: 3,
-                    backgroundColor: "#20314E",
-                    borderColor: "rgba(255,255,255,0.08)",
+                    backgroundColor: "var(--naftal-surface-3)",
+                    borderColor: "var(--naftal-border-subtle)",
                   }}
                 >
                   <CardContent>
@@ -241,25 +243,26 @@ export default function PendingPage() {
                         sx={{ justifyContent: "space-between", alignItems: "flex-start" }}
                       >
                         <Box>
-                          <Typography variant="overline" sx={{ color: "#ffa500", fontWeight: 800 }}>
+                          <Typography variant="overline" sx={{ color: "var(--naftal-brand)", fontWeight: 800 }}>
                             {typeLabel[doc.type] ?? doc.type}
                           </Typography>
-                          <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800, lineHeight: 1.2 }}>
+                          <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: 800, lineHeight: 1.2 }}>
                             {doc.employee.name}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.55)" }}>
-                            Soumis le {formatAlgeriaDateTime(doc.createdAt)}
+
+                          <Typography variant="caption" sx={{ color: "var(--naftal-text-muted)" }}>
+                            Soumis le {formatAlgeriaDate(doc.createdAt)}
                           </Typography>
                         </Box>
 
                         <Chip
                           size="small"
                           label="EN ATTENTE"
-                          sx={{ backgroundColor: "rgba(255,165,0,0.15)", color: "#ffa500", fontWeight: 800 }}
+                          sx={{ backgroundColor: "var(--naftal-brand-muted)", color: "var(--naftal-brand)", fontWeight: 800 }}
                         />
                       </Stack>
 
-                      <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+                      <Divider sx={{ borderColor: "var(--naftal-border-subtle)" }} />
 
                       {renderDetails(doc)}
                     </Stack>

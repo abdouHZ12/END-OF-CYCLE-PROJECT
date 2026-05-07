@@ -31,20 +31,20 @@ type Structure = { id: number; name: string };
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
-    color: "#fff",
+    color: "var(--naftal-text-primary)",
     borderRadius: "10px",
-    "& fieldset": { borderColor: "rgba(255,255,255,0.15)" },
-    "&:hover fieldset": { borderColor: "#ffa500" },
-    "&.Mui-focused fieldset": { borderColor: "#ffa500" },
+    "& fieldset": { borderColor: "var(--naftal-border-subtle)" },
+    "&:hover fieldset": { borderColor: "var(--naftal-brand)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--naftal-brand)" },
   },
-  "& .MuiInputLabel-root": { color: "lightgray" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-  "& .MuiSvgIcon-root": { color: "lightgray" },
+  "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+  "& .MuiSvgIcon-root": { color: "var(--naftal-text-secondary)" },
 };
 
 const menuSx = {
-  "& .MuiPaper-root": { bgcolor: "#1a2942", color: "#fff" },
-  "& .MuiMenuItem-root:hover": { bgcolor: "rgba(255,165,0,0.1)" },
+  "& .MuiPaper-root": { bgcolor: "var(--naftal-surface-2)", color: "var(--naftal-text-primary)" },
+  "& .MuiMenuItem-root:hover": { bgcolor: "var(--naftal-brand-muted)" },
 };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -129,10 +129,10 @@ export default function RegisterEmployeePage() {
   };
 
   const roleTypeColor: Record<string, string> = {
-    ADMIN: "#f44336",
-    MANAGER: "#ffa500",
-    WORKER: "#4caf50",
-    AGENT: "#7fb3ff",
+    ADMIN: "var(--naftal-error)",
+    MANAGER: "var(--naftal-brand)",
+    WORKER: "var(--naftal-success)",
+    AGENT: "var(--naftal-info)",
   };
 
   return (
@@ -140,7 +140,7 @@ export default function RegisterEmployeePage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         padding: "36px",
         overflowY: "auto",
         overflowX: "hidden",
@@ -151,17 +151,18 @@ export default function RegisterEmployeePage() {
         <Button
           startIcon={<ArrowBackOutlinedIcon />}
           onClick={() => router.push("/admin/employees")}
-          sx={{ color: "lightgray", textTransform: "none", "&:hover": { color: "#ffa500" } }}
+          sx={{ color: "var(--naftal-text-secondary)", textTransform: "none", "&:hover": { color: "var(--naftal-brand)" } }}
         >
           Back
         </Button>
       </Box>
 
-      <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
-        Enregistrer Employee
+
+      <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
+        Register Employee
       </Typography>
-      <Typography sx={{ color: "gray", fontWeight: "bold", mb: 4 }}>
-        Creer un nouveau compte employee
+      <Typography sx={{ color: "var(--naftal-text-muted)", fontWeight: "bold", mb: 4 }}>
+        Create a new employee account
       </Typography>
 
       {/* Alerts */}
@@ -169,8 +170,8 @@ export default function RegisterEmployeePage() {
         <Alert
           severity="error"
           onClose={() => setError(null)}
-          sx={{ mb: 3, bgcolor: "rgba(244,67,54,0.1)", color: "#f44336",
-            "& .MuiAlert-icon": { color: "#f44336" } }}
+          sx={{ mb: 3, bgcolor: "var(--naftal-error-muted)", color: "var(--naftal-error)",
+            "& .MuiAlert-icon": { color: "var(--naftal-error)" } }}
         >
           {error}
         </Alert>
@@ -179,13 +180,13 @@ export default function RegisterEmployeePage() {
         <Alert
           severity="success"
           onClose={() => setSuccess(false)}
-          sx={{ mb: 3, bgcolor: "rgba(76,175,80,0.1)", color: "#4caf50",
-            "& .MuiAlert-icon": { color: "#4caf50" } }}
+          sx={{ mb: 3, bgcolor: "var(--naftal-success-muted)", color: "var(--naftal-success)",
+            "& .MuiAlert-icon": { color: "var(--naftal-success)" } }}
         >
           Employee registered successfully!{" "}
           <Button
             size="small"
-            sx={{ color: "#4caf50", textTransform: "none", p: 0, ml: 1 }}
+            sx={{ color: "var(--naftal-success)", textTransform: "none", p: 0, ml: 1 }}
             onClick={() => router.push("/admin/employees")}
           >
             View all employees →
@@ -196,13 +197,13 @@ export default function RegisterEmployeePage() {
       {/* Form */}
       <Box
         sx={{
-          backgroundColor: "#1a2942",
+          backgroundColor: "var(--naftal-surface-2)",
           borderRadius: 3,
           p: 4,
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid var(--naftal-border-subtle)",
         }}
       >
-        <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
+        <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
           Personal Information
         </Typography>
 
@@ -252,7 +253,7 @@ export default function RegisterEmployeePage() {
               sx={fieldSx}
               helperText="Minimum 8 characters"
               slotProps={{
-                formHelperText: { sx: { color: "gray" } },
+                formHelperText: { sx: { color: "var(--naftal-text-muted)" } },
               }}
             />
           </Grid>
@@ -260,11 +261,12 @@ export default function RegisterEmployeePage() {
 
         {/* Divider */}
         <Box
-          sx={{ width: "100%", height: "1px", bgcolor: "rgba(255,255,255,0.08)", my: 4 }}
+          sx={{ width: "100%", height: "1px", bgcolor: "var(--naftal-border-subtle)", my: 4 }}
         />
 
-        <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
-          Assignement
+
+        <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
+          Assignment
         </Typography>
 
         <Grid container spacing={3}>
@@ -279,7 +281,7 @@ export default function RegisterEmployeePage() {
                   MenuProps={{ sx: menuSx }}
                 >
                   <MenuItem value="">
-                    <Typography sx={{ color: "lightgray", fontStyle: "italic" }}>
+                    <Typography sx={{ color: "var(--naftal-text-secondary)", fontStyle: "italic" }}>
                       No department
                     </Typography>
                   </MenuItem>
@@ -318,8 +320,8 @@ export default function RegisterEmployeePage() {
                             backgroundColor: role
                               ? `${roleTypeColor[role.type]}22`
                               : "transparent",
-                            color: role ? roleTypeColor[role.type] : "#fff",
-                            border: `1px solid ${role ? roleTypeColor[role.type] : "#fff"}`,
+                            color: role ? roleTypeColor[role.type] : "var(--naftal-text-primary)",
+                            border: `1px solid ${role ? roleTypeColor[role.type] : "var(--naftal-text-primary)"}`,
                             borderRadius: "8px",
                             fontWeight: "bold",
                           }}
@@ -334,13 +336,13 @@ export default function RegisterEmployeePage() {
                     <Checkbox
                       checked={selectedRoleIds.includes(role.id)}
                       sx={{
-                        color: "lightgray",
-                        "&.Mui-checked": { color: "#ffa500" },
+                        color: "var(--naftal-text-secondary)",
+                        "&.Mui-checked": { color: "var(--naftal-brand)" },
                       }}
                     />
                     <ListItemText
                       primary={roleTypeLabel[role.type] ?? role.name}
-                      sx={{ color: roleTypeColor[role.type] ?? "#fff" }}
+                      sx={{ color: roleTypeColor[role.type] ?? "var(--naftal-text-primary)" }}
                     />
                   </MenuItem>
                 ))}
@@ -353,7 +355,7 @@ export default function RegisterEmployeePage() {
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}>
           <Button
             onClick={() => router.push("/admin/employees")}
-            sx={{ color: "lightgray", textTransform: "none" }}
+            sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
             Annuler
           </Button>
@@ -363,13 +365,13 @@ export default function RegisterEmployeePage() {
             onClick={handleSubmit}
             disabled={isLoading}
             sx={{
-              backgroundColor: "orange",
-              color: "black",
+              backgroundColor: "var(--naftal-brand)",
+              color: "var(--naftal-on-brand)",
               textTransform: "none",
               fontWeight: "bold",
               borderRadius: 2,
               px: 4,
-              "&:hover": { backgroundColor: "darkorange" },
+              "&:hover": { backgroundColor: "var(--naftal-brand-strong)" },
             }}
           >
             {isLoading ? "Registering..." : "Enregistrer Employee"}

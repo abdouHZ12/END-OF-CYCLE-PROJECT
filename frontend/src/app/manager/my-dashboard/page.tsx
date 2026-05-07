@@ -55,11 +55,11 @@ export type DocumentResponse = {
 export const getStatusChip = (status: string) => {
   switch (status) {
     case "PENDING":
-      return <Chip label={"Pending"} sx={{ backgroundColor: "rgba(255, 165, 0, 0.1)", color: "orange" ,fontWeight: "bold", border: "1px solid #ffa500" , borderRadius: "8px" }} />;
+      return <Chip label={"Pending"} sx={{ backgroundColor: "var(--naftal-brand-muted)", color: "var(--naftal-brand)" ,fontWeight: "bold", border: "1px solid var(--naftal-brand)" , borderRadius: "8px" }} />;
     case "APPROVED":
-      return <Chip label={"Approved"} sx={{ backgroundColor: "rgba(0, 128, 0, 0.1)", color: "#4caf50"  , fontWeight: "bold", border: "1px solid #4caf50" , borderRadius: "8px" }} />;
+      return <Chip label={"Approved"} sx={{ backgroundColor: "var(--naftal-success-muted)", color: "var(--naftal-success)"  , fontWeight: "bold", border: "1px solid var(--naftal-success)" , borderRadius: "8px" }} />;
     case "REJECTED":
-      return <Chip label={"Rejected"} sx={{ backgroundColor: "rgba(255, 0, 0, 0.1)", color: "#f44336" , fontWeight: "bold", border: "1px solid #f44336" , borderRadius: "8px" }} />;
+      return <Chip label={"Rejected"} sx={{ backgroundColor: "var(--naftal-error-muted)", color: "var(--naftal-error)" , fontWeight: "bold", border: "1px solid var(--naftal-error)" , borderRadius: "8px" }} />;
     default:
       return <Chip label={status} />;
   }
@@ -131,7 +131,7 @@ const router = useRouter() ;
           sx={{
             flexGrow: 1,
             mt: "70px", // push below navbar
-            backgroundColor: "rgb(10, 22, 40)",
+            backgroundColor: "var(--naftal-bg)",
             display: "grid",
             gridTemplateRows: "1fr auto",
             padding: "36px",
@@ -140,13 +140,13 @@ const router = useRouter() ;
           }}
         >
           <Box sx={{width:"100% ", height: "100%"}}>
-            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
+            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"var(--naftal-text-primary)" }}>
               Dashboard
             </h1>
             <p
               style={{
                 fontSize: "20px ",
-                color: "gray",
+                color: "var(--naftal-text-muted)",
                 fontWeight: "bold",
                 marginBottom: "20px",
               }}
@@ -157,8 +157,8 @@ const router = useRouter() ;
               <Grid size={{  sm : 4 , md: 6, lg: 4 }} >
                 <Card
                 sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
+                  bgcolor:"var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -167,31 +167,31 @@ const router = useRouter() ;
                   border: "0.1px solid transparent", // Initial border
                   transition: "transform 0.1s", // Smooth transition
                   "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
+                    borderColor: "var(--naftal-brand-strong)", // Dark var(--naftal-brand) on hover
                     transform: "scale(1.01)", // Slightly scale up the card
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 0, 255, 0.1)", width: 48, height: 48 }}>
-                      <TextSnippetOutlinedIcon sx={{ color: "#7fb3ff" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-info-muted)", width: 48, height: 48 }}>
+                      <TextSnippetOutlinedIcon sx={{ color: "var(--naftal-info)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           +3 ce mois
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {Rows.length}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
                     Total demandes
                   </Typography>
                 </CardContent>
@@ -201,8 +201,8 @@ const router = useRouter() ;
               <Grid size={{ sm : 4 , md: 6, lg: 4 }}>
                 <Card
                 sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
+                  bgcolor:"var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -211,31 +211,31 @@ const router = useRouter() ;
                   border: "0.1px solid transparent", // Initial border
                   transition: "transform 0.1s", // Smooth transition
                   "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
+                    borderColor: "var(--naftal-brand-strong)", // Dark var(--naftal-brand) on hover
                     transform: "scale(1.01)", // Slightly scale up the card
                   },                  
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 165, 0, 0.1)", width: 48, height: 48 }}>
-                      <AccessTimeIcon sx={{ color: "#ffa500" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-brand-muted)", width: 48, height: 48 }}>
+                      <AccessTimeIcon sx={{ color: "var(--naftal-brand)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           + 2 new 
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {Rows.filter(row => row.status === "PENDING").length}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
                     Pending
                   </Typography>
                 </CardContent>
@@ -245,8 +245,8 @@ const router = useRouter() ;
               <Grid size={{ sm :4 , md: 6, lg: 4 }}>
                 <Card
                 sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
+                  bgcolor:"var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -255,7 +255,7 @@ const router = useRouter() ;
                   border: "0.1px solid transparent", // Initial border
                   transition: "transform 0.1s", // Smooth transition
                   "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
+                    borderColor: "var(--naftal-brand-strong)", // Dark var(--naftal-brand) on hover
                     transform: "scale(1.01)", // Slightly scale up the card
                   },
                 }}
@@ -264,24 +264,24 @@ const router = useRouter() ;
                   
                   }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 128, 0, 0.1)", width: 48, height: 48 }}>
-                      <TaskAltOutlinedIcon sx={{ color: "#4caf50" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-success-muted)", width: 48, height: 48 }}>
+                      <TaskAltOutlinedIcon sx={{ color: "var(--naftal-success)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           + 62%
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {Rows.filter(row => row.status === "APPROVED").length}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
                     Approved
                   </Typography>
                 </CardContent>
@@ -291,8 +291,8 @@ const router = useRouter() ;
               <Grid size={{ sm : 4 , md: 6, lg: 4 }}>
                 <Card
                 sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
+                  bgcolor:"var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -301,31 +301,31 @@ const router = useRouter() ;
                   border: "0.1px solid transparent", // Initial border
                   transition: "transform 0.1s", // Smooth transition
                   "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
+                    borderColor: "var(--naftal-brand-strong)", // Dark var(--naftal-brand) on hover
                     transform: "scale(1.01)", // Slightly scale up the card
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 0, 0, 0.1)", width: 48, height: 48 }}>
-                      <CancelOutlinedIcon sx={{ color: "#f44336" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-error-muted)", width: 48, height: 48 }}>
+                      <CancelOutlinedIcon sx={{ color: "var(--naftal-error)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           +12% 
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {Rows.filter(row => row.status === "REJECTED").length}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
                     Rejected
                   </Typography>
                 </CardContent>
@@ -346,7 +346,7 @@ const router = useRouter() ;
                 sx={{
                   fontSize: "25px",
                   fontWeight: "bold",
-                  color: "#fff",
+                  color: "var(--naftal-text-primary)",
                 }}
               >
                 Recent Requests
@@ -355,15 +355,15 @@ const router = useRouter() ;
                 variant="contained"
                 sx={{
                   backgroundColor: "white",
-                  color: "gray",
+                  color: "var(--naftal-text-muted)",
                   textTransform: "none",
                   borderRadius: 2,
                   padding: "8px 16px",
                   border: "1px solid gray",
                   "&:hover": {
-                    color: "orange",
-                    backgroundColor: "rgba(255, 165, 0, 0.2)",
-                    border: "1px solid orange",
+                    color: "var(--naftal-on-brand)",    
+                    backgroundColor: "var(--naftal-brand)",
+                    border: "1px solid var(--naftal-brand)",
                   },
                 }}
               >
@@ -371,7 +371,7 @@ const router = useRouter() ;
               </Button>
             </Box>
             {isLoading ? (
-              <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
+              <Typography variant="body1" sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 4 }}>
                 Loading documents...
               </Typography>
             ) : error  ? (
@@ -380,12 +380,12 @@ const router = useRouter() ;
               </Typography>) 
               : empty ? ( 
                 <Box sx={{
-                            backgroundColor: "#1a2942",
+                            backgroundColor: "var(--naftal-surface-2)",
                             borderRadius: "12px",
                             padding: "30px 20px",
                                                   }}>
                       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                         <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
+                         <Typography variant="h6" sx={{ color: "var(--naftal-text-secondary)" ,fontSize:"20px" }}>
                              No documents found
                           </Typography>
                       </Box>
@@ -394,45 +394,45 @@ const router = useRouter() ;
               <TableContainer
               component={Paper}
               sx={{
-                backgroundColor: "#1a2942",
+                backgroundColor: "var(--naftal-surface-2)",
                 borderRadius: 2,
                 overflowY: "auto",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "var(--naftal-shadow-strong)",
+                border: "1px solid var(--naftal-border-subtle)",
               }}
             >
               <Table sx={{ }}>
-                <TableHead sx={{bgcolor:"#10223A" , boxShadow:"0px 0px 1px 0px gray"}}>
+                <TableHead sx={{bgcolor:"var(--naftal-surface-0)" , boxShadow:"0px 0px 1px 0px gray"}}>
                   <TableRow>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Numéro</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Type de demande</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Destination / Motif</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Date de soumission</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Numéro</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Type de demande</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Destination / Motif</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Date de soumission</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Statut</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {Rows.map((row) => (
-                    <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
-                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold" , border:"none" }}>{row.id}</TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
+                    <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" } }}>
+                      <TableCell sx={{ color: "var(--naftal-brand)", fontWeight: "bold" , border:"none" }}>{row.id}</TableCell>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
+                          <TextSnippetOutlinedIcon sx={{ color: "var(--naftal-text-muted)",width: "20px", marginRight: "8px" }} />
                           {gettype(row.type)}
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{color:"lightgray"}}>
+                          <LocationOnIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                          <Typography sx={{color:"var(--naftal-text-secondary)"}}>
                           {row.missionOrder?.destination || row.absenceAuth?.reason || "/"}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                         <Box sx={{ display: "flex", alignItems: "center"  }}>
-                          <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{color:"lightgray"}}>
+                          <CalendarTodayIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                          <Typography sx={{color:"var(--naftal-text-secondary)"}}>
                           {row.createdAt.split("T")[0]} {/* Display only the date part */}
                           </Typography>
                         </Box>
@@ -449,25 +449,25 @@ const router = useRouter() ;
                 <Grid size={{ xs: 12 }} key={row.id}>
                   <Card
                     sx={{
-                      backgroundColor: "#1a2942",
-                      color: "#fff",
+                      backgroundColor: "var(--naftal-surface-2)",
+                      color: "var(--naftal-text-primary)",
                       borderRadius: 2,
-                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+                      boxShadow: "var(--naftal-shadow-strong)",
                       padding: "16px",
                     }}
                   >
                   <Typography
                     variant="h6"
-                    sx={{ fontWeight: "bold", color: "#ffa500" }}
+                    sx={{ fontWeight: "bold", color: "var(--naftal-brand)" }}
                   >
                     {row.id}
                   </Typography>
-                  <Typography variant="body1" sx={{ color: "#fff" }}>
+                  <Typography variant="body1" sx={{ color: "var(--naftal-text-primary)" }}>
                     {gettype(row.type)}
                   </Typography>
                   <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                    <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                    <Typography sx={{ color: "lightgray" }}>
+                    <LocationOnIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                    <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                       {row.missionOrder?.destination ||
                         row.absenceAuth?.reason ||
                         "/"}
@@ -475,9 +475,9 @@ const router = useRouter() ;
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                     <CalendarTodayIcon
-                      sx={{ color: "gray", marginRight: "8px" }}
+                      sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }}
                     />
-                    <Typography sx={{ color: "lightgray" }}>
+                    <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                       {row.createdAt.split("T")[0]}
                     </Typography>
                   </Box>
@@ -495,7 +495,7 @@ const router = useRouter() ;
               <Button
                 variant="contained"
                 sx={{
-                  backgroundColor: "orange",
+                  backgroundColor: "var(--naftal-brand)",
                   color: "black",
                   textTransform: "none",
                   borderRadius: 10,
@@ -505,7 +505,7 @@ const router = useRouter() ;
                   "&:hover": {
                     transition: "transform 0.3s ease",
                     transform: "scale(1.05)",
-                    backgroundColor: "darkorange",
+                    backgroundColor: "var(--naftal-brand-strong)",
                   },
                 }}
 
