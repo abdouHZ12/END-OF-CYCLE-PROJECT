@@ -264,7 +264,12 @@ export default function Page() {
             Recent Requests
           </h2>
           <Link href="/worker/my-requests">
-            <Button variant="outline">See all</Button>
+          <Button
+            variant="outline"
+            className="hover:bg-(--naftal-brand) hover:text-(--naftal-on-brand) hover:border-(--naftal-brand)"
+          >
+            See all
+          </Button>
           </Link>
         </div>
 

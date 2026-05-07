@@ -43,7 +43,7 @@ export default function Sidebar({
           <div
             className={cn(
               "text-left text-2xl font-extrabold tracking-wide",
-              isDark ? "text-(--naftal-brand)" : "text-(--naftal-info)"
+              isDark ? "text-(--naftal-brand)" : "text-(--naftal-brand)"
             )}
           >
             NAFTAL

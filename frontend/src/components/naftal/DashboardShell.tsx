@@ -62,9 +62,9 @@ export default function DashboardShell({
         <div
           className={cn(
             "flex h-10 w-10 items-center justify-center rounded-xl font-extrabold",
-            isDark
-              ? "border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)"
-              : "bg-(--naftal-brand-muted) text-(--naftal-on-brand)"
+           isDark
+            ? "border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)"
+            : "bg-(--naftal-brand) text-(--naftal-on-brand)"
           )}
         >
           {user.initials}
@@ -151,17 +151,10 @@ export default function DashboardShell({
               <NotificationPanel />
               <ThemeToggle />
 
-              <div className="hidden sm:flex items-center gap-3">
-                <div
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-xl font-extrabold",
-                    isDark
-                      ? "border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)"
-                      : "bg-(--naftal-brand-muted) text-(--naftal-on-brand)"
-                  )}
-                >
-                  {user.initials}
-                </div>
+<div className="hidden sm:flex items-center gap-3">
+  <div className="flex h-10 w-10 items-center justify-center rounded-xl font-extrabold border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)">
+    {user.initials}
+  </div>
                 <div className="leading-tight">
                   <div className="text-sm font-bold text-(--naftal-text-primary)">
                     {user.name}

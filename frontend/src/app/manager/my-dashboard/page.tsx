@@ -361,8 +361,8 @@ const router = useRouter() ;
                   padding: "8px 16px",
                   border: "1px solid gray",
                   "&:hover": {
-                    color: "var(--naftal-brand)",
-                    backgroundColor: "var(--naftal-brand-muted-strong)",
+                    color: "var(--naftal-on-brand)",    
+                    backgroundColor: "var(--naftal-brand)",
                     border: "1px solid var(--naftal-brand)",
                   },
                 }}

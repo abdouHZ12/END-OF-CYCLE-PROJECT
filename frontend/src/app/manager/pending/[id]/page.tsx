@@ -93,20 +93,6 @@ const handleBack = () => {
     router.back();
   }
 
-  const formatDateTime = (iso?: string | null) => {
-    if (!iso) return "—";
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "—";
-    return d.toLocaleString("fr-DZ", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-
 const handleDecision = async (documentId: number, decision: Decision, managerComment?: string) => {
     setActionLoading(documentId);
     try {

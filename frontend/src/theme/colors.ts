@@ -95,20 +95,20 @@ export const lightColors: ThemeColors = {
   textPrimary: "#1F2937",
   textSecondary: "#4B5563",
   textMuted: "#6B7280",
-  // Accent (Naftal yellow)
-  brand: "#F5A000",
-  brandStrong: "#D98D00",
-  brandHover: "#FFB21A",
-  brandMuted: "rgba(245,160,0,0.14)",
-  brandMutedStrong: "rgba(245,160,0,0.22)",
-  brandGhost: "rgba(245,160,0,0.08)",
-  brandBorder: "rgba(245,160,0,0.35)",
-  brandBorderStrong: "rgba(245,160,0,0.55)",
-  // Text on accent backgrounds (use primary brand blue)
-  onBrand: "#0B3C5D",
-  // Primary brand blue used for secondary actions + info
-  info: "#0B3C5D",
-  infoMuted: "rgba(11,60,93,0.10)",
+  // Accent (blue)
+  brand: "#1D4ED8",
+  brandStrong: "#1E40AF",
+  brandHover: "#2563EB",
+  brandMuted: "rgba(29,78,216,0.10)",
+  brandMutedStrong: "rgba(29,78,216,0.16)",
+  brandGhost: "rgba(29,78,216,0.06)",
+  brandBorder: "rgba(29,78,216,0.30)",
+  brandBorderStrong: "rgba(29,78,216,0.50)",
+  // Text on accent backgrounds
+  onBrand: "#FFFFFF",
+  // Info (distinct teal-blue to differentiate from brand)
+  info: "#0284C7",
+  infoMuted: "rgba(2,132,199,0.10)",
   // Status colors
   success: "#16A34A",
   successMuted: "rgba(22,163,74,0.10)",
