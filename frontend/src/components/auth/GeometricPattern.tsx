@@ -15,7 +15,7 @@ export function GeometricPattern() {
             <motion.path
               d="M60 2 L112 32 L112 92 L60 122 L8 92 L8 32 Z"
               fill="none"
-              stroke="rgba(235, 231, 42, 0.8)"
+              stroke="rgba(255, 165, 0, 0.4)"
               strokeWidth="1.5"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}

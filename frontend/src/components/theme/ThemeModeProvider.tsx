@@ -59,7 +59,7 @@ function applyCssVars(mode: ThemeMode) {
   root.style.setProperty("--naftal-shell-text-muted", c.shellTextMuted);
   root.style.setProperty("--naftal-shell-border", c.shellBorder);
   root.style.setProperty("--naftal-shell-hover", c.shellHover);
-  }
+}
 
 // Bridge: apply CSS vars immediately on client before first render
 if (typeof window !== "undefined") {
@@ -76,30 +76,35 @@ export function ThemeModeProvider({
   children: React.ReactNode;
   forcedMode?: ThemeMode;
 }) {
-  const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
-  const [mode, setMode] = React.useState<ThemeMode>(forcedMode ?? "light");
-  const [mounted, setMounted] = React.useState(false);
+const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+
+const [mode, setMode] = React.useState<ThemeMode>(forcedMode ?? "light");
+const [mounted, setMounted] = React.useState(false);
+
+React.useEffect(() => {
+  if (forcedMode) {
+    setMode(forcedMode);
+    applyCssVars(forcedMode);
+    setMounted(true);
+    return;
+  }
+  const stored = localStorage.getItem(STORAGE_KEY);
+  const resolved: ThemeMode =
+    stored === "light" || stored === "dark"
+      ? stored
+      : prefersDark ? "dark" : "light";
+  setMode(resolved);
+  applyCssVars(resolved);
+  setMounted(true);
+}, [prefersDark, forcedMode]);
 
   React.useEffect(() => {
-    if (forcedMode) {
-      setMode(forcedMode);
-      applyCssVars(forcedMode);
-      setMounted(true);
-      return;
-    }
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const resolved: ThemeMode =
-      stored === "light" || stored === "dark"
-        ? stored
-        : prefersDark ? "dark" : "light";
-    setMode(resolved);
     setMounted(true);
-  }, [prefersDark, forcedMode]);
+  }, []);
 
   React.useEffect(() => {
     if (!mounted) return;
     if (!forcedMode) {
-      // Don't persist forced mode — it's page-scoped, not a user preference
       localStorage.setItem(STORAGE_KEY, mode);
     }
     applyCssVars(mode);
@@ -111,11 +116,11 @@ export function ThemeModeProvider({
     () => ({
       mode,
       toggleMode: () => {
-        if (forcedMode) return; // no-op when mode is forced
+        if (forcedMode) return;
         setMode((prev) => (prev === "dark" ? "light" : "dark"));
       },
       setMode: (next: ThemeMode) => {
-        if (forcedMode) return; // no-op when mode is forced
+        if (forcedMode) return;
         setMode(next);
       },
     }),
