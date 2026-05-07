@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import type { Document } from "@/features/documents/types";
 import { useParams } from "next/navigation";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-import { formatAlgeriaDateTime } from "@/lib/datetime";
+import { getFullDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 import {  apiPut } from "@/lib/api";
 import {
@@ -29,6 +29,7 @@ import {
 import Stack from "@mui/material/Stack";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import { formatAlgeriaDateTime } from "@/lib/datetime";
 
 type LeaveSession = {
   id: number;
@@ -437,10 +438,10 @@ return (
                                     />
                                   </Stack>
                                   <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
-                                    Sortie: {formatDateTime(ls.leaveTime)} • Retour: {formatDateTime(ls.returnTime)}
+                                    Sortie: {formatAlgeriaDateTime(ls.leaveTime)} • Retour: {formatAlgeriaDateTime(ls.returnTime)}
                                   </Typography>
                                   <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.25 }}>
-                                    Créée: {formatDateTime(ls.createdAt)} • DocumentId: {ls.documentId}
+                                    Créée: {formatAlgeriaDateTime(ls.createdAt)} • DocumentId: {ls.documentId}
                                   </Typography>
                                 </Box>
                               ))}

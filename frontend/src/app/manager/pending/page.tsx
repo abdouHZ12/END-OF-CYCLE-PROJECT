@@ -142,10 +142,10 @@ export default function PendingPage() {
         <Stack spacing={0.25}>
 
           <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
-            Sortie: {formatDateTime(doc.exitSlip.exitTime)}
+            Sortie: {formatAlgeriaDateTime(doc.exitSlip.exitTime)}
           </Typography>
           <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
-            Retour: {formatDateTime(doc.exitSlip.returnTime)}
+            Retour: {formatAlgeriaDateTime(doc.exitSlip.returnTime)}
           </Typography>
           <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Porte: {doc.exitSlip.gate}
@@ -159,7 +159,7 @@ export default function PendingPage() {
         <Stack spacing={0.25}>
 
           <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
-            Du {formatDate(doc.absenceAuth.startDate)} au {formatDate(doc.absenceAuth.endDate)}
+            Du {formatAlgeriaDate(doc.absenceAuth.startDate)} au {formatAlgeriaDate(doc.absenceAuth.endDate)}
           </Typography>
           <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
             Motif: {doc.absenceAuth.reason}
@@ -251,7 +251,7 @@ export default function PendingPage() {
                           </Typography>
 
                           <Typography variant="caption" sx={{ color: "var(--naftal-text-muted)" }}>
-                            Soumis le {formatDate(doc.createdAt)}
+                            Soumis le {formatAlgeriaDate(doc.createdAt)}
                           </Typography>
                         </Box>
 
