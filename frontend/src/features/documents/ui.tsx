@@ -7,10 +7,10 @@ export const getStatusChip = (status: string) => {
         <Chip
           label={'En attente'}
           sx={{
-            backgroundColor: 'rgba(255, 165, 0, 0.1)',
-            color: 'orange',
+            backgroundColor: 'var(--naftal-brand-muted)',
+            color: 'var(--naftal-brand)',
             fontWeight: 'bold',
-            border: '1px solid #ffa500',
+            border: '1px solid var(--naftal-brand)',
             borderRadius: '8px',
           }}
         />
@@ -20,10 +20,10 @@ export const getStatusChip = (status: string) => {
         <Chip
           label={'Approuvé'}
           sx={{
-            backgroundColor: 'rgba(0, 128, 0, 0.1)',
-            color: '#4caf50',
+            backgroundColor: 'var(--naftal-success-muted)',
+            color: 'var(--naftal-success)',
             fontWeight: 'bold',
-            border: '1px solid #4caf50',
+            border: '1px solid var(--naftal-success)',
             borderRadius: '8px',
           }}
         />
@@ -33,10 +33,10 @@ export const getStatusChip = (status: string) => {
         <Chip
           label={'Rejeté'}
           sx={{
-            backgroundColor: 'rgba(255, 0, 0, 0.1)',
-            color: '#f44336',
+            backgroundColor: 'var(--naftal-error-muted)',
+            color: 'var(--naftal-error)',
             fontWeight: 'bold',
-            border: '1px solid #f44336',
+            border: '1px solid var(--naftal-error)',
             borderRadius: '8px',
           }}
         />

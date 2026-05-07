@@ -129,55 +129,59 @@ async function main() {
     include: { roles: { include: { role: true } } },
   });
 
-  const worker = await prisma.employee.upsert({
-    where: { username: 'worker' },
-    update: {
-      name: 'worker',
-      email: 'worker@example.com',
-      password: workerPassword,
-      structure: { connect: { id: structure.id } },
-      roles: {
-        deleteMany: {},
-        create: [{ role: { connect: { id: workerRole.id } } }],
-      },
-    },
-    create: {
-      name: 'worker',
-      username: 'worker',
-      email: 'worker@example.com',
-      password: workerPassword,
-      structure: { connect: { id: structure.id } },
-      roles: {
-        create: [{ role: { connect: { id: workerRole.id } } }],
-      },
-    },
-    include: { roles: { include: { role: true } } },
-  });
+// Replace ONLY the worker + agent upsert blocks with these updated versions
 
-  const agent = await prisma.employee.upsert({
-    where: { username: 'agent' },
-    update: {
-      name: 'agent',
-      email: 'agent@example.com',
-      password: agentPassword,
-      structure: { connect: { id: structure.id } },
-      roles: {
-        deleteMany: {},
-        create: [{ role: { connect: { id: agentRole.id } } }],
-      },
+const worker = await prisma.employee.upsert({
+  where: { username: 's.belhadj' },
+  update: {
+    name: 'Sofiane Belhadj',
+    username: 's.belhadj',
+    email: 'sofiane.belhadj@example.com',
+    password: workerPassword,
+    structure: { connect: { id: structure.id } }, // Assigned to Head Office department
+    roles: {
+      deleteMany: {},
+      create: [{ role: { connect: { id: workerRole.id } } }],
     },
-    create: {
-      name: 'agent',
-      username: 'agent',
-      email: 'agent@example.com',
-      password: agentPassword,
-      structure: { connect: { id: structure.id } },
-      roles: {
-        create: [{ role: { connect: { id: agentRole.id } } }],
-      },
+  },
+  create: {
+    name: 'Sofiane Belhadj',
+    username: 's.belhadj',
+    email: 'sofiane.belhadj@example.com',
+    password: workerPassword,
+    structure: { connect: { id: structure.id } }, // Department assignment
+    roles: {
+      create: [{ role: { connect: { id: workerRole.id } } }],
     },
-    include: { roles: { include: { role: true } } },
-  });
+  },
+  include: { roles: { include: { role: true } } },
+});
+
+const agent = await prisma.employee.upsert({
+  where: { username: 'n.kaci' },
+  update: {
+    name: 'Nassim Kaci',
+    username: 'n.kaci',
+    email: 'nassim.kaci@example.com',
+    password: agentPassword,
+    structure: { connect: { id: structure.id } },
+    roles: {
+      deleteMany: {},
+      create: [{ role: { connect: { id: agentRole.id } } }],
+    },
+  },
+  create: {
+    name: 'Nassim Kaci',
+    username: 'n.kaci',
+    email: 'nassim.kaci@example.com',
+    password: agentPassword,
+    structure: { connect: { id: structure.id } },
+    roles: {
+      create: [{ role: { connect: { id: agentRole.id } } }],
+    },
+  },
+  include: { roles: { include: { role: true } } },
+});
 
   console.log('✅ Seed complete:', { admin, manager, adminManager, worker, agent });
 }

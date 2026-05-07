@@ -79,10 +79,10 @@ const getStatusChip = (status: string) => {
         <Chip
           label={"Pending"}
           sx={{
-            backgroundColor: "rgba(255, 165, 0, 0.1)",
-            color: "orange",
+            backgroundColor: "var(--naftal-brand-muted)",
+            color: "var(--naftal-brand)",
             fontWeight: "bold",
-            border: "1px solid #ffa500",
+            border: "1px solid var(--naftal-brand)",
             borderRadius: "8px",
           }}
         />
@@ -92,10 +92,10 @@ const getStatusChip = (status: string) => {
         <Chip
           label={"Approved"}
           sx={{
-            backgroundColor: "rgba(0, 128, 0, 0.1)",
-            color: "#4caf50",
+            backgroundColor: "var(--naftal-success-muted)",
+            color: "var(--naftal-success)",
             fontWeight: "bold",
-            border: "1px solid #4caf50",
+            border: "1px solid var(--naftal-success)",
             borderRadius: "8px",
           }}
         />
@@ -105,10 +105,10 @@ const getStatusChip = (status: string) => {
         <Chip
           label={"Rejected"}
           sx={{
-            backgroundColor: "rgba(255, 0, 0, 0.1)",
-            color: "#f44336",
+            backgroundColor: "var(--naftal-error-muted)",
+            color: "var(--naftal-error)",
             fontWeight: "bold",
-            border: "1px solid #f44336",
+            border: "1px solid var(--naftal-error)",
             borderRadius: "8px",
           }}
         />
@@ -153,7 +153,7 @@ export default function ManagerHomePage() {
       sx={{
         flexGrow: 1,
         mt: "70px", // push below navbar
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         display: "grid",
         gridTemplateRows: "1fr auto",
         padding: "36px",
@@ -162,17 +162,17 @@ export default function ManagerHomePage() {
       }}
     >
       <Box sx={{ width: "100% ", height: "100%" }}>
-        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "#fff" }}>
+        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
           Tableau de bord
         </h1>
-        <p style={{ fontSize: "16px", color: "gray", marginBottom: "28px" }}>
+        <p style={{ fontSize: "16px", color: "var(--naftal-text-muted)", marginBottom: "28px" }}>
           Vue ensemble des demandes de votre équipe
         </p>
 
-      {loading && <p style={{ color: "lightgray" }}>Chargement...</p>}
+      {loading && <p style={{ color: "var(--naftal-text-secondary)" }}>Chargement...</p>}
 
       {error && (
-        <div style={{ color: "#ef4444", backgroundColor: "rgba(239,68,68,0.1)", padding: "12px", borderRadius: "8px", marginBottom: "16px" }}>
+        <div style={{ color: "var(--naftal-error)", backgroundColor: "var(--naftal-error-muted)", padding: "12px", borderRadius: "8px", marginBottom: "16px" }}>
           {error}
         </div>
       )}
@@ -183,8 +183,8 @@ export default function ManagerHomePage() {
             <Grid size={{ sm: 4, md: 6, lg: 4 }}>
               <Card
                 sx={{
-                  bgcolor: "#1a2942",
-                  color: "#fff",
+                  bgcolor: "var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -193,32 +193,33 @@ export default function ManagerHomePage() {
                   border: "0.1px solid transparent",
                   transition: "transform 0.1s",
                   "&:hover": {
-                    borderColor: "darkorange",
+                    borderColor: "var(--naftal-brand-strong)",
                     transform: "scale(1.01)",
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 0, 255, 0.1)", width: 48, height: 48 }}>
-                      <TextSnippetOutlinedIcon sx={{ color: "#7fb3ff" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-info-muted)", width: 48, height: 48 }}>
+                      <TextSnippetOutlinedIcon sx={{ color: "var(--naftal-info)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           +3 ce mois
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {stats.total}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Les demandes totales
+
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
+                    Total demandes
                   </Typography>
                 </CardContent>
               </Card>
@@ -227,8 +228,8 @@ export default function ManagerHomePage() {
             <Grid size={{ sm: 4, md: 6, lg: 4 }}>
               <Card
                 sx={{
-                  bgcolor: "#1a2942",
-                  color: "#fff",
+                  bgcolor: "var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -237,32 +238,33 @@ export default function ManagerHomePage() {
                   border: "0.1px solid transparent",
                   transition: "transform 0.1s",
                   "&:hover": {
-                    borderColor: "darkorange",
+                    borderColor: "var(--naftal-brand-strong)",
                     transform: "scale(1.01)",
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 165, 0, 0.1)", width: 48, height: 48 }}>
-                      <AccessTimeIcon sx={{ color: "#ffa500" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-brand-muted)", width: 48, height: 48 }}>
+                      <AccessTimeIcon sx={{ color: "var(--naftal-brand)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           + 2 new
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {stats.pending}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    En attente
+
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
+                    Pending
                   </Typography>
                 </CardContent>
               </Card>
@@ -271,8 +273,8 @@ export default function ManagerHomePage() {
             <Grid size={{ sm: 4, md: 6, lg: 4 }}>
               <Card
                 sx={{
-                  bgcolor: "#1a2942",
-                  color: "#fff",
+                  bgcolor: "var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -281,32 +283,33 @@ export default function ManagerHomePage() {
                   border: "0.1px solid transparent",
                   transition: "transform 0.1s",
                   "&:hover": {
-                    borderColor: "darkorange",
+                    borderColor: "var(--naftal-brand-strong)",
                     transform: "scale(1.01)",
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 128, 0, 0.1)", width: 48, height: 48 }}>
-                      <TaskAltOutlinedIcon sx={{ color: "#4caf50" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-success-muted)", width: 48, height: 48 }}>
+                      <TaskAltOutlinedIcon sx={{ color: "var(--naftal-success)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           + 62%
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {stats.approved}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Approuves
+
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
+                    Approved
                   </Typography>
                 </CardContent>
               </Card>
@@ -315,8 +318,8 @@ export default function ManagerHomePage() {
             <Grid size={{ sm: 4, md: 6, lg: 4 }}>
               <Card
                 sx={{
-                  bgcolor: "#1a2942",
-                  color: "#fff",
+                  bgcolor: "var(--naftal-surface-2)",
+                  color: "var(--naftal-text-primary)",
                   borderRadius: 2,
                   position: "relative",
                   boxShadow: "none",
@@ -325,32 +328,33 @@ export default function ManagerHomePage() {
                   border: "0.1px solid transparent",
                   transition: "transform 0.1s",
                   "&:hover": {
-                    borderColor: "darkorange",
+                    borderColor: "var(--naftal-brand-strong)",
                     transform: "scale(1.01)",
                   },
                 }}
               >
                 <CardContent sx={{ p: 2 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 0, 0, 0.1)", width: 48, height: 48 }}>
-                      <CancelOutlinedIcon sx={{ color: "#f44336" }} />
+                    <Avatar sx={{ bgcolor: "var(--naftal-error-muted)", width: 48, height: 48 }}>
+                      <CancelOutlinedIcon sx={{ color: "var(--naftal-error)" }} />
                     </Avatar>
 
                     <Box sx={{ textAlign: "right" }}>
                       <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
+                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                        <Typography variant="caption" sx={{ color: "var(--naftal-text-secondary)" }}>
                           +12%
                         </Typography>
                       </Stack>
                     </Box>
                   </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
+                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "var(--naftal-text-primary)", fontSize: 34 }}>
                     {stats.rejected}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Refuse
+
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
+                    Rejected
                   </Typography>
                 </CardContent>
               </Card>
@@ -366,22 +370,23 @@ export default function ManagerHomePage() {
               marginBottom: "30px",
             }}
           >
-            <Typography variant="h5" sx={{ fontSize: "25px", fontWeight: "bold", color: "#fff" }}>
-              Demandes récentes
+
+            <Typography variant="h5" sx={{ fontSize: "25px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
+              Recent Requests
             </Typography>
               <Button
                 variant="outlined"
                 sx={{
                   backgroundColor: "transparent",
-                  color: "lightgray",
+                  color: "var(--naftal-text-secondary)",
                   textTransform: "none",
                   borderRadius: 2,
                   padding: "8px 16px",
-                  border: "1px solid rgba(255,255,255,0.15)",
+                  border: "1px solid var(--naftal-border-subtle)",
                   "&:hover": {
-                    color: "orange",
-                    backgroundColor: "rgba(255, 165, 0, 0.1)",
-                    border: "1px solid orange",
+                    color: "var(--naftal-brand)",
+                    backgroundColor: "var(--naftal-brand-muted)",
+                    border: "1px solid var(--naftal-brand)",
                   },
                 }}
               >
@@ -390,66 +395,66 @@ export default function ManagerHomePage() {
           </Box>
 
           {stats.recentDocuments.length === 0 ? (
-            <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
+            <Typography variant="body1" sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 4 }}>
               No documents found
             </Typography>
           ) : !isSmallScreen ? (
             <TableContainer
               component={Paper}
               sx={{
-                backgroundColor: "#1a2942",
+                backgroundColor: "var(--naftal-surface-2)",
                 borderRadius: 2,
                 overflowY: "auto",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "var(--naftal-shadow-strong)",
+                border: "1px solid var(--naftal-border-subtle)",
               }}
             >
               <Table>
-                <TableHead sx={{ bgcolor: "#10223A", boxShadow: "0px 0px 1px 0px gray" }}>
+                <TableHead sx={{ bgcolor: "var(--naftal-surface-0)", boxShadow: "0px 0px 1px 0px var(--naftal-border)" }}>
                   <TableRow>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Numéro</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Employé</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Type de demande</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Destination / Motif</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Date de soumission</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Statut</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Numéro</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Employé</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Type de demande</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Destination / Motif</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Date de soumission</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Statut</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {stats.recentDocuments.map((doc) => (
                     <TableRow
                       key={doc.id}
-                      sx={{ boxShadow: "0px 0px 1px 0px gray", "&:hover": { backgroundColor: "#1a2540" } }}
+                      sx={{ boxShadow: "0px 0px 1px 0px var(--naftal-border)", "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" } }}
                     >
-                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
+                      <TableCell sx={{ color: "var(--naftal-brand)", fontWeight: "bold", border: "none" }}>
                         {formatReqNumber(doc.id, doc.createdAt)}
                       </TableCell>
-                      <TableCell sx={{ color: "#fff", border: "none" }}>
-                        <Typography sx={{ color: "lightgray", fontWeight: 600, lineHeight: 1.2 }}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
+                        <Typography sx={{ color: "var(--naftal-text-secondary)", fontWeight: 600, lineHeight: 1.2 }}>
                           {doc.employee?.name ?? "—"}
                         </Typography>
                         {!!doc.employee?.username && (
-                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                          <Typography variant="caption" sx={{ color: "var(--naftal-text-muted)" }}>
                             {doc.employee.username}
                           </Typography>
                         )}
                       </TableCell>
-                      <TableCell sx={{ color: "#fff", border: "none" }}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <TextSnippetOutlinedIcon sx={{ color: "gray", width: "20px", marginRight: "8px" }} />
+                          <TextSnippetOutlinedIcon sx={{ color: "var(--naftal-text-muted)", width: "20px", marginRight: "8px" }} />
                           {typeLabel[doc.type] ?? doc.type}
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: "#fff", border: "none" }}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{ color: "lightgray" }}>{getDestinationOrMotif(doc)}</Typography>
+                          <LocationOnIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                          <Typography sx={{ color: "var(--naftal-text-secondary)" }}>{getDestinationOrMotif(doc)}</Typography>
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: "#fff", border: "none" }}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{ color: "lightgray" }}>{doc.createdAt.split("T")[0]}</Typography>
+                          <CalendarTodayIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                          <Typography sx={{ color: "var(--naftal-text-secondary)" }}>{doc.createdAt.split("T")[0]}</Typography>
                         </Box>
                       </TableCell>
                       <TableCell sx={{ border: "none" }}>{getStatusChip(doc.status)}</TableCell>
@@ -464,30 +469,30 @@ export default function ManagerHomePage() {
                 <Grid size={{ xs: 12 }} key={doc.id}>
                   <Card
                     sx={{
-                      backgroundColor: "#1a2942",
-                      color: "#fff",
+                      backgroundColor: "var(--naftal-surface-2)",
+                      color: "var(--naftal-text-primary)",
                       borderRadius: 2,
-                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+                      boxShadow: "var(--naftal-shadow-strong)",
                       padding: "16px",
                     }}
                   >
-                    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#ffa500" }}>
+                    <Typography variant="h6" sx={{ fontWeight: "bold", color: "var(--naftal-brand)" }}>
                       {formatReqNumber(doc.id, doc.createdAt)}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)" }}>
+                    <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                       {doc.employee?.name ?? "—"}
                       {!!doc.employee?.username && ` (${doc.employee.username})`}
                     </Typography>
-                    <Typography variant="body1" sx={{ color: "#fff" }}>
+                    <Typography variant="body1" sx={{ color: "var(--naftal-text-primary)" }}>
                       {typeLabel[doc.type] ?? doc.type}
                     </Typography>
                     <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                      <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                      <Typography sx={{ color: "lightgray" }}>{getDestinationOrMotif(doc)}</Typography>
+                      <LocationOnIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                      <Typography sx={{ color: "var(--naftal-text-secondary)" }}>{getDestinationOrMotif(doc)}</Typography>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                      <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
-                      <Typography sx={{ color: "lightgray" }}>{doc.createdAt.split("T")[0]}</Typography>
+                      <CalendarTodayIcon sx={{ color: "var(--naftal-text-muted)", marginRight: "8px" }} />
+                      <Typography sx={{ color: "var(--naftal-text-secondary)" }}>{doc.createdAt.split("T")[0]}</Typography>
                     </Box>
                     <Box sx={{ mt: 2 }}>{getStatusChip(doc.status)}</Box>
                   </Card>

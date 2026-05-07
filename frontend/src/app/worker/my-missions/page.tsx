@@ -15,7 +15,7 @@ import {
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { apiGet, type ApiError } from "@/lib/api";
 import { getStatusChip } from "@/features/documents/ui";
-import { formatAlgeriaDateTime } from "@/lib/datetime";
+import { getFullDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type MissionOrder = {
@@ -80,7 +80,7 @@ export default function MyMissionsPage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         display: "grid",
         gridTemplateRows: "1fr auto",
         padding: "36px",
@@ -89,13 +89,14 @@ export default function MyMissionsPage() {
       }}
     >
       <Box sx={{ width: "100%", height: "100%" }}>
-        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "#fff" }}>
-          Mes missions
+
+        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
+          My Missions
         </h1>
         <p
           style={{
             fontSize: "20px",
-            color: "gray",
+            color: "var(--naftal-text-muted)",
             fontWeight: "bold",
             marginBottom: "20px",
           }}
@@ -105,7 +106,7 @@ export default function MyMissionsPage() {
 
         <Box sx={{ mt: 2 }}>
           {isLoading ? (
-            <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
+            <Typography variant="body1" sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 4 }}>
               Loading missions...
             </Typography>
           ) : error ? (
@@ -115,14 +116,15 @@ export default function MyMissionsPage() {
           ) : empty ? (
             <Box
               sx={{
-                backgroundColor: "#1a2942",
+                backgroundColor: "var(--naftal-surface-2)",
                 borderRadius: "12px",
                 padding: "30px 20px",
               }}
             >
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <Typography variant="h6" sx={{ color: "lightgray", fontSize: "20px" }}>
-                  Aucun Ordre de Mission Assigne a vous pour le moment
+
+                <Typography variant="h6" sx={{ color: "var(--naftal-text-secondary)", fontSize: "20px" }}>
+                  No mission orders assigned to you yet
                 </Typography>
               </Box>
             </Box>
@@ -130,22 +132,22 @@ export default function MyMissionsPage() {
             <TableContainer
               component={Paper}
               sx={{
-                backgroundColor: "#1a2942",
+                backgroundColor: "var(--naftal-surface-2)",
                 borderRadius: 2,
                 overflowY: "auto",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "var(--naftal-shadow-strong)",
+                border: "1px solid var(--naftal-border-subtle)",
               }}
             >
               <Table>
-                <TableHead sx={{ bgcolor: "#10223A", boxShadow: "0px 0px 1px 0px gray" }}>
+                <TableHead sx={{ bgcolor: "var(--naftal-surface-0)", boxShadow: "0px 0px 1px 0px var(--naftal-border)" }}>
                   <TableRow>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Destination</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Purpose</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Duration</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Travel</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Assigned On</TableCell>
-                    <TableCell sx={{ color: "lightgray", border: "none" }}>Status</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Destination</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Purpose</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Duration</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Travel</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Assigned On</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -153,27 +155,27 @@ export default function MyMissionsPage() {
                     <TableRow
                       key={mission.id}
                       sx={{
-                        boxShadow: "0px 0px 1px 0px gray",
-                        "&:hover": { backgroundColor: "#1a2540" },
+                        boxShadow: "0px 0px 1px 0px var(--naftal-border)",
+                        "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" },
                       }}
                     >
-                      <TableCell sx={{ color: "#fff", border: "none" }}>
+                      <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <TextSnippetOutlinedIcon
-                            sx={{ color: "gray", width: "20px", marginRight: "8px" }}
+                            sx={{ color: "var(--naftal-text-muted)", width: "20px", marginRight: "8px" }}
                           />
                           {mission.missionOrder?.destination ?? "N/A"}
                         </Box>
                       </TableCell>
 
                       <TableCell sx={{ border: "none" }}>
-                        <Typography sx={{ color: "lightgray" }}>
+                        <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                           {mission.missionOrder?.purpose ?? "N/A"}
                         </Typography>
                       </TableCell>
 
                       <TableCell sx={{ border: "none" }}>
-                        <Typography sx={{ color: "lightgray" }}>
+                        <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                           {mission.missionOrder?.duration
                             ? `${mission.missionOrder.duration} day(s)`
                             : "N/A"}
@@ -181,7 +183,7 @@ export default function MyMissionsPage() {
                       </TableCell>
 
                       <TableCell sx={{ border: "none" }}>
-                        <Typography sx={{ color: "lightgray" }}>
+                        <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                           {mission.missionOrder?.travelMethod
                             ? travelMethodLabel[mission.missionOrder.travelMethod] ?? mission.missionOrder.travelMethod
                             : "N/A"}
@@ -189,8 +191,9 @@ export default function MyMissionsPage() {
                       </TableCell>
 
                       <TableCell sx={{ border: "none" }}>
-                        <Typography sx={{ color: "lightgray" }}>
-                          {formatAlgeriaDateTime(mission.createdAt)}
+
+                        <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
+                          {getFullDate(mission.createdAt)}
                         </Typography>
                       </TableCell>
 

@@ -183,7 +183,7 @@ return (
         sx={{
             flexGrow: 1,
             mt: "70px", // push below navbar
-            backgroundColor: "rgb(10, 22, 40)",
+            backgroundColor: "var(--naftal-bg)",
             display: "grid",
             gridTemplateRows: "1fr auto",
             padding: "36px",
@@ -194,14 +194,15 @@ return (
           }}
         >
         <Box sx={{width:"100% ", height: "100%"}}>
-            <ArrowBackOutlinedIcon onClick={handleBack} style={{ cursor: "pointer" , color:"lightgray"}} />
-            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Détails de la demande
+
+            <ArrowBackOutlinedIcon onClick={handleBack} style={{ cursor: "pointer" , color:"var(--naftal-text-secondary)"}} />
+            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"var(--naftal-text-primary)" }}>
+              Dashboard
             </h1>
             <p
               style={{
                 fontSize: "20px ",
-                color: "gray",
+                color: "var(--naftal-text-muted)",
                 fontWeight: "bold",
                 marginBottom: "20px",
               }}
@@ -210,7 +211,7 @@ return (
             </p>
 
             {isLoading ? (
-                <Stack direction="row" spacing={2} sx={{ alignItems: "center", color: "rgba(255,255,255,0.75)" }}>
+                <Stack direction="row" spacing={2} sx={{ alignItems: "center", color: "var(--naftal-text-secondary)" }}>
                   <CircularProgress size={20} />
                   <Typography variant="body2">Chargement…</Typography>
                 </Stack>
@@ -224,15 +225,15 @@ return (
                   {/* Document Card */}
                   <Grid size={{ xs: 12, md: 12, lg: 8 }}>
                     <Card sx={{
-                      backgroundColor: "rgb(20, 30, 50)",
-                      border: "0.5px solid rgba(255,255,255,0.08)",
+                      backgroundColor: "var(--naftal-surface-2)",
+                      border: "0.5px solid var(--naftal-border-subtle)",
                       borderRadius: "12px",
                       padding: "24px",
-                      color: "#fff",
+                      color: "var(--naftal-text-primary)",
                     }}>
                       <Stack direction="row" spacing={1} sx={{ mb: 0.5, alignItems: "center" }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#ffa500" }} />
-                        <Typography sx={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--naftal-brand)" }} />
+                        <Typography sx={{ fontSize: "11px", color: "var(--naftal-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                           Document
                         </Typography>
                       </Stack>
@@ -249,26 +250,27 @@ return (
                           : null}
                       </Typography>
 
-                      <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", mb: 2.5 }}>
-                        Soumise le {formatAlgeriaDateTime(document.createdAt)}
+
+                      <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", mb: 2.5 }}>
+                        Soumise le {getFullDate(document.createdAt)}
                       </Typography>
 
-                      <Divider sx={{ backgroundColor: "rgba(255,255,255,0.07)", mb: 2.5 }} />
+                      <Divider sx={{ backgroundColor: "var(--naftal-border-subtle)", mb: 2.5 }} />
 
                       <Stack spacing={1.5}>
                         <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
-                          <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>Statut</Typography>
+                          <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)" }}>Statut</Typography>
                           <Chip label={document.status} size="small" sx={{
                             fontSize: "12px", fontWeight: 500,
-                            backgroundColor: "rgba(255,165,0,0.12)",
-                            color: "#ffa500",
-                            border: "0.5px solid rgba(255,165,0,0.35)",
+                            backgroundColor: "var(--naftal-brand-muted)",
+                            color: "var(--naftal-brand)",
+                            border: "0.5px solid var(--naftal-brand-border)",
                             borderRadius: "6px",
                           }} />
                         </Stack>
                         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                          <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>Référence</Typography>
-                          <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>
+                          <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)" }}>Référence</Typography>
+                          <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-secondary)" }}>
                             {`REQ-${new Date(document.createdAt).getFullYear()}-${String(document.id).padStart(4, "0")}`}
                           </Typography>
                         </Stack>
@@ -279,15 +281,15 @@ return (
                   {/* DSS Card */}
                   <Grid size={{ xs: 12, md: 12, lg: 8 }}>
                     <Card sx={{
-                      backgroundColor: "rgb(20, 30, 50)",
-                      border: "0.5px solid rgba(255,255,255,0.08)",
+                      backgroundColor: "var(--naftal-surface-2)",
+                      border: "0.5px solid var(--naftal-border-subtle)",
                       borderRadius: "12px",
                       padding: "24px",
-                      color: "#fff",
+                      color: "var(--naftal-text-primary)",
                     }}>
                       <Stack direction="row" spacing={1} sx={{ mb: 0.5, alignItems: "center" }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#7f77dd" }} />
-                        <Typography sx={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--naftal-info)" }} />
+                        <Typography sx={{ fontSize: "11px", color: "var(--naftal-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                           DSS Recommendation
                         </Typography>
                       </Stack>
@@ -300,44 +302,44 @@ return (
                               sx={{
                                 fontSize: "15px", fontWeight: 500, borderRadius: "8px", px: 1,
                                 ...(dssRecommendation.recommendation === "APPROVE"
-                                  ? { backgroundColor: "rgba(34,197,94,0.12)", color: "#4ade80", border: "0.5px solid rgba(74,222,128,0.3)" }
+                                  ? { backgroundColor: "var(--naftal-success-muted)", color: "var(--naftal-success)", border: "0.5px solid var(--naftal-success-muted)" }
                                   : dssRecommendation.recommendation === "REJECT"
-                                  ? { backgroundColor: "rgba(239,68,68,0.12)", color: "#f87171", border: "0.5px solid rgba(248,113,113,0.3)" }
-                                  : { backgroundColor: "rgba(251,146,60,0.12)", color: "#fb923c", border: "0.5px solid rgba(251,146,60,0.3)" })
+                                  ? { backgroundColor: "var(--naftal-error-muted)", color: "var(--naftal-error)", border: "0.5px solid var(--naftal-error-muted)" }
+                                  : { backgroundColor: "var(--naftal-warning-muted)", color: "var(--naftal-warning)", border: "0.5px solid var(--naftal-warning-muted)" })
                               }}
                             />
                             <Box sx={{ flex: 1 }}>
                               <Stack direction="row" sx={{ justifyContent: "space-between", mb: 0.5 }}>
-                                <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>Score</Typography>
-                                <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>{dssRecommendation.score} / 100</Typography>
+                                <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)" }}>Score</Typography>
+                                <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)" }}>{dssRecommendation.score} / 100</Typography>
                               </Stack>
-                              <Box sx={{ height: "4px", backgroundColor: "rgba(255,255,255,0.08)", borderRadius: "2px" }}>
+                              <Box sx={{ height: "4px", backgroundColor: "var(--naftal-border-subtle)", borderRadius: "2px" }}>
                                 <Box sx={{
                                   width: `${dssRecommendation.score}%`, height: "100%", borderRadius: "2px",
-                                  backgroundColor: dssRecommendation.recommendation === "APPROVE" ? "#4ade80"
-                                    : dssRecommendation.recommendation === "REJECT" ? "#f87171" : "#fb923c",
+                                  backgroundColor: dssRecommendation.recommendation === "APPROVE" ? "var(--naftal-success)"
+                                    : dssRecommendation.recommendation === "REJECT" ? "var(--naftal-error)" : "var(--naftal-warning)",
                                   transition: "width 0.6s ease",
                                 }} />
                               </Box>
                             </Box>
                           </Stack>
 
-                          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.07)", mb: 2 }} />
+                          <Divider sx={{ backgroundColor: "var(--naftal-border-subtle)", mb: 2 }} />
 
-                          <Typography sx={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.07em", mb: 1 }}>
+                          <Typography sx={{ fontSize: "11px", color: "var(--naftal-text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", mb: 1 }}>
                             Reasons
                           </Typography>
 
                           {dssRecommendation.reasons.length === 0 ? (
-                            <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.3)", fontStyle: "italic" }}>
+                            <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", fontStyle: "italic" }}>
                               No flags raised.
                             </Typography>
                           ) : (
                             <Stack spacing={1}>
                               {dssRecommendation.reasons.map((reason, i) => (
                                 <Stack key={i} direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                                  <Box sx={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.2)", mt: "6px", flexShrink: 0 }} />
-                                  <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 , fontWeight:"bold" }}>
+                                  <Box sx={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "var(--naftal-text-muted)", mt: "6px", flexShrink: 0 }} />
+                                  <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", lineHeight: 1.5 , fontWeight:"bold" }}>
                                     {reason}
                                   </Typography>
                                 </Stack>
@@ -346,7 +348,7 @@ return (
                           )}
                         </>
                       ) : (
-                        <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.3)", fontStyle: "italic", mt: 1 }}>
+                        <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", fontStyle: "italic", mt: 1 }}>
                           No recommendation available.
                         </Typography>
                       )}
@@ -360,19 +362,19 @@ return (
                 <Grid size={{ xs: 12, md: 16, lg: 16 }}>
                   <Card
                     sx={{
-                      backgroundColor: "rgb(20, 30, 50)",
-                      border: "0.5px solid rgba(255,255,255,0.08)",
+                      backgroundColor: "var(--naftal-surface-2)",
+                      border: "0.5px solid var(--naftal-border-subtle)",
                       borderRadius: "12px",
                       padding: "24px",
-                      color: "#fff",
+                      color: "var(--naftal-text-primary)",
                     }}
                   >
                     <Stack direction="row" spacing={1} sx={{ mb: 1, alignItems: "center" }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#60a5fa" }} />
+                      <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--naftal-info)" }} />
                       <Typography
                         sx={{
                           fontSize: "11px",
-                          color: "rgba(255,255,255,0.35)",
+                          color: "var(--naftal-text-muted)",
                           textTransform: "uppercase",
                           letterSpacing: "0.08em",
                         }}
@@ -381,30 +383,31 @@ return (
                       </Typography>
                     </Stack>
 
-                    <Divider sx={{ backgroundColor: "rgba(255,255,255,0.07)", mb: 2 }} />
+                    <Divider sx={{ backgroundColor: "var(--naftal-border-subtle)", mb: 2 }} />
 
                     <Grid container spacing={2} columns={{ sm: 8, md: 16, lg: 16 }}>
                       {/* Not Returned */}
                       <Grid size={{ xs: 12, md: 16, lg: 5 }}>
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
-                            <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              Les seances de sortie non retournées
+
+                            <Typography sx={{ fontWeight: 700, color: "var(--naftal-text-primary)" }}>
+                              Leave sessions not returned
                             </Typography>
                             <Chip
                               size="small"
                               label={`${notReturned.length}`}
                               sx={{
-                                backgroundColor: "rgba(239,68,68,0.12)",
-                                color: "#f87171",
-                                border: "0.5px solid rgba(248,113,113,0.25)",
+                                backgroundColor: "var(--naftal-error-muted)",
+                                color: "var(--naftal-error)",
+                                border: "0.5px solid var(--naftal-error-muted)",
                                 fontWeight: 800,
                               }}
                             />
                           </Stack>
 
                           {notReturned.length === 0 ? (
-                            <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>
+                            <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", fontStyle: "italic" }}>
                               Aucun.
                             </Typography>
                           ) : (
@@ -413,37 +416,37 @@ return (
                                 <Box
                                   key={ls.id}
                                   sx={{
-                                    border: "0.5px solid rgba(255,255,255,0.08)",
+                                    border: "0.5px solid var(--naftal-border-subtle)",
                                     borderRadius: "10px",
                                     p: 1.25,
-                                    backgroundColor: "rgba(255,255,255,0.02)",
+                                    backgroundColor: "var(--naftal-hover)",
                                   }}
                                 >
                                   <Stack direction="row" sx={{ justifyContent: "space-between", gap: 1 }}>
-                                    <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", fontWeight: 700 }}>
+                                    <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-secondary)", fontWeight: 700 }}>
                                       Session #{ls.id}
                                     </Typography>
                                     <Chip
                                       size="small"
                                       label={ls.status ?? "—"}
                                       sx={{
-                                        backgroundColor: "rgba(255,255,255,0.06)",
-                                        color: "rgba(255,255,255,0.75)",
-                                        border: "0.5px solid rgba(255,255,255,0.1)",
+                                        backgroundColor: "var(--naftal-hover)",
+                                        color: "var(--naftal-text-secondary)",
+                                        border: "0.5px solid var(--naftal-border-subtle)",
                                       }}
                                     />
                                   </Stack>
-                                  <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", mt: 0.5 }}>
+                                  <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
                                     Sortie: {formatDateTime(ls.leaveTime)} • Retour: {formatDateTime(ls.returnTime)}
                                   </Typography>
-                                  <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", mt: 0.25 }}>
+                                  <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.25 }}>
                                     Créée: {formatDateTime(ls.createdAt)} • DocumentId: {ls.documentId}
                                   </Typography>
                                 </Box>
                               ))}
 
                               {notReturned.length > 6 ? (
-                                <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+                                <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)" }}>
                                   +{notReturned.length - 6} autre(s)
                                 </Typography>
                               ) : null}
@@ -456,23 +459,24 @@ return (
                       <Grid size={{ xs: 12, md: 8, lg: 5 }}>
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
-                            <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              Les refus precedents de ce jour
+
+                            <Typography sx={{ fontWeight: 700, color: "var(--naftal-text-primary)" }}>
+                              Previous rejections
                             </Typography>
                             <Chip
                               size="small"
                               label={`${rejections.length}`}
                               sx={{
-                                backgroundColor: "rgba(239,68,68,0.12)",
-                                color: "#f87171",
-                                border: "0.5px solid rgba(248,113,113,0.25)",
+                                backgroundColor: "var(--naftal-error-muted)",
+                                color: "var(--naftal-error)",
+                                border: "0.5px solid var(--naftal-error-muted)",
                                 fontWeight: 800,
                               }}
                             />
                           </Stack>
 
                           {rejections.length === 0 ? (
-                            <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>
+                            <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", fontStyle: "italic" }}>
                               Aucun.
                             </Typography>
                           ) : (
@@ -481,34 +485,35 @@ return (
                                 <Box
                                   key={doc.id}
                                   sx={{
-                                    border: "0.5px solid rgba(255,255,255,0.08)",
+                                    border: "0.5px solid var(--naftal-border-subtle)",
                                     borderRadius: "10px",
                                     p: 1.25,
-                                    backgroundColor: "rgba(255,255,255,0.02)",
+                                    backgroundColor: "var(--naftal-hover)",
                                   }}
                                 >
                                   <Stack direction="row" sx={{ justifyContent: "space-between", gap: 1 }}>
-                                    <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", fontWeight: 800 }}>
+                                    <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-primary)", fontWeight: 800 }}>
                                       {typeLabel[doc.type as string] ?? (doc.type as string) ?? "Document"} • #{doc.id}
                                     </Typography>
                                     <Chip
                                       size="small"
                                       label={doc.status}
                                       sx={{
-                                        backgroundColor: "rgba(239,68,68,0.12)",
-                                        color: "#f87171",
-                                        border: "0.5px solid rgba(248,113,113,0.25)",
+                                        backgroundColor: "var(--naftal-error-muted)",
+                                        color: "var(--naftal-error)",
+                                        border: "0.5px solid var(--naftal-error-muted)",
                                       }}
                                     />
                                   </Stack>
-                                  <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", mt: 0.5 }}>
-                                    Soumis: {formatAlgeriaDateTime(doc.createdAt)}
+
+                                  <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
+                                    Soumis: {getFullDate(doc.createdAt)}
                                   </Typography>
                                 </Box>
                               ))}
 
                               {rejections.length > 6 ? (
-                                <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+                                <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)" }}>
                                   +{rejections.length - 6} autre(s)
                                 </Typography>
                               ) : null}
@@ -521,23 +526,24 @@ return (
                       <Grid size={{ xs: 12, md: 8, lg: 6 }}>
                         <Stack spacing={1.25}>
                           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
-                            <Typography sx={{ fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                              les demandes approuvées précédemment ce dernier 90 jours
+
+                            <Typography sx={{ fontWeight: 700, color: "var(--naftal-text-primary)" }}>
+                              Recent approved documents this last 90 days
                             </Typography>
                             <Chip
                               size="small"
                               label={`${approvedDocs.length}`}
                               sx={{
-                                backgroundColor: "rgba(34,197,94,0.12)",
-                                color: "#4ade80",
-                                border: "0.5px solid rgba(74,222,128,0.25)",
+                                backgroundColor: "var(--naftal-success-muted)",
+                                color: "var(--naftal-success)",
+                                border: "0.5px solid var(--naftal-success-muted)",
                                 fontWeight: 800,
                               }}
                             />
                           </Stack>
 
                           {approvedDocs.length === 0 ? (
-                            <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>
+                            <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", fontStyle: "italic" }}>
                               Aucun.
                             </Typography>
                           ) : (
@@ -546,34 +552,35 @@ return (
                                 <Box
                                   key={doc.id}
                                   sx={{
-                                    border: "0.5px solid rgba(255,255,255,0.08)",
+                                    border: "0.5px solid var(--naftal-border-subtle)",
                                     borderRadius: "10px",
                                     p: 1.25,
-                                    backgroundColor: "rgba(255,255,255,0.02)",
+                                    backgroundColor: "var(--naftal-hover)",
                                   }}
                                 >
                                   <Stack direction="row" sx={{ justifyContent: "space-between", gap: 1 }}>
-                                    <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", fontWeight: 800 }}>
+                                    <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-primary)", fontWeight: 800 }}>
                                       {typeLabel[doc.type as string] ?? (doc.type as string) ?? "Document"} • #{doc.id}
                                     </Typography>
                                     <Chip
                                       size="small"
                                       label={doc.status}
                                       sx={{
-                                        backgroundColor: "rgba(34,197,94,0.12)",
-                                        color: "#4ade80",
-                                        border: "0.5px solid rgba(74,222,128,0.25)",
+                                        backgroundColor: "var(--naftal-success-muted)",
+                                        color: "var(--naftal-success)",
+                                        border: "0.5px solid var(--naftal-success-muted)",
                                       }}
                                     />
                                   </Stack>
-                                  <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", mt: 0.5 }}>
-                                    Soumis: {formatAlgeriaDateTime(doc.createdAt)}
+
+                                  <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
+                                    Soumis: {getFullDate(doc.createdAt)}
                                   </Typography>
                                 </Box>
                               ))}
 
                               {approvedDocs.length > 6 ? (
-                                <Typography sx={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+                                <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)" }}>
                                   +{approvedDocs.length - 6} autre(s)
                                 </Typography>
                               ) : null}

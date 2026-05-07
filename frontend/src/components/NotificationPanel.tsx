@@ -21,10 +21,10 @@ const TYPE_LABELS: Record<Notification["type"], string> = {
 };
 
 const TYPE_COLORS: Record<Notification["type"], string> = {
-  NEW_PENDING_DOCUMENT: "#ffa500",
-  DOCUMENT_APPROVED: "#22c55e",
-  DOCUMENT_REJECTED: "#ef4444",
-  DOCUMENT_EXPIRING: "#f97316",
+  NEW_PENDING_DOCUMENT: "var(--naftal-brand)",
+  DOCUMENT_APPROVED: "var(--naftal-success)",
+  DOCUMENT_REJECTED: "var(--naftal-error)",
+  DOCUMENT_EXPIRING: "var(--naftal-warning)",
 };
 
 export default function NotificationPanel() {
@@ -51,8 +51,8 @@ export default function NotificationPanel() {
           badgeContent={unreadCount}
           sx={{
             "& .MuiBadge-badge": {
-              backgroundColor: "#ffa500",
-              color: "#222",
+              backgroundColor: "var(--naftal-brand)",
+              color: "var(--naftal-on-brand)",
               fontWeight: "bold",
               fontSize: "11px",
               width: 18,
@@ -63,7 +63,7 @@ export default function NotificationPanel() {
             },
           }}
         >
-          <NotificationsNoneIcon sx={{ fontSize: "30px", color: "#fff" }} />
+          <NotificationsNoneIcon sx={{ fontSize: "30px", color: "var(--naftal-text-primary)" }} />
         </Badge>
       </IconButton>
 
@@ -76,12 +76,12 @@ export default function NotificationPanel() {
         slotProps={{
           paper: {
             sx: {
-              backgroundColor: "#1a2742",
-              color: "#fff",
+              backgroundColor: "var(--naftal-surface-1)",
+              color: "var(--naftal-text-primary)",
               width: 360,
               maxHeight: 480,
               borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.08)",
+              border: "1px solid var(--naftal-border-subtle)",
               mt: 1,
             },
           },
@@ -92,7 +92,7 @@ export default function NotificationPanel() {
           <Typography sx={{ fontWeight: "bold", fontSize: "16px" }}>
             Notifications
             {unreadCount > 0 && (
-              <Typography component="span" sx={{ ml: 1, fontSize: "12px", color: "#ffa500" }}>
+              <Typography component="span" sx={{ ml: 1, fontSize: "12px", color: "var(--naftal-brand)" }}>
                 ({unreadCount} unread)
               </Typography>
             )}
@@ -102,21 +102,21 @@ export default function NotificationPanel() {
               onClick={markAllAsRead}
               size="small"
               startIcon={<CheckCircleIcon sx={{ fontSize: "14px" }} />}
-              sx={{ color: "#ffa500", fontSize: "11px", textTransform: "none", p: 0, minWidth: 0 }}
+              sx={{ color: "var(--naftal-brand)", fontSize: "11px", textTransform: "none", p: 0, minWidth: 0 }}
             >
               Mark all read
             </Button>
           )}
         </Box>
 
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+        <Divider sx={{ borderColor: "var(--naftal-border-subtle)" }} />
 
         {/* List */}
         <Box sx={{ overflowY: "auto", maxHeight: 380 }}>
           {notifications.length === 0 ? (
             <Box sx={{ py: 5, textAlign: "center" }}>
-              <NotificationsNoneIcon sx={{ fontSize: 40, color: "rgba(255,255,255,0.2)", mb: 1 }} />
-              <Typography sx={{ color: "rgba(255,255,255,0.4)", fontSize: "14px" }}>
+              <NotificationsNoneIcon sx={{ fontSize: 40, color: "var(--naftal-text-muted)", mb: 1 }} />
+              <Typography sx={{ color: "var(--naftal-text-muted)", fontSize: "14px" }}>
                 No notifications yet
               </Typography>
             </Box>
@@ -129,9 +129,9 @@ export default function NotificationPanel() {
                   px: 2,
                   py: 1.5,
                   cursor: "pointer",
-                  backgroundColor: n.read ? "transparent" : "rgba(255,165,0,0.06)",
+                  backgroundColor: n.read ? "transparent" : "var(--naftal-brand-ghost)",
                   borderLeft: n.read ? "3px solid transparent" : `3px solid ${TYPE_COLORS[n.type]}`,
-                  "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
+                  "&:hover": { backgroundColor: "var(--naftal-hover)" },
                   transition: "background 0.2s",
                 }}
               >
@@ -148,13 +148,13 @@ export default function NotificationPanel() {
                     {TYPE_LABELS[n.type]}
                   </Typography>
                   {!n.read && (
-                    <FiberManualRecordIcon sx={{ fontSize: "8px", color: "#ffa500", ml: "auto" }} />
+                    <FiberManualRecordIcon sx={{ fontSize: "8px", color: "var(--naftal-brand)", ml: "auto" }} />
                   )}
                 </Box>
-                <Typography sx={{ fontSize: "13px", color: "#e2e8f0", lineHeight: 1.4 }}>
+                <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-secondary)", lineHeight: 1.4 }}>
                   {n.message}
                 </Typography>
-                <Typography sx={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", mt: 0.5 }}>
+                <Typography sx={{ fontSize: "11px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
                   {new Date(n.createdAt).toLocaleString("fr-DZ", {
                     day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
                   })}

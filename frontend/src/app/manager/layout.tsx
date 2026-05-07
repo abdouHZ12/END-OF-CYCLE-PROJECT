@@ -1,13 +1,13 @@
 "use client";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import Button from "@mui/material/Button";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import GroupIcon from "@mui/icons-material/Group";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
-import Dashboard from "@/components/Dashboard";
+import DashboardShell from "@/components/naftal/DashboardShell";
+import Button from "@/components/naftal/Button";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import CardTravelIcon from '@mui/icons-material/CardTravel';
 
@@ -24,37 +24,23 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
     { label: "Mission Order",       href: "/manager/mission-order",     icon: <CardTravelIcon /> },
     { label: "Historique employés", href: "/manager/employees-history", icon: <GroupIcon /> },
   ];
-  
-  const toggleSx = {
-    justifyContent: "space-between",
-    px: 1.5, py: 1,
-    backgroundColor: "rgba(255,165,0,0.12)",
-    color: "#ffa500",
-    borderColor: "rgba(255,165,0,0.3)",
-    borderRadius: "10px",
-    textTransform: "none",
-    fontSize: "13px",
-    fontWeight: 700,
-    "&:hover": {
-      backgroundColor: "rgba(255,165,0,0.18)",
-      borderColor: "rgba(255,165,0,0.45)",
-    },
-  } as const;
 
-const toggleButton = (
-  <Button
-    onClick={() => router.push(employeeHref)}
-    fullWidth variant="outlined"
-    startIcon={<PersonOutlineOutlinedIcon fontSize="small" />}
-    endIcon={<SwapHorizOutlinedIcon fontSize="small" />}
-    sx={toggleSx}
-  >
-    Espace worker
-  </Button>
-);
+  const toggleButton = (
+    <Button
+      onClick={() => router.push(employeeHref)}
+      variant="outline"
+      className="w-full justify-between border-(--naftal-brand-border) bg-(--naftal-brand-ghost) text-(--naftal-info) hover:bg-(--naftal-brand-muted)"
+    >
+      <span className="inline-flex items-center gap-2">
+        <PersonOutlineOutlinedIcon fontSize="small" />
+        Espace worker
+      </span>
+      <SwapHorizOutlinedIcon fontSize="small" />
+    </Button>
+  );
 
   return (
-    <Dashboard
+    <DashboardShell
       items={items}
       viewToggle={toggleButton}
       user={currentUser ? {
@@ -64,6 +50,6 @@ const toggleButton = (
       } : undefined}
     >
       {children}
-    </Dashboard>
+    </DashboardShell>
   );
 }

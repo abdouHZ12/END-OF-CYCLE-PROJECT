@@ -59,10 +59,10 @@ const getStatusChip = (status: string) => {
           label={"EN ATTENTE"}
           size="small"
           sx={{
-            backgroundColor: "rgba(255, 165, 0, 0.12)",
-            color: "#ffa500",
+            backgroundColor: "var(--naftal-brand-muted)",
+            color: "var(--naftal-brand)",
             fontWeight: "bold",
-            border: "1px solid #ffa500",
+            border: "1px solid var(--naftal-brand)",
           }}
         />
       );
@@ -72,10 +72,10 @@ const getStatusChip = (status: string) => {
           label={"APPROUVÉ"}
           size="small"
           sx={{
-            backgroundColor: "rgba(22, 163, 74, 0.12)",
-            color: "#16a34a",
+            backgroundColor: "var(--naftal-success-muted)",
+            color: "var(--naftal-success)",
             fontWeight: "bold",
-            border: "1px solid #16a34a",
+            border: "1px solid var(--naftal-success)",
           }}
         />
       );
@@ -85,10 +85,10 @@ const getStatusChip = (status: string) => {
           label={"REFUSÉ"}
           size="small"
           sx={{
-            backgroundColor: "rgba(239, 68, 68, 0.12)",
-            color: "#ef4444",
+            backgroundColor: "var(--naftal-error-muted)",
+            color: "var(--naftal-error)",
             fontWeight: "bold",
-            border: "1px solid #ef4444",
+            border: "1px solid var(--naftal-error)",
           }}
         />
       );
@@ -100,13 +100,13 @@ const getStatusChip = (status: string) => {
 const getTypeIcon = (type: string) => {
   switch (type) {
     case "EXIT_SLIP":
-      return <MeetingRoomOutlinedIcon fontSize="small" sx={{ color: "#ffa500" }} />;
+      return <MeetingRoomOutlinedIcon fontSize="small" sx={{ color: "var(--naftal-brand)" }} />;
     case "ABSENCE_AUTH":
-      return <CalendarMonthOutlinedIcon fontSize="small" sx={{ color: "#ffa500" }} />;
+      return <CalendarMonthOutlinedIcon fontSize="small" sx={{ color: "var(--naftal-brand)" }} />;
     case "MISSION_ORDER":
-      return <FlightTakeoffOutlinedIcon fontSize="small" sx={{ color: "#ffa500" }} />;
+      return <FlightTakeoffOutlinedIcon fontSize="small" sx={{ color: "var(--naftal-brand)" }} />;
     default:
-      return <TextSnippetOutlinedIcon fontSize="small" sx={{ color: "#ffa500" }} />;
+      return <TextSnippetOutlinedIcon fontSize="small" sx={{ color: "var(--naftal-brand)" }} />;
   }
 };
 
@@ -160,22 +160,22 @@ export default function EmployeesHistoryPage() {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         minHeight: "100vh",
         py: 3,
       }}
     >
       <Container maxWidth="lg">
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#fff" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
           Historique des employés
         </Typography>
-        <Typography sx={{ color: "gray", mb: 3 }}>
+        <Typography sx={{ color: "var(--naftal-text-muted)", mb: 3 }}>
           Consulter historique des demandes de vos employés
         </Typography>
 
         {loading && (
-          <Stack direction="row" spacing={1} sx={{ color: "lightgray", alignItems: "center" }}>
-            <CircularProgress size={18} sx={{ color: "#ffa500" }} />
+          <Stack direction="row" spacing={1} sx={{ color: "var(--naftal-text-secondary)", alignItems: "center" }}>
+            <CircularProgress size={18} sx={{ color: "var(--naftal-brand)" }} />
             <Typography>Chargement...</Typography>
           </Stack>
         )}
@@ -185,10 +185,10 @@ export default function EmployeesHistoryPage() {
             severity="error"
             sx={{
               mb: 2,
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              color: "#ef4444",
+              backgroundColor: "var(--naftal-error-muted)",
+              color: "var(--naftal-error)",
               border: "1px solid rgba(239, 68, 68, 0.3)",
-              "& .MuiAlert-icon": { color: "#ef4444" },
+              "& .MuiAlert-icon": { color: "var(--naftal-error)" },
             }}
           >
             {error}
@@ -201,9 +201,9 @@ export default function EmployeesHistoryPage() {
               mt: 6,
               p: 3,
               textAlign: "center",
-              backgroundColor: "rgba(255,255,255,0.04)",
+              backgroundColor: "var(--naftal-hover)",
               borderRadius: 2,
-              color: "lightgray",
+              color: "var(--naftal-text-secondary)",
             }}
           >
             Aucun employé trouvé
@@ -218,14 +218,14 @@ export default function EmployeesHistoryPage() {
               onChange={(_, isExpanded) => setExpanded(isExpanded ? emp.id : null)}
               disableGutters
               sx={{
-                backgroundColor: "#20314E",
+                backgroundColor: "var(--naftal-surface-3)",
                 borderRadius: 2,
                 overflow: "hidden",
                 "&:before": { display: "none" },
               }}
             >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ color: "#ffa500" }} />}
+                expandIcon={<ExpandMoreIcon sx={{ color: "var(--naftal-brand)" }} />}
                 sx={{
                   px: 2.5,
                   py: 1,
@@ -240,8 +240,8 @@ export default function EmployeesHistoryPage() {
                   <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
                     <Avatar
                       sx={{
-                        bgcolor: "rgba(255, 165, 0, 0.18)",
-                        color: "#ffa500",
+                        bgcolor: "var(--naftal-brand-muted-strong)",
+                        color: "var(--naftal-brand)",
                         fontWeight: "bold",
                         width: 38,
                         height: 38,
@@ -250,10 +250,10 @@ export default function EmployeesHistoryPage() {
                       {getEmployeeInitials(emp.name)}
                     </Avatar>
                     <Box>
-                      <Typography sx={{ color: "#fff", fontWeight: "bold", lineHeight: 1.2 }}>
+                      <Typography sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", lineHeight: 1.2 }}>
                         {emp.name}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: "gray" }}>
+                      <Typography variant="caption" sx={{ color: "var(--naftal-text-muted)" }}>
                         @{emp.username} · {emp.issuedDocuments.length} demande(s)
                       </Typography>
                     </Box>
@@ -264,19 +264,19 @@ export default function EmployeesHistoryPage() {
                     label={String(emp.issuedDocuments.length)}
                     size="small"
                     sx={{
-                      backgroundColor: "rgba(255, 255, 255, 0.06)",
-                      color: "#fff",
-                      "& .MuiChip-icon": { color: "#ffa500" },
+                      backgroundColor: "var(--naftal-hover)",
+                      color: "var(--naftal-text-primary)",
+                      "& .MuiChip-icon": { color: "var(--naftal-brand)" },
                     }}
                   />
                 </Stack>
               </AccordionSummary>
 
               <AccordionDetails sx={{ px: 2.5, pb: 2.5, pt: 0 }}>
-                <Divider sx={{ mb: 2, borderColor: "rgba(255,255,255,0.08)" }} />
+                <Divider sx={{ mb: 2, borderColor: "var(--naftal-border-subtle)" }} />
 
                 {emp.issuedDocuments.length === 0 ? (
-                  <Typography variant="body2" sx={{ color: "gray" }}>
+                  <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
                     Aucune demande
                   </Typography>
                 ) : (
@@ -293,7 +293,7 @@ export default function EmployeesHistoryPage() {
                           sx={{
                             width: "100%",
                             p: 2,
-                            backgroundColor: "rgba(255,255,255,0.04)",
+                            backgroundColor: "var(--naftal-hover)",
                             borderRadius: 2,
                           }}
                         >
@@ -305,7 +305,7 @@ export default function EmployeesHistoryPage() {
                             >
                               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                                 {getTypeIcon(doc.type)}
-                                <Typography sx={{ color: "#ffa500", fontWeight: "bold", fontSize: 13 }}>
+                                <Typography sx={{ color: "var(--naftal-brand)", fontWeight: "bold", fontSize: 13 }}>
                                   {typeLabel[doc.type] ?? doc.type}
                                 </Typography>
                               </Stack>
@@ -313,16 +313,16 @@ export default function EmployeesHistoryPage() {
                             </Stack>
 
                             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                              <AccessTimeOutlinedIcon sx={{ color: "gray" }} fontSize="small" />
-                              <Typography variant="caption" sx={{ color: "gray" }}>
+                              <AccessTimeOutlinedIcon sx={{ color: "var(--naftal-text-muted)" }} fontSize="small" />
+                              <Typography variant="caption" sx={{ color: "var(--naftal-text-muted)" }}>
                                 Soumis le {formatDate(doc.createdAt)}
                               </Typography>
                             </Stack>
 
                             {doc.exitSlip && (
                               <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                                <MeetingRoomOutlinedIcon sx={{ color: "lightgray", mt: "2px" }} fontSize="small" />
-                                <Typography variant="body2" sx={{ color: "lightgray" }}>
+                                <MeetingRoomOutlinedIcon sx={{ color: "var(--naftal-text-secondary)", mt: "2px" }} fontSize="small" />
+                                <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                                   Sortie: {formatDate(doc.exitSlip.exitTime)} — Retour: {formatDate(doc.exitSlip.returnTime)} — Porte: {doc.exitSlip.gate}
                                 </Typography>
                               </Stack>
@@ -330,8 +330,8 @@ export default function EmployeesHistoryPage() {
 
                             {doc.absenceAuth && (
                               <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                                <CalendarMonthOutlinedIcon sx={{ color: "lightgray", mt: "2px" }} fontSize="small" />
-                                <Typography variant="body2" sx={{ color: "lightgray" }}>
+                                <CalendarMonthOutlinedIcon sx={{ color: "var(--naftal-text-secondary)", mt: "2px" }} fontSize="small" />
+                                <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                                   Du {formatDate(doc.absenceAuth.startDate)} au {formatDate(doc.absenceAuth.endDate)} — {doc.absenceAuth.reason}
                                 </Typography>
                               </Stack>
@@ -339,8 +339,8 @@ export default function EmployeesHistoryPage() {
 
                             {doc.missionOrder && (
                               <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                                <FlightTakeoffOutlinedIcon sx={{ color: "lightgray", mt: "2px" }} fontSize="small" />
-                                <Typography variant="body2" sx={{ color: "lightgray" }}>
+                                <FlightTakeoffOutlinedIcon sx={{ color: "var(--naftal-text-secondary)", mt: "2px" }} fontSize="small" />
+                                <Typography variant="body2" sx={{ color: "var(--naftal-text-secondary)" }}>
                                   {doc.missionOrder.destination} — {doc.missionOrder.duration} jours — {doc.missionOrder.purpose}
                                 </Typography>
                               </Stack>

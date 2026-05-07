@@ -20,10 +20,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import List from "@mui/material/List";
 import NotificationPanel from "@/components/NotificationPanel";
-
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 const drawerWidth = 256;
-
 
 type DashboardUser = {
   initials: string;
@@ -41,7 +40,7 @@ interface DashboardProps {
     label: string;
     href: string;
     icon: React.ReactNode;
-  }[];  
+  }[];
 }
 
 export default function Dashboard({
@@ -50,7 +49,6 @@ export default function Dashboard({
   user: userProp,
   viewToggle,
 }: DashboardProps) {
-
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
@@ -79,11 +77,10 @@ export default function Dashboard({
     }
   };
 
-  // the container of the nav bar and side bar with list passed as a props
   const drawer = (
     <div
       style={{
-        backgroundColor: "#1a2742",
+        backgroundColor: "var(--naftal-surface-1)",
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -92,7 +89,7 @@ export default function Dashboard({
       <div style={{ marginBottom: "20px" }}>
         <p
           style={{
-            color: "orange",
+            color: "var(--naftal-brand)",
             textAlign: "left",
             fontSize: "30px",
             fontWeight: "bold",
@@ -106,133 +103,138 @@ export default function Dashboard({
           style={{
             width: "66px",
             height: "2px",
-            backgroundColor: "#ffa500",
+            backgroundColor: "var(--naftal-brand)",
             borderRadius: "0px",
-            marginLeft: "20px", 
-            marginBottom: "10px", 
+            marginLeft: "20px",
+            marginBottom: "10px",
           }}
-        ></div>
+        />
       </div>
 
       <div
         style={{
           width: "100%",
           height: "1px",
-          backgroundColor: "rgba(255,255,255,0.12)",
+          backgroundColor: "var(--naftal-border-subtle)",
         }}
       />
+
       {viewToggle && (
         <div style={{ margin: "10px 16px" }}>
           {viewToggle}
         </div>
       )}
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: "auto",
-          "& .MuiListItemButton-root:hover": {
-            backgroundColor: "#ffa500 !important",
-            color: "#222 !important",
-          },
-          "& .MuiListItemButton-root:hover .MuiListItemIcon-root": {
-            color: "#222 !important",
-          },
-        }}
-      >
-          <List sx={{ color: "#fff", marginLeft: "16px", marginTop: "30px" }}>
-            {items.map((item) => (
-                <ListItem disablePadding key={item.href}>
+
+      <Box sx={{ flex: 1, overflowY: "auto" }}>
+        <List sx={{ color: "var(--naftal-text-primary)", marginLeft: "16px", marginTop: "30px" }}>
+          {items.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <ListItem disablePadding key={item.href}>
                 <ListItemButton
-                    component={Link}
-                    href={item.href}
-                    selected={pathname === item.href}
-                    sx={{
-                        marginRight: "16px",
-                        borderRadius: "10px",
-                        color: "lightgray", // default text/icon color
-                        "& .MuiListItemIcon-root": {
-                        color: "lightgray", // default icon color
-                        },
-                        "&:hover": {
-                        backgroundColor: "rgba(211,211,211,0.12)", // thin gray overlay
-                        color: "#fff", // text color on hover
-                        "& .MuiListItemIcon-root": {
-                            color: "#fff", // icon color on hover
-                        },
-                        },
-                    }}
+                  component={Link}
+                  href={item.href}
+                  selected={isActive}
+                  sx={{
+                    marginRight: "16px",
+                    borderRadius: "10px",
+                    backgroundColor: isActive ? "var(--naftal-brand)" : "transparent",
+                    color: isActive ? "var(--naftal-on-brand)" : "var(--naftal-text-secondary)",
+                    "& .MuiListItemIcon-root": {
+                      color: isActive ? "var(--naftal-on-brand)" : "var(--naftal-text-secondary)",
+                    },
+                    "&:hover": {
+                      backgroundColor: isActive
+                        ? "var(--naftal-brand-hover)"
+                        : "var(--naftal-hover)",
+                      color: isActive ? "var(--naftal-on-brand)" : "var(--naftal-text-primary)",
+                      "& .MuiListItemIcon-root": {
+                        color: isActive ? "var(--naftal-on-brand)" : "var(--naftal-text-primary)",
+                      },
+                    },
+                    "&.Mui-selected": {
+                      backgroundColor: "var(--naftal-brand)",
+                      color: "var(--naftal-on-brand)",
+                      "& .MuiListItemIcon-root": {
+                        color: "var(--naftal-on-brand)",
+                      },
+                      "&:hover": {
+                        backgroundColor: "var(--naftal-brand-hover)",
+                      },
+                    },
+                  }}
                 >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.label} />
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.label} />
                 </ListItemButton>
-                </ListItem>
-            ))}
-            </List>      
+              </ListItem>
+            );
+          })}
+        </List>
       </Box>
 
-      <Divider />
+      <Divider sx={{ borderColor: "var(--naftal-border-subtle)" }} />
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: "10px",
-            padding: "12px 16px",
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "10px",
+          padding: "12px 16px",
+        }}
+      >
+        <Avatar
+          sx={{
+            bgcolor: "var(--naftal-brand-strong)",
+            color: "var(--naftal-on-brand)",
+            width: 40,
+            height: 40,
+            fontSize: "16px",
+            fontWeight: "bold",
+            flexShrink: 0,
           }}
         >
-          <Avatar
-            sx={{
-              bgcolor: "darkorange",
-              color: "#222",
-              width: 40,
-              height: 40,
-              fontSize: "16px",
-              fontWeight: "bold",
-              flexShrink: 0,
-            }}
-          >
-            {user.initials}
-          </Avatar>
+          {user.initials}
+        </Avatar>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <p style={{ fontSize: "15px", fontWeight: "bold", color: "white", margin: 0 }}>
-              {user.name}
-            </p>
-            <p style={{ fontSize: "11px", color: "lightgray", margin: 0 }}>
-              {user.role}
-            </p>
-          </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <p style={{ fontSize: "15px", fontWeight: "bold", color: "var(--naftal-text-primary)", margin: 0 }}>
+            {user.name}
+          </p>
+          <p style={{ fontSize: "11px", color: "var(--naftal-text-secondary)", margin: 0 }}>
+            {user.role}
+          </p>
         </div>
-
-        <ListItem disablePadding>
-          <ListItemButton
-            onClick={logout}
-            disabled={isLoggingOut}
-            sx={{
-              marginLeft: "3px",
-              borderRadius: "10px",
-              color: "#ef4444",
-              "& .MuiListItemIcon-root": {
-                color: "#ef4444",
-              },
-              "&:hover": {
-                backgroundColor: "rgba(239, 68, 68, 0.14)",
-                color: "#fff",
-                "& .MuiListItemIcon-root": {
-                  color: "#fff",
-                },
-              },
-            }}
-          >
-            <ListItemIcon>
-              <TextSnippetOutlinedIcon sx={{ fontSize: "25px" }} />
-            </ListItemIcon>
-            <ListItemText primary="Deconnexion" sx={{ paddingLeft: "10px" }} />
-          </ListItemButton>
-        </ListItem>
       </div>
 
+      <ListItem disablePadding>
+        <ListItemButton
+          onClick={logout}
+          disabled={isLoggingOut}
+          sx={{
+            marginLeft: "3px",
+            borderRadius: "10px",
+            color: "var(--naftal-error)",
+            "& .MuiListItemIcon-root": {
+              color: "var(--naftal-error)",
+            },
+            "&:hover": {
+              backgroundColor: "var(--naftal-error-muted)",
+              color: "var(--naftal-error)",
+              "& .MuiListItemIcon-root": {
+                color: "var(--naftal-error)",
+              },
+            },
+          }}
+        >
+          <ListItemIcon>
+            <TextSnippetOutlinedIcon sx={{ fontSize: "25px" }} />
+          </ListItemIcon>
+          <ListItemText primary="Deconnexion" sx={{ paddingLeft: "10px" }} />
+        </ListItemButton>
+      </ListItem>
+    </div>
   );
 
   return (
@@ -241,26 +243,32 @@ export default function Dashboard({
         display: "flex",
         height: "100dvh",
         overflow: "hidden",
-        bgcolor: "#12213a",
+        bgcolor: "var(--naftal-bg)",
       }}
     >
       <CssBaseline />
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
           height: "70px",
-          backgroundColor: "#20314E",
+          backgroundColor: "var(--naftal-surface-3)", // ← surface-3 not surface-1
+          borderBottom: "1px solid var(--naftal-border)", // ← border not border-subtle
+          color: "var(--naftal-text-primary)",
         }}
       >
         <Toolbar>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{
+              mr: 2,
+              display: { sm: "none" },
+              color: "var(--naftal-text-primary)",
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -272,16 +280,17 @@ export default function Dashboard({
               marginLeft: "auto",
             }}
           >
-            <div style={{ marginRight: "20px" }}>
-            <div style={{ marginRight: "20px" }}>
+            <div style={{ marginRight: "16px" }}>
               <NotificationPanel />
             </div>
+            <div style={{ marginRight: "16px" }}>
+              <ThemeToggle />
             </div>
 
             <Avatar
               sx={{
-                bgcolor: "darkorange",
-                color: "#222",
+                bgcolor: "var(--naftal-brand-strong)",
+                color: "var(--naftal-on-brand)",
                 width: 40,
                 height: 40,
                 border: "none",
@@ -294,39 +303,26 @@ export default function Dashboard({
               {user.initials}
             </Avatar>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: "auto",
-              }}
-            >
-              <p style={{ fontSize: "15px", fontWeight: "bold" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <p style={{ fontSize: "15px", fontWeight: "bold", color: "var(--naftal-text-primary)", margin: 0 }}>
                 {user.name}
               </p>
-              <p
-                style={{
-                  fontSize: "11px",
-                  fontWeight: "normal",
-                  color: "lightgray",
-                }}
-              >
+              <p style={{ fontSize: "11px", fontWeight: "normal", color: "var(--naftal-text-secondary)", margin: 0 }}>
                 {user.role}
               </p>
             </div>
           </div>
         </Toolbar>
       </AppBar>
+
       <Box
         component="nav"
         sx={{
-          backgroundColor: "#12213a",
           width: { sm: drawerWidth },
           flexShrink: { sm: 0 },
         }}
-        aria-label="mailbox folders"
+        aria-label="navigation"
       >
-        
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -337,17 +333,16 @@ export default function Dashboard({
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              backgroundColor: "#1a2742",
+              backgroundColor: "var(--naftal-surface-1)",
+              borderRight: "1px solid var(--naftal-border)",
+              boxShadow: "var(--naftal-shadow-soft)",
             },
           }}
-          slotProps={{
-            root: {
-              keepMounted: true, 
-            },
-          }}
+          slotProps={{ root: { keepMounted: true } }}
         >
           {drawer}
         </Drawer>
+
         <Drawer
           variant="permanent"
           sx={{
@@ -355,7 +350,9 @@ export default function Dashboard({
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              backgroundColor: "#1a2742",
+              backgroundColor: "var(--naftal-surface-1)",
+              borderRight: "1px solid var(--naftal-border)", // ← border not border-subtle
+              boxShadow: "var(--naftal-shadow-soft)",        // ← adds depth separation
             },
           }}
           open
@@ -363,8 +360,8 @@ export default function Dashboard({
           {drawer}
         </Drawer>
       </Box>
-        {children}
+
+      {children}
     </Box>
   );
 }
-

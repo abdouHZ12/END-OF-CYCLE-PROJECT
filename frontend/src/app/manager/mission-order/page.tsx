@@ -123,7 +123,7 @@ useEffect(() => {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    backgroundColor: "rgb(10, 22, 40)",
+    backgroundColor: "var(--naftal-bg)",
     borderRadius: "5px",
     fontSize: "16px",
     marginTop: "4px",
@@ -132,14 +132,14 @@ useEffect(() => {
     paddingBottom: "8px",
     paddingLeft: "10px",
     paddingRight: "10px",
-    color: "#fff",
-    border: "1px solid rgba(255,255,255,0.08)",
+    color: "var(--naftal-text-primary)",
+    border: "1px solid var(--naftal-border-subtle)",
     outline: "none",
     boxSizing: "border-box",
   };
 
   const labelStyle: React.CSSProperties = {
-    color: "#cbd5e1",
+    color: "var(--naftal-text-secondary)",
     fontSize: "14px",
     fontWeight: 500,
     marginBottom: "4px",
@@ -151,7 +151,7 @@ useEffect(() => {
       sx={{
         flexGrow: 1,
         mt: "70px",
-        backgroundColor: "rgb(10, 22, 40)",
+        backgroundColor: "var(--naftal-bg)",
         display: "grid",
         gridTemplateRows: "1fr auto",
         pt: "20px",
@@ -163,13 +163,14 @@ useEffect(() => {
     >
       <Box sx={{ width: "100%" }}>
         {/* Header */}
-        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "#fff", margin: 0 }}>
-          Assignement des Missions
+
+        <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)", margin: 0 }}>
+          Mission Order
         </h1>
         <p
           style={{
             fontSize: "20px",
-            color: "gray",
+            color: "var(--naftal-text-muted)",
             fontWeight: "bold",
             marginBottom: "24px",
             marginTop: "6px",
@@ -181,17 +182,18 @@ useEffect(() => {
         {/* Tab-style header bar to match worker page aesthetic */}
         <Box
           sx={{
-            backgroundColor: "#1a2742",
+            backgroundColor: "var(--naftal-surface-1)",
             borderRadius: "12px 12px 0 0",
             padding: "12px 16px",
-            borderBottom: "2px solid #ffa500",
+            borderBottom: "2px solid var(--naftal-brand)",
             display: "inline-block",
             minWidth: "180px",
             textAlign: "center",
           }}
         >
-          <span style={{ color: "#fff", fontWeight: 600, fontSize: "15px" }}>
-            Nouvelle order de mission
+
+          <span style={{ color: "var(--naftal-text-primary)", fontWeight: 600, fontSize: "15px" }}>
+            New Mission Order
           </span>
         </Box>
 
@@ -207,7 +209,7 @@ useEffect(() => {
             onSubmit={handleSubmit}
             sx={{
               padding: "24px",
-              backgroundColor: "#20314E",
+              backgroundColor: "var(--naftal-surface-3)",
               borderRadius: "0 12px 12px 12px",
               width: "100%",
               boxSizing: "border-box",
@@ -236,7 +238,7 @@ useEffect(() => {
               disabled={workersLoading}
               style={{
                 ...inputStyle,
-                color: assignedToId ? "#fff" : "gray",
+                color: assignedToId ? "var(--naftal-text-primary)" : "gray",
                 cursor: workersLoading ? "not-allowed" : "pointer",
               }}
             >
@@ -244,7 +246,7 @@ useEffect(() => {
                 {workersLoading ? "Loading workers..." : "Choisir un employé"}
               </option>
               {workers.map((worker) => (
-                <option key={worker.id} value={worker.id} style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
+                <option key={worker.id} value={worker.id} style={{ color: "var(--naftal-text-primary)", backgroundColor: "var(--naftal-bg)" }}>
                   {worker.name} — @{worker.username}
                 </option>
               ))}
@@ -297,21 +299,22 @@ useEffect(() => {
               required
               style={{
                 ...inputStyle,
-                color: travelMethod ? "#fff" : "gray",
+                color: travelMethod ? "var(--naftal-text-primary)" : "gray",
                 cursor: "pointer",
               }}
             >
               <option value="" disabled>
                 Sélectionner la méthode de transport
               </option>
-              <option value="PERSONAL" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Personnel
+
+              <option value="PERSONAL" style={{ color: "var(--naftal-text-primary)", backgroundColor: "var(--naftal-bg)" }}>
+                Personal
               </option>
-              <option value="COMPANY" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Entreprise
+              <option value="COMPANY" style={{ color: "var(--naftal-text-primary)", backgroundColor: "var(--naftal-bg)" }}>
+                Company
               </option>
-              <option value="AIRPLANE" style={{ color: "#fff", backgroundColor: "rgb(10, 22, 40)" }}>
-                Avion
+              <option value="AIRPLANE" style={{ color: "var(--naftal-text-primary)", backgroundColor: "var(--naftal-bg)" }}>
+                Airplane
               </option>
             </select>
 
@@ -322,7 +325,7 @@ useEffect(() => {
                   disabled={isLoading}
                   type="submit"
                   sx={{
-                    backgroundColor: "#ffa500",
+                    backgroundColor: "var(--naftal-brand)",
                     color: "black",
                     fontWeight: "bold",
                     padding: "12px 24px",
@@ -331,11 +334,11 @@ useEffect(() => {
                     textTransform: "none",
                     fontSize: "15px",
                     "&:hover": {
-                      backgroundColor: "#ffb733",
+                      backgroundColor: "var(--naftal-brand-hover)",
                     },
                     "&:disabled": {
-                      backgroundColor: "#7a5200",
-                      color: "#aaa",
+                      backgroundColor: "var(--naftal-brand-border-strong)",
+                      color: "var(--naftal-text-muted)",
                     },
                   }}
                 >
@@ -357,7 +360,7 @@ useEffect(() => {
                     textTransform: "none",
                     fontSize: "15px",
                     "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "var(--naftal-border-subtle)",
                     },
                   }}
                 >

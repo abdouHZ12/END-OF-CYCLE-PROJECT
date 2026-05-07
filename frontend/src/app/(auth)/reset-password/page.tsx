@@ -80,12 +80,12 @@ function ResetPasswordPageInner() {
   }
 
   return (
-    <div className="min-h-dvh bg-slate-950 px-6 py-14 text-slate-100">
+    <div className="min-h-dvh bg-[var(--naftal-bg)] px-6 py-14 text-[var(--naftal-text-primary)]">
       <div className="mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-md items-center">
-        <div className="w-full rounded-2xl border border-slate-800/80 bg-slate-900/70 p-8 shadow-2xl shadow-black/50 backdrop-blur">
+        <div className="w-full rounded-2xl border border-[var(--naftal-border)] bg-[var(--naftal-surface-1)] p-8 shadow-2xl shadow-black/20 backdrop-blur">
           <Link
 			href="/auth"
-            className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-slate-100"
+            className="inline-flex items-center gap-2 text-sm text-[var(--naftal-text-secondary)] hover:text-[var(--naftal-text-primary)]"
           >
             <ArrowLeftIcon className="h-4 w-4" />
             Retour
@@ -94,12 +94,12 @@ function ResetPasswordPageInner() {
           {expired ? (
             <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 p-5">
               <div className="text-lg font-semibold">Ce lien a expiré.</div>
-              <div className="mt-1 text-sm text-slate-300">
+              <div className="mt-1 text-sm text-[var(--naftal-text-secondary)]">
                 Veuillez recommencer.
               </div>
               <Link
                 href="/forgot-password"
-                className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-amber-400 px-4 py-3 font-semibold text-slate-950"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-[var(--naftal-brand)] px-4 py-3 font-semibold text-[var(--naftal-on-brand)]"
               >
                 Recommencer
               </Link>
@@ -118,15 +118,15 @@ function ResetPasswordPageInner() {
 
               <form className="mt-6 space-y-4" onSubmit={onSubmit}>
                 <label className="block">
-                  <div className="text-sm font-medium text-slate-200">
+                  <div className="text-sm font-medium text-[var(--naftal-text-secondary)]">
                     Nouveau mot de passe
                   </div>
                   <div className="relative mt-2">
-                    <LockIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                    <LockIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--naftal-text-muted)]" />
                     <input
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full rounded-lg border border-slate-800 bg-slate-950/40 py-3 pl-10 pr-10 text-slate-100 outline-none placeholder:text-slate-500 focus:border-amber-400/70"
+                      className="w-full rounded-lg border border-[var(--naftal-border)] bg-[var(--naftal-surface-2)] py-3 pl-10 pr-10 text-[var(--naftal-text-primary)] outline-none placeholder:text-[var(--naftal-text-muted)] focus:border-[var(--naftal-brand)]"
                       type={showNew ? "text" : "password"}
                       autoComplete="new-password"
                       required
@@ -134,7 +134,7 @@ function ResetPasswordPageInner() {
                     <button
                       type="button"
                       onClick={() => setShowNew((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-200"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--naftal-text-muted)] hover:text-[var(--naftal-text-primary)]"
                       aria-label={showNew ? "Masquer" : "Afficher"}
                     >
                       {showNew ? (
@@ -147,31 +147,31 @@ function ResetPasswordPageInner() {
                 </label>
 
                 <div>
-                  <div className="flex items-center justify-between text-xs text-slate-400">
+                  <div className="flex items-center justify-between text-xs text-[var(--naftal-text-muted)]">
                     <span>Force</span>
-                    <span className="text-slate-300">{strength.label}</span>
+                    <span className="text-[var(--naftal-text-secondary)]">{strength.label}</span>
                   </div>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-800">
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--naftal-surface-2)]">
                     <div
-                      className="h-full rounded-full bg-amber-400 transition-[width]"
+                      className="h-full rounded-full bg-[var(--naftal-brand)] transition-[width]"
                       style={{ width: `${(strength.score / 4) * 100}%` }}
                     />
                   </div>
-                  <div className="mt-2 text-xs text-slate-400">
+                  <div className="mt-2 text-xs text-[var(--naftal-text-muted)]">
                     min 8 caractères, une majuscule, un chiffre
                   </div>
                 </div>
 
                 <label className="block">
-                  <div className="text-sm font-medium text-slate-200">
+                  <div className="text-sm font-medium text-[var(--naftal-text-secondary)]">
                     Confirmer le mot de passe
                   </div>
                   <div className="relative mt-2">
-                    <LockIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                    <LockIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--naftal-text-muted)]" />
                     <input
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full rounded-lg border border-slate-800 bg-slate-950/40 py-3 pl-10 pr-10 text-slate-100 outline-none placeholder:text-slate-500 focus:border-amber-400/70"
+                      className="w-full rounded-lg border border-[var(--naftal-border)] bg-[var(--naftal-surface-2)] py-3 pl-10 pr-10 text-[var(--naftal-text-primary)] outline-none placeholder:text-[var(--naftal-text-muted)] focus:border-[var(--naftal-brand)]"
                       type={showConfirm ? "text" : "password"}
                       autoComplete="new-password"
                       required
@@ -179,7 +179,7 @@ function ResetPasswordPageInner() {
                     <button
                       type="button"
                       onClick={() => setShowConfirm((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-200"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--naftal-text-muted)] hover:text-[var(--naftal-text-primary)]"
                       aria-label={showConfirm ? "Masquer" : "Afficher"}
                     >
                       {showConfirm ? (
@@ -194,11 +194,11 @@ function ResetPasswordPageInner() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-3 font-semibold text-slate-950 transition disabled:cursor-not-allowed disabled:opacity-80"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--naftal-brand)] px-4 py-3 font-semibold text-[var(--naftal-on-brand)] transition disabled:cursor-not-allowed disabled:opacity-80"
                 >
                   {isLoading ? (
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-900/40 border-t-slate-900" />
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--naftal-on-brand)]/40 border-t-[var(--naftal-on-brand)]" />
                       Mise à jour...
                     </span>
                   ) : (
@@ -207,7 +207,7 @@ function ResetPasswordPageInner() {
                 </button>
               </form>
 
-              <div className="mt-8 text-center text-xs text-slate-500">
+              <div className="mt-8 text-center text-xs text-[var(--naftal-text-muted)]">
                 © 2025 Naftal — Tous droits réservés
               </div>
             </>

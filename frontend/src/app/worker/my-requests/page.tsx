@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { formatAlgeriaDate , formatAlgeriaDateTime  , formatAlgeriaTime } from "@/lib/datetime";
+import { getFullDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
@@ -259,7 +259,7 @@ export default function Page() {
         sx={{
             flexGrow: 1,
             mt: "70px", // push below navbar
-            backgroundColor: "rgb(10, 22, 40)",
+            backgroundColor: "var(--naftal-bg)",
             display: "grid",
             gridTemplateRows: "1fr auto",
             padding: "36px",
@@ -274,13 +274,13 @@ export default function Page() {
                       </div>
                     ) : null}
 
-            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
+            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"var(--naftal-text-primary)" }}>
               Mes demandes
             </h1>
             <p
               style={{
                 fontSize: "20px ",
-                color: "gray",
+                color: "var(--naftal-text-muted)",
                 fontWeight: "bold",
                 marginBottom: "20px",
               }}
@@ -289,19 +289,20 @@ export default function Page() {
             </p>
             <Box
               sx={{
-                backgroundColor: "#1a2942",
+                backgroundColor: "var(--naftal-surface-2)",
                 borderRadius: "12px",
                 padding: "16px",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.25)",
+                border: "1px solid var(--naftal-border-subtle)",
+                boxShadow: "var(--naftal-shadow-soft)",
               }}
             >
               <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
-                <FilterAltOutlinedIcon sx={{ color: " darkorange" }} />
-                <Typography variant="h6" sx={{ color: "#fff", fontWeight: 800 }}>
-                  Filtre 
+
+                <FilterAltOutlinedIcon sx={{ color: "var(--naftal-text-secondary)" }} />
+                <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: 800 }}>
+                  Filter
                 </Typography>
-                <Typography sx={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>
+                <Typography sx={{ color: "var(--naftal-text-muted)", fontSize: 13 }}>
                   Affinez la liste par statut et tri
                 </Typography>
               </Stack>
@@ -312,8 +313,8 @@ export default function Page() {
                     <InputLabel
                       id="status-label"
                       sx={{
-                        color: "rgba(255,255,255,0.65)",
-                        "&.Mui-focused": { color: "#fbbf24" },
+                        color: "var(--naftal-text-secondary)",
+                        "&.Mui-focused": { color: "var(--naftal-brand)" },
                       }}
                     >
                       Status
@@ -326,22 +327,22 @@ export default function Page() {
                       label="Status"
                       onChange={(e) => setStatus(e.target.value)}
                       sx={{
-                        color: "#fff",
-                        backgroundColor: "rgb(10, 22, 40)",
+                        color: "var(--naftal-text-primary)",
+                        backgroundColor: "var(--naftal-bg)",
                         borderRadius: 2,
-                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.12)" },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fbbf24" },
-                        "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border-subtle)" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-brand)" },
+                        "& .MuiSelect-icon": { color: "var(--naftal-text-secondary)" },
                       }}
                       MenuProps={{
                         slotProps: {
                           paper: {
                             sx: {
                               mt: 1,
-                              backgroundColor: "#10223A",
-                              color: "#fff",
-                              border: "1px solid rgba(255,255,255,0.08)",
+                              backgroundColor: "var(--naftal-surface-0)",
+                              color: "var(--naftal-text-primary)",
+                              border: "1px solid var(--naftal-border-subtle)",
                               borderRadius: 2,
                             },
                           },
@@ -349,7 +350,7 @@ export default function Page() {
                       }}
                     >
                       <MenuItem value="">
-                        <Typography sx={{ color: "rgba(255,255,255,0.85)" }}>All Status</Typography>
+                        <Typography sx={{ color: "var(--naftal-text-primary)" }}>All Status</Typography>
                       </MenuItem>
                       <MenuItem value="PENDING">En attente</MenuItem>
                       <MenuItem value="APPROVED">Approuvé</MenuItem>
@@ -363,8 +364,8 @@ export default function Page() {
                     <InputLabel
                       id="sort-label"
                       sx={{
-                        color: "rgba(255,255,255,0.65)",
-                        "&.Mui-focused": { color: "#fbbf24" },
+                        color: "var(--naftal-text-secondary)",
+                        "&.Mui-focused": { color: "var(--naftal-brand)" },
                       }}
                     >
                       Trie par
@@ -377,22 +378,22 @@ export default function Page() {
                       label="Sort By"
                       onChange={(e) => setSort(e.target.value)}
                       sx={{
-                        color: "#fff",
-                        backgroundColor: "rgb(10, 22, 40)",
+                        color: "var(--naftal-text-primary)",
+                        backgroundColor: "var(--naftal-bg)",
                         borderRadius: 2,
-                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.12)" },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fbbf24" },
-                        "& .MuiSelect-icon": { color: "rgba(255,255,255,0.65)" },
+                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border-subtle)" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-brand)" },
+                        "& .MuiSelect-icon": { color: "var(--naftal-text-secondary)" },
                       }}
                       MenuProps={{
                         slotProps: {
                           paper: {
                             sx: {
                               mt: 1,
-                              backgroundColor: "#10223A",
-                              color: "#fff",
-                              border: "1px solid rgba(255,255,255,0.08)",
+                              backgroundColor: "var(--naftal-surface-0)",
+                              color: "var(--naftal-text-primary)",
+                              border: "1px solid var(--naftal-border-subtle)",
                               borderRadius: 2,
                             },
                           },
@@ -409,7 +410,7 @@ export default function Page() {
             
             <Box sx={{mt:4}}>
                     {isLoading ? (
-                                  <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
+                                  <Typography variant="body1" sx={{ color: "var(--naftal-text-muted)", textAlign: "center", mt: 4 }}>
                                     Loading documents...
                                   </Typography>
                         ) : error  ? (
@@ -418,13 +419,14 @@ export default function Page() {
                                 </Typography>) 
                             : empty ? ( 
                                 <Box sx={{
-                                    backgroundColor: "#1a2942",
+                                    backgroundColor: "var(--naftal-surface-2)",
                                     borderRadius: "12px",
                                     padding: "30px 20px",
                                     }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                        <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
-                                            Il ya aucun document trouve
+
+                                        <Typography variant="h6" sx={{ color: "var(--naftal-text-secondary)" ,fontSize:"20px" }}>
+                                            No documents found
                                         </Typography>
                                     </Box>
                                  </Box>   ) 
@@ -432,54 +434,57 @@ export default function Page() {
                                   <TableContainer
                                   component={Paper}
                                   sx={{
-                                    backgroundColor: "#1a2942",
+                                    backgroundColor: "var(--naftal-surface-2)",
                                     borderRadius: 2,
                                     overflowY: "auto",
-                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                                    boxShadow: "var(--naftal-shadow-strong)",
+                                    border: "1px solid var(--naftal-border-subtle)",
                                   }}
                                 >
                                   <Table sx={{ }}>
-                                    <TableHead sx={{bgcolor:"#10223A" , boxShadow:"0px 0px 1px 0px gray"}}>
+                                    <TableHead sx={{bgcolor:"var(--naftal-surface-0)" , boxShadow:"0px 0px 1px 0px gray"}}>
                                       <TableRow>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Type</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Informations</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Date de soumission</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
-                                        <TableCell sx={{ color: "lightgray" , border:"none" }}>Actions</TableCell>
+
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Type</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Informations</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Submission Date</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Statut</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Actions</TableCell>
                                       </TableRow>
                                     </TableHead>
                                     <TableBody>
                                       {Rows.map((row) => (
-                                        <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
-                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                        <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" } }}>
+                                          <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
-                                              <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
+                                              <TextSnippetOutlinedIcon sx={{ color: "var(--naftal-text-muted)",width: "20px", marginRight: "8px" }} />
                                               {gettype(row.type)}
                                             </Box>
                                           </TableCell>
 
-                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                          <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
-                                              <Typography sx={{color:"lightgray"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+ formatAlgeriaTime(row.exitSlip.returnTime) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDate(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDate(row.absenceAuth.endDate) : 
+
+                                              <Typography sx={{color:"var(--naftal-text-secondary)"}}>
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+ row.exitSlip.returnTime.substring(11,16) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
                                           </TableCell>
 
-                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                          <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
-                                              <Typography sx={{color:"lightgray"}}>
-                                              {formatAlgeriaDate(row.createdAt)}  {/* Display only the date part */}
+
+                                              <Typography sx={{color:"var(--naftal-text-secondary)"}}>
+                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
                                               </Typography>
                                             </Box>
                                           </TableCell>
 
                                           <TableCell sx={{ border:"none"}}>{getStatusChip(row.status)}</TableCell>
 
-                                          <TableCell sx={{ color: "#fff" , border:"none"}}>
+                                          <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
                                               {row.status === "PENDING" && row.type !== "MISSION_ORDER" ? (
                                                 <Avatar
@@ -488,21 +493,28 @@ export default function Page() {
                                                     bgcolor: "transparent",
                                                     width: 40,
                                                     height: 40,
-                                                    "&:hover": { backgroundColor: "rgba(59, 130, 246, 0.18)" },
+                                                    "&:hover": { backgroundColor: "var(--naftal-info-muted)" },
                                                     cursor: "pointer",
                                                   }}
                                                 >
-                                                  <EditOutlinedIcon sx={{ color: "#60a5fa" }} />
+                                                  <EditOutlinedIcon sx={{ color: "var(--naftal-info)" }} />
                                                 </Avatar>
                                               ) : null}
-                                              <Avatar onClick={() => {router.push(`${routePrefix}/my-requests/${row.id}`)}} sx={{ bgcolor: "transparent", width: 40, height: 40 ,"&:hover": { backgroundColor: "#303f9f" } }}>
-                                                    <VisibilityOutlinedIcon />
-                                                </Avatar>
+                                              <Avatar
+                                                onClick={() => { router.push(`${routePrefix}/my-requests/${row.id}`) }}
+                                                sx={{ bgcolor: "transparent", width: 40, height: 40, "&:hover": { backgroundColor: "var(--naftal-info-muted)" }, cursor: "pointer" }}
+                                              >
+                                                <VisibilityOutlinedIcon sx={{ color: "var(--naftal-info)" }} />
+                                              </Avatar>
+
                                               {row.status === "PENDING" ? (
-                                                  <Avatar onClick={() => {handleDelete(row.id)}} sx={{ bgcolor: "transparent", width: 40, height: 40  , "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}>
-                                                    <CancelOutlinedIcon sx={{ color: "#f44336" }} />
+                                                <Avatar
+                                                  onClick={() => {handleDelete(row.id)}}
+                                                  sx={{ bgcolor: "transparent", width: 40, height: 40, "&:hover": { bgcolor: "rgba(244, 67, 54, 0.1)" } }}
+                                                >
+                                                  <CancelOutlinedIcon sx={{ color: "var(--naftal-error)" }} />
                                                 </Avatar>
-                                              ): null}
+                                              ) : null}
 
                                             </Box>
                                           </TableCell>
@@ -515,234 +527,235 @@ export default function Page() {
             </Box>
 
 
-                                <Dialog
-                                  open={editOpen}
-                                  onClose={closeEdit}
-                                  fullWidth
-                                  maxWidth="sm"
-                                  slotProps={{
-                                    paper: {
-                                      sx: {
-                                        backgroundColor: "#1a2942",
-                                        color: "#fff",
-                                        borderRadius: 3,
-                                        border: "1px solid rgba(255,255,255,0.08)",
-                                        overflow: "hidden",
-                                        boxShadow: "0px 18px 45px rgba(0, 0, 0, 0.45)",
-                                        "&:before": {
-                                          content: '""',
-                                          display: "block",
-                                          height: "4px",
-                                          backgroundColor: "#ffa500",
-                                        },
-                                      },
-                                    },
-                                  }}
-                                >
-                                  <DialogTitle
-                                    sx={{
-                                      fontWeight: 900,
-                                      py: 2,
-                                      backgroundColor: "#10223A",
-                                      borderBottom: "1px solid rgba(255,255,255,0.08)",
-                                    }}
-                                  >
-                                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                                      <Box sx={{ width: 9, height: 9, borderRadius: "50%", backgroundColor: "#ffa500" }} />
-                                      <Box>
-                                        <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>Modify request</Typography>
-                                      </Box>
-                                    </Stack>
-                                  </DialogTitle>
-                                  <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
-                                  <DialogContent sx={{ pt: 2 }}>
-                                    {editingDoc?.type === "EXIT_SLIP" ? (
-                                      <Stack spacing={2} sx={{ mt: 1 }}>
-                                        <TextField
-                                          label="Leave time"
-                                          type="datetime-local"
-                                          value={editExitTime}
-                                          onChange={(e) => setEditExitTime(e.target.value)}
-                                          slotProps={{ inputLabel: { shrink: true } }}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                        <TextField
-                                          label="Return time"
-                                          type="datetime-local"
-                                          value={editReturnTime}
-                                          onChange={(e) => setEditReturnTime(e.target.value)}
-                                          slotProps={{ inputLabel: { shrink: true } }}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                        <TextField
-                                          label="Gate"
-                                          value={editGate}
-                                          onChange={(e) => setEditGate(e.target.value)}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                      </Stack>
-                                    ) : null}
 
-                                    {editingDoc?.type === "ABSENCE_AUTH" ? (
-                                      <Stack spacing={2} sx={{ mt: 1 }}>
-                                        <TextField
-                                          label="Start date"
-                                          type="date"
-                                          value={editStartDate}
-                                          onChange={(e) => setEditStartDate(e.target.value)}
-                                          slotProps={{ inputLabel: { shrink: true } }}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                        <TextField
-                                          label="End date"
-                                          type="date"
-                                          value={editEndDate}
-                                          onChange={(e) => setEditEndDate(e.target.value)}
-                                          slotProps={{ inputLabel: { shrink: true } }}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                        <TextField
-                                          label="Reason"
-                                          value={editReason}
-                                          onChange={(e) => setEditReason(e.target.value)}
-                                          multiline
-                                          minRows={3}
-                                          fullWidth
-                                          sx={{
-                                            "& .MuiInputBase-input": { color: "#fff" },
-                                            "& .MuiOutlinedInput-root": { backgroundColor: "rgb(10, 22, 40)" },
-                                            "& .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "rgba(255,255,255,0.12)",
-                                              transition: "border-color 160ms ease, box-shadow 160ms ease",
-                                            },
-                                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.22)" },
-                                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                              borderColor: "#ffa500",
-                                              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.12)",
-                                            },
-                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
-                                            "& .MuiInputLabel-root.Mui-focused": { color: "#ffa500" },
-                                          }}
-                                        />
-                                      </Stack>
-                                    ) : null}
+            <Dialog
+              open={editOpen}
+              onClose={closeEdit}
+              fullWidth
+              maxWidth="sm"
+              slotProps={{
+                paper: {
+                  sx: {
+                    backgroundColor: "var(--naftal-surface-2)",
+                    color: "var(--naftal-text-primary)",
+                    borderRadius: 3,
+                    border: "1px solid var(--naftal-border-subtle)",
+                    overflow: "hidden",
+                    boxShadow: "var(--naftal-shadow-strong)",
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      height: "4px",
+                      backgroundColor: "var(--naftal-brand)",
+                    },
+                  },
+                },
+              }}
+            >
+              <DialogTitle
+                sx={{
+                  fontWeight: 900,
+                  py: 2,
+                  backgroundColor: "var(--naftal-surface-0)",
+                  borderBottom: "1px solid var(--naftal-border-subtle)",
+                }}
+              >
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Box sx={{ width: 9, height: 9, borderRadius: "50%", backgroundColor: "var(--naftal-brand)" }} />
+                  <Box>
+                    <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>Modify request</Typography>
+                  </Box>
+                </Stack>
+              </DialogTitle>
+              <Divider sx={{ borderColor: "var(--naftal-border-subtle)" }} />
+              <DialogContent sx={{ pt: 2 }}>
+                {editingDoc?.type === "EXIT_SLIP" ? (
+                  <Stack spacing={2} sx={{ mt: 1 }}>
+                    <TextField
+                      label="Leave time"
+                      type="datetime-local"
+                      value={editExitTime}
+                      onChange={(e) => setEditExitTime(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                    <TextField
+                      label="Return time"
+                      type="datetime-local"
+                      value={editReturnTime}
+                      onChange={(e) => setEditReturnTime(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                    <TextField
+                      label="Gate"
+                      value={editGate}
+                      onChange={(e) => setEditGate(e.target.value)}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                  </Stack>
+                ) : null}
 
-                                  </DialogContent>
-                                  <DialogActions
-                                    sx={{
-                                      px: 3,
-                                      pb: 2,
-                                      pt: 1.5,
-                                      backgroundColor: "rgba(16, 34, 58, 0.65)",
-                                      borderTop: "1px solid rgba(255,255,255,0.08)",
-                                    }}
-                                  >
-                                    <Button
-                                      onClick={closeEdit}
-                                      disabled={isSaving}
-                                      sx={{
-                                        color: "rgba(255,255,255,0.85)",
-                                        border: "1px solid rgba(255,255,255,0.22)",
-                                        borderRadius: 2,
-                                        textTransform: "none",
-                                        px: 2,
-                                        "&:hover": { backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.3)" },
-                                      }}
-                                    >
-                                      Cancel
-                                    </Button>
-                                    <Button
-                                      onClick={handleSaveEdit}
-                                      disabled={isSaving}
-                                      sx={{
-                                        backgroundColor: "#ffa500",
-                                        color: "#0a1628",
-                                        fontWeight: 900,
-                                        borderRadius: 2,
-                                        textTransform: "none",
-                                        px: 2,
-                                        "&:hover": { backgroundColor: "#ffb733" },
-                                      }}
-                                    >
-                                      {isSaving ? "Saving..." : "Save changes"}
-                                    </Button>
-                                  </DialogActions>
-                                </Dialog>
+                {editingDoc?.type === "ABSENCE_AUTH" ? (
+                  <Stack spacing={2} sx={{ mt: 1 }}>
+                    <TextField
+                      label="Start date"
+                      type="date"
+                      value={editStartDate}
+                      onChange={(e) => setEditStartDate(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                    <TextField
+                      label="End date"
+                      type="date"
+                      value={editEndDate}
+                      onChange={(e) => setEditEndDate(e.target.value)}
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                    <TextField
+                      label="Reason"
+                      value={editReason}
+                      onChange={(e) => setEditReason(e.target.value)}
+                      multiline
+                      minRows={3}
+                      fullWidth
+                      sx={{
+                        "& .MuiInputBase-input": { color: "var(--naftal-text-primary)" },
+                        "& .MuiOutlinedInput-root": { backgroundColor: "var(--naftal-bg)" },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-border-subtle)",
+                          transition: "border-color 160ms ease, box-shadow 160ms ease",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "var(--naftal-border)" },
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--naftal-brand)",
+                          boxShadow: "0 0 0 3px var(--naftal-brand-muted)",
+                        },
+                        "& .MuiInputLabel-root": { color: "var(--naftal-text-secondary)" },
+                        "& .MuiInputLabel-root.Mui-focused": { color: "var(--naftal-brand)" },
+                      }}
+                    />
+                  </Stack>
+                ) : null}
+
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  px: 3,
+                  pb: 2,
+                  pt: 1.5,
+                  backgroundColor: "var(--naftal-surface-2)",
+                  borderTop: "1px solid var(--naftal-border-subtle)",
+                }}
+              >
+                <Button
+                  onClick={closeEdit}
+                  disabled={isSaving}
+                  sx={{
+                    color: "var(--naftal-text-primary)",
+                    border: "1px solid var(--naftal-border)",
+                    borderRadius: 2,
+                    textTransform: "none",
+                    px: 2,
+                    "&:hover": { backgroundColor: "var(--naftal-hover)", borderColor: "var(--naftal-text-muted)" },
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveEdit}
+                  disabled={isSaving}
+                  sx={{
+                    backgroundColor: "var(--naftal-brand)",
+                    color: "var(--naftal-on-brand)",
+                    fontWeight: 900,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    px: 2,
+                    "&:hover": { backgroundColor: "var(--naftal-brand-hover)" },
+                  }}
+                >
+                  {isSaving ? "Saving..." : "Save changes"}
+                </Button>
+              </DialogActions>
+            </Dialog>
 
 
         </Box>

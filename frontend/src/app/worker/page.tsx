@@ -1,90 +1,64 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Avatar from "@mui/material/Avatar";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import Stack from "@mui/material/Stack";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { apiGet , type ApiError} from "@/lib/api";
-import { useRouter } from "next/navigation";
-import {useMediaQuery , useTheme} from "@mui/material";
-import { getStoredEmployeeId, getStoredPrimaryRole } from "@/lib/authStorage";
+
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+
+import { apiGet, type ApiError } from "@/lib/api";
+import { getStoredEmployeeId } from "@/lib/authStorage";
 import { formatAlgeriaDate } from "@/lib/datetime";
 
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Typography,
-  Chip
-} from "@mui/material";
-
+import Button from "@/components/naftal/Button";
+import Badge from "@/components/naftal/Badge";
+import Table from "@/components/naftal/Table";
+import { Card } from "@/components/naftal/Card";
 
 export type Document = {
   id: number;
-  type : string;
-  createdAt : string ;
-  status : string ;
-  qrCode? : string ;
+  type: string;
+  createdAt: string;
+  status: string;
+  qrCode?: string;
   managerComment?: string | null;
-  issuedById? : number;
-  authIssuedAt? : string;
-  decisionMadeById?: number ;
+  issuedById?: number;
+  authIssuedAt?: string;
+  decisionMadeById?: number;
   decisionMadeBy?: {
     id: number;
     name: string;
     username: string;
   } | null;
-  exitSlip? : {
-    exitTime :string;
-    returnTime :string;
-    gate : string ;
-  } ;
-  absenceAuth? : {
-    endDate : string;
-    startDate : string;
-    reason : string;
-  } ;
-  missionOrder? :{
-    duration :number;
-    destination : string ;
-    purpose : string ;
-    travelMethod : string ;
-  } ;
-}
+  exitSlip?: {
+    exitTime: string;
+    returnTime: string;
+    gate: string;
+  };
+  absenceAuth?: {
+    endDate: string;
+    startDate: string;
+    reason: string;
+  };
+  missionOrder?: {
+    duration: number;
+    destination: string;
+    purpose: string;
+    travelMethod: string;
+  };
+};
 
 export type DocumentResponse = {
-  [key: string]: Document; // The response is an object with dynamic keys, each containing a `Document`
+  [key: string]: Document;
 };
 
-
-export const getStatusChip = (status: string) => {
-  switch (status) {
-    case "PENDING":
-      return <Chip label={"Pending"} sx={{ backgroundColor: "rgba(255, 165, 0, 0.1)", color: "orange" ,fontWeight: "bold", border: "1px solid #ffa500" , borderRadius: "8px" }} />;
-    case "APPROVED":
-      return <Chip label={"Approved"} sx={{ backgroundColor: "rgba(0, 128, 0, 0.1)", color: "#4caf50"  , fontWeight: "bold", border: "1px solid #4caf50" , borderRadius: "8px" }} />;
-    case "REJECTED":
-      return <Chip label={"Rejected"} sx={{ backgroundColor: "rgba(255, 0, 0, 0.1)", color: "#f44336" , fontWeight: "bold", border: "1px solid #f44336" , borderRadius: "8px" }} />;
-    default:
-      return <Chip label={status} />;
-  }
-};
-export const gettype = (type: string) => {
+export function gettype(type: string) {
   switch (type) {
     case "MISSION_ORDER":
       return "Mission Order";
@@ -97,9 +71,13 @@ export const gettype = (type: string) => {
   }
 }
 
-export default function Page() {
+function reqNumber(row: Document) {
+  return `REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`;
+}
 
-  const [Rows , setRows] = useState<Document[]>([]);
+
+export default function Page() {
+  const [rows, setRows] = useState<Document[]>([]);
   const [cardDeltas, setCardDeltas] = useState<{
     totalDelta: number;
     pendingDelta: number;
@@ -108,501 +86,312 @@ export default function Page() {
   }>({ totalDelta: 0, pendingDelta: 0, approvedRateDeltaPct: 0, rejectedRateDeltaPct: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [empty , setEmpty] = useState(false);
-
-
-const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm")) ;
-  
-const router = useRouter() ;
+  const [empty, setEmpty] = useState(false);
 
   function formatSigned(value: number): string {
     if (value > 0) return `+${value}`;
     return String(value);
   }
 
-  function getSeeAllPath(): string {
-    const role = getStoredPrimaryRole();
-    if (role === "MANAGER") return "/manager/my-requests";
-    return "/worker/my-requests";
-  }
+  const fetchDocuments = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
 
-  useEffect(() => {
+    try {
+      const employeeId = getStoredEmployeeId();
+      if (!employeeId) {
+        setError("You are not logged in.");
+        setEmpty(true);
+        setRows([]);
+        return;
+      }
 
 
-    fetchDocuments();
+      const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
+      const documentsArray = Object.values(res);
+
+      const now = Date.now();
+      const tenDaysMs = 10 * 24 * 60 * 60 * 1000;
+      const currentStart = new Date(now - tenDaysMs);
+      const prevStart = new Date(now - 2 * tenDaysMs);
+
+      const withinLast10Days = documentsArray.filter((doc) => {
+        const created = new Date(doc.createdAt);
+        if (Number.isNaN(created.getTime())) return false;
+        return created.getTime() >= currentStart.getTime();
+      });
+
+      const withinPrev10Days = documentsArray.filter((doc) => {
+        const created = new Date(doc.createdAt);
+        if (Number.isNaN(created.getTime())) return false;
+        return created.getTime() >= prevStart.getTime() && created.getTime() < currentStart.getTime();
+      });
+
+      const currentPending = withinLast10Days.filter((d) => d.status === "PENDING").length;
+      const prevPending = withinPrev10Days.filter((d) => d.status === "PENDING").length;
+
+      const currentApproved = withinLast10Days.filter((d) => d.status === "APPROVED").length;
+      const currentRejected = withinLast10Days.filter((d) => d.status === "REJECTED").length;
+      const prevApproved = withinPrev10Days.filter((d) => d.status === "APPROVED").length;
+      const prevRejected = withinPrev10Days.filter((d) => d.status === "REJECTED").length;
+
+      const currentDecided = currentApproved + currentRejected;
+      const prevDecided = prevApproved + prevRejected;
+
+      const currentApprovedRate = currentDecided > 0 ? currentApproved / currentDecided : 0;
+      const prevApprovedRate = prevDecided > 0 ? prevApproved / prevDecided : 0;
+      const currentRejectedRate = currentDecided > 0 ? currentRejected / currentDecided : 0;
+      const prevRejectedRate = prevDecided > 0 ? prevRejected / prevDecided : 0;
+
+      setCardDeltas({
+        totalDelta: withinLast10Days.length - withinPrev10Days.length,
+        pendingDelta: currentPending - prevPending,
+        approvedRateDeltaPct: Math.round((currentApprovedRate - prevApprovedRate) * 100),
+        rejectedRateDeltaPct: Math.round((currentRejectedRate - prevRejectedRate) * 100),
+      });
+
+      if (withinLast10Days.length === 0) {
+        setEmpty(true);
+        setRows([]);
+      } else {
+        setEmpty(false);
+        setRows(withinLast10Days);
+      }
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      setError(apiErr.message || "An error occurred while fetching documents.");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-
-  async function fetchDocuments() {
-      setIsLoading(true);
-      setError(null);
-      try { 
-        const employeeId = getStoredEmployeeId();
-        if (!employeeId) {
-          setError("You are not logged in.");
-          return;
-        }
-        const res = await apiGet<DocumentResponse>(`/api/dAll/documents/${employeeId}`);
-        const documentsArray = Object.values(res);
-
-        const now = Date.now();
-        const tenDaysMs = 10 * 24 * 60 * 60 * 1000;
-        const currentStart = new Date(now - tenDaysMs);
-        const prevStart = new Date(now - 2 * tenDaysMs);
-
-        const withinLast10Days = documentsArray.filter((doc) => {
-          const created = new Date(doc.createdAt);
-          if (Number.isNaN(created.getTime())) return false;
-          return created.getTime() >= currentStart.getTime();
-        });
-
-        const withinPrev10Days = documentsArray.filter((doc) => {
-          const created = new Date(doc.createdAt);
-          if (Number.isNaN(created.getTime())) return false;
-          return created.getTime() >= prevStart.getTime() && created.getTime() < currentStart.getTime();
-        });
-
-        const currentPending = withinLast10Days.filter((d) => d.status === "PENDING").length;
-        const prevPending = withinPrev10Days.filter((d) => d.status === "PENDING").length;
-
-        const currentApproved = withinLast10Days.filter((d) => d.status === "APPROVED").length;
-        const currentRejected = withinLast10Days.filter((d) => d.status === "REJECTED").length;
-        const prevApproved = withinPrev10Days.filter((d) => d.status === "APPROVED").length;
-        const prevRejected = withinPrev10Days.filter((d) => d.status === "REJECTED").length;
-
-        const currentDecided = currentApproved + currentRejected;
-        const prevDecided = prevApproved + prevRejected;
-
-        const currentApprovedRate = currentDecided > 0 ? currentApproved / currentDecided : 0;
-        const prevApprovedRate = prevDecided > 0 ? prevApproved / prevDecided : 0;
-        const currentRejectedRate = currentDecided > 0 ? currentRejected / currentDecided : 0;
-        const prevRejectedRate = prevDecided > 0 ? prevRejected / prevDecided : 0;
-
-        setCardDeltas({
-          totalDelta: withinLast10Days.length - withinPrev10Days.length,
-          pendingDelta: currentPending - prevPending,
-          approvedRateDeltaPct: Math.round((currentApprovedRate - prevApprovedRate) * 100),
-          rejectedRateDeltaPct: Math.round((currentRejectedRate - prevRejectedRate) * 100),
-        });
-
-        if (withinLast10Days.length === 0) {
-          setEmpty(true);
-          setRows([]);
-        } else {
-          setEmpty(false);
-          setRows(withinLast10Days);
-        }
-      }catch (err:unknown) {
-        
-        const apiErr = err as ApiError;
-        setError(apiErr.message || "An error occurred while fetching documents.");
-      }finally {
-        setIsLoading(false);
-      }
-      }
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
 
-
+  const pendingCount = rows.filter((r) => r.status === "PENDING").length;
+  const approvedCount = rows.filter((r) => r.status === "APPROVED").length;
+  const rejectedCount = rows.filter((r) => r.status === "REJECTED").length;
 
   return (
-        <Box
-          sx={{
-            flexGrow: 1,
-            mt: "70px", // push below navbar
-            backgroundColor: "rgb(10, 22, 40)",
-            display: "grid",
-            gridTemplateRows: "1fr auto",
-            padding: "36px",
-            overflowY: "auto",
-            overflowX: "hidden",
-          }}
-        >
-          <Box sx={{width:"100% ", height: "100%"}}>
-            <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"#fff" }}>
-              Tableau de bord
-            </h1>
-            <p
-              style={{
-                fontSize: "20px ",
-                color: "gray",
-                fontWeight: "bold",
-                marginBottom: "20px",
-              }}
-            >
-              Bienvenue sur votre tableau de bord, où vous pouvez suivre vos demandes dans les 10 derniers jours.
-            </p>
-            <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
-              <Grid size={{  sm : 4 , md: 6, lg: 4 }} >
-                <Card
-                sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
-                  borderRadius: 2,
-                  position: "relative",
-                  boxShadow: "none",
-                  p: 2,
-                  width: "100%",
-                  border: "0.1px solid transparent", // Initial border
-                  transition: "transform 0.1s", // Smooth transition
-                  "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
-                    transform: "scale(1.01)", // Slightly scale up the card
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 2 }}>
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 0, 255, 0.1)", width: 48, height: 48 }}>
-                      <TextSnippetOutlinedIcon sx={{ color: "#7fb3ff" }} />
-                    </Avatar>
+    <div className="min-h-dvh bg-(--naftal-bg) pt-17.5 px-4 sm:px-8 lg:px-10 pb-12">
+      <div className="mx-auto w-full">
+        <h1 className="mt-6 text-3xl sm:text-4xl font-extrabold text-(--naftal-text-primary)">
+          Dashboard
+        </h1>
+        <p className="mt-1 text-base sm:text-lg font-semibold text-(--naftal-text-muted)">
+          Welcome to your dashboard
+        </p>
 
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          {formatSigned(cardDeltas.totalDelta)} (10j)
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  </Stack>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <Card className="p-5 hover:border-(--naftal-brand-border-strong) transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--naftal-info-muted)">
+                <TextSnippetOutlinedIcon className="text-(--naftal-info)" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-(--naftal-text-secondary)">
+                <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                {formatSigned(cardDeltas.totalDelta)} 10d
+              </div>
+            </div>
+            <div className="mt-4 text-4xl font-extrabold text-(--naftal-text-primary)">
+              {rows.length}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
+              Total demandes
+            </div>
+          </Card>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
-                    {Rows.length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Total demandes
-                  </Typography>
-                </CardContent>
-                </Card>
-              </Grid>
+          <Card className="p-5 hover:border-(--naftal-brand-border-strong) transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--naftal-warning-muted)">
+                <AccessTimeIcon className="text-(--naftal-warning)" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-(--naftal-text-secondary)">
+                <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                {formatSigned(cardDeltas.pendingDelta)} new
+              </div>
+            </div>
+            <div className="mt-4 text-4xl font-extrabold text-(--naftal-text-primary)">
+              {pendingCount}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
+              Pending
+            </div>
+          </Card>
 
-              <Grid size={{ sm : 4 , md: 6, lg: 4 }}>
-                <Card
-                sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
-                  borderRadius: 2,
-                  position: "relative",
-                  boxShadow: "none",
-                  p: 2,
-                  width: "100%",
-                  border: "0.1px solid transparent", // Initial border
-                  transition: "transform 0.1s", // Smooth transition
-                  "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
-                    transform: "scale(1.01)", // Slightly scale up the card
-                  },                  
-                }}
-              >
-                <CardContent sx={{ p: 2 }}>
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 165, 0, 0.1)", width: 48, height: 48 }}>
-                      <AccessTimeIcon sx={{ color: "#ffa500" }} />
-                    </Avatar>
+          <Card className="p-5 hover:border-(--naftal-brand-border-strong) transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--naftal-success-muted)">
+                <TaskAltOutlinedIcon className="text-(--naftal-success)" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-(--naftal-text-secondary)">
+                <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                {formatSigned(cardDeltas.approvedRateDeltaPct)}%
+              </div>
+            </div>
+            <div className="mt-4 text-4xl font-extrabold text-(--naftal-text-primary)">
+              {approvedCount}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
+              Approved
+            </div>
+          </Card>
 
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          {formatSigned(cardDeltas.pendingDelta)} new
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  </Stack>
 
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
-                    {Rows.filter(row => row.status === "PENDING").length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    En attente
-                  </Typography>
-                </CardContent>
-                </Card>
-              </Grid>  
+          <Card className="p-5 hover:border-(--naftal-brand-border-strong) transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--naftal-error-muted)">
+                <CancelOutlinedIcon className="text-(--naftal-error)" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-(--naftal-text-secondary)">
+                <ArrowUpwardIcon sx={{ fontSize: 14, color: "var(--naftal-info)" }} />
+                {formatSigned(cardDeltas.rejectedRateDeltaPct)}%
+              </div>
+            </div>
+            <div className="mt-4 text-4xl font-extrabold text-(--naftal-text-primary)">
+              {rejectedCount}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
+              Rejected
+            </div>
+          </Card>
+        </div>
 
-              <Grid size={{ sm :4 , md: 6, lg: 4 }}>
-                <Card
-                sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
-                  borderRadius: 2,
-                  position: "relative",
-                  boxShadow: "none",
-                  p: 2,
-                  width: "100%",
-                  border: "0.1px solid transparent", // Initial border
-                  transition: "transform 0.1s", // Smooth transition
-                  "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
-                    transform: "scale(1.01)", // Slightly scale up the card
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 2
-                  
-                  }}>
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(0, 128, 0, 0.1)", width: 48, height: 48 }}>
-                      <TaskAltOutlinedIcon sx={{ color: "#4caf50" }} />
-                    </Avatar>
+        <div className="mt-10 flex items-center justify-between gap-4">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-(--naftal-text-primary)">
+            Recent Requests
+          </h2>
+          <Link href="/worker/my-requests">
+            <Button variant="outline">See all</Button>
+          </Link>
+        </div>
 
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          {formatSigned(cardDeltas.approvedRateDeltaPct)}%
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  </Stack>
-
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
-                    {Rows.filter(row => row.status === "APPROVED").length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Approuve
-                  </Typography>
-                </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid size={{ sm : 4 , md: 6, lg: 4 }}>
-                <Card
-                sx={{
-                  bgcolor:"#1a2942",
-                  color: "#fff",
-                  borderRadius: 2,
-                  position: "relative",
-                  boxShadow: "none",
-                  p: 2,
-                  width: "100%",
-                  border: "0.1px solid transparent", // Initial border
-                  transition: "transform 0.1s", // Smooth transition
-                  "&:hover": {
-                    borderColor: "darkorange", // Dark orange on hover
-                    transform: "scale(1.01)", // Slightly scale up the card
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 2 }}>
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <Avatar sx={{ bgcolor: "rgba(255, 0, 0, 0.1)", width: 48, height: 48 }}>
-                      <CancelOutlinedIcon sx={{ color: "#f44336" }} />
-                    </Avatar>
-
-                    <Box sx={{ textAlign: "right" }}>
-                      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
-                        <ArrowUpwardIcon sx={{ fontSize: 14, color: "#7fb3ff" }} />
-                        <Typography variant="caption" sx={{ color: "lightgray" }}>
-                          {formatSigned(cardDeltas.rejectedRateDeltaPct)}%
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  </Stack>
-
-                  <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, color: "#fff", fontSize: 34 }}>
-                    {Rows.filter(row => row.status === "REJECTED").length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                    Rejete
-                  </Typography>
-                </CardContent>
-                </Card>
-              </Grid>              
-            </Grid>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between", // Space between the heading and button
-                alignItems: "center", // Align items vertically in the center
-                marginTop: "30px",
-                marginBottom: "30px",
-              }}
-            >
-              <Typography
-                variant="h5"
-                sx={{
-                  fontSize: "25px",
-                  fontWeight: "bold",
-                  color: "#fff",
-                }}
-              >
-                Demandes récentes
-              </Typography>
-              <Button
-                variant="outlined"
-                onClick={() => router.push(getSeeAllPath())}
-                sx={{
-                  backgroundColor: "transparent",
-                  color: "lightgray",
-                  textTransform: "none",
-                  borderRadius: 2,
-                  padding: "8px 16px",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  "&:hover": {
-                    color: "orange",
-                    backgroundColor: "rgba(255, 165, 0, 0.1)",
-                    border: "1px solid orange",
-                  },
-                }}
-              >
-                Voir tout
-              </Button>
-            </Box>
-            {isLoading ? (
-              <Typography variant="body1" sx={{ color: "gray", textAlign: "center", mt: 4 }}>
-                Loading documents...
-              </Typography>
-            ) : error  ? (
-              <Typography variant="body1" sx={{ color: "red", textAlign: "center", mt: 4 }}>
-                {error}
-              </Typography>) 
-              : empty ? ( 
-                <Box sx={{
-                            backgroundColor: "#1a2942",
-                            borderRadius: "12px",
-                            padding: "30px 20px",
-                                                  }}>
-                      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                         <Typography variant="h6" sx={{ color: "lightgray" ,fontSize:"20px" }}>
-                             No documents found in the last 10 days
-                          </Typography>
-                      </Box>
-                  </Box>   ) 
-             : !isSmallScreen ?( 
-              <TableContainer
-              component={Paper}
-              sx={{
-                backgroundColor: "#1a2942",
-                borderRadius: 2,
-                overflowY: "auto",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              <Table sx={{ }}>
-                <TableHead sx={{bgcolor:"#10223A" , boxShadow:"0px 0px 1px 0px gray"}}>
-                  <TableRow>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Numéro</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Type de demande</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Destination / Motif</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Date de soumission</TableCell>
-                    <TableCell sx={{ color: "lightgray" , border:"none" }}>Statut</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Rows.map((row) => (
-                    <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "#1a2540" } }}>
-                      <TableCell sx={{ color: "#ffa500", fontWeight: "bold", border: "none" }}>
-                        {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
-                      </TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <TextSnippetOutlinedIcon sx={{ color: "gray",width: "20px", marginRight: "8px" }} />
+        <div className="mt-5">
+          {isLoading ? (
+            <div className="py-10 text-center text-sm font-semibold text-(--naftal-text-muted)">
+              Loading documents...
+            </div>
+          ) : error ? (
+            <div className="py-10 text-center text-sm font-semibold text-(--naftal-error)">
+              {error}
+            </div>
+          ) : empty ? (
+            <Card className="p-8 text-center">
+              <div className="text-base font-semibold text-(--naftal-text-secondary)">
+                No documents found in the last 10 days
+              </div>
+            </Card>
+          ) : (
+            <>
+              <div className="hidden md:block">
+                <Table
+                  rows={rows}
+                  getRowKey={(r) => r.id}
+                  columns={[
+                    {
+                      header: "Numéro",
+                      cell: (row) => (
+                        <span className="font-extrabold text-(--naftal-brand)">
+                          {reqNumber(row)}
+                        </span>
+                      ),
+                    },
+                    {
+                      header: "Type de demande",
+                      cell: (row) => (
+                        <span className="inline-flex items-center gap-2 text-(--naftal-text-primary)">
+                          <TextSnippetOutlinedIcon
+                            className="text-(--naftal-text-muted)"
+                            fontSize="small"
+                          />
                           {gettype(row.type)}
-                        </Box>
-                      </TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{color:"lightgray"}}>
-                          {row.missionOrder?.destination || row.absenceAuth?.reason || "/"}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell sx={{ color: "#fff" , border:"none"}}>
-                        <Box sx={{ display: "flex", alignItems: "center"  }}>
-                          <CalendarTodayIcon sx={{ color: "gray", marginRight: "8px" }} />
-                          <Typography sx={{color:"lightgray"}}>
+                        </span>
+                      ),
+                    },
+                    {
+                      header: "Destination / Motif",
+                      cell: (row) => (
+                        <span className="inline-flex items-center gap-2 text-(--naftal-text-secondary)">
+                          <LocationOnIcon
+                            className="text-(--naftal-text-muted)"
+                            fontSize="small"
+                          />
+                          {row.missionOrder?.destination ||
+                            row.absenceAuth?.reason ||
+                            "/"}
+                        </span>
+                      ),
+                    },
+                    {
+                      header: "Date de soumission",
+                      cell: (row) => (
+                        <span className="inline-flex items-center gap-2 text-(--naftal-text-secondary)">
+                          <CalendarTodayIcon
+                            className="text-(--naftal-text-muted)"
+                            fontSize="small"
+                          />
                           {formatAlgeriaDate(row.createdAt)}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell sx={{ border:"none"}}>{getStatusChip(row.status)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer> 
-            ):(
-            <Grid container spacing={2}>
-              {Rows.map((row) => (
-                <Grid size={{ xs: 12 }} key={row.id}>
-                  <Card
-                    sx={{
-                      backgroundColor: "#1a2942",
-                      color: "#fff",
-                      borderRadius: 2,
-                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                      padding: "16px",
-                    }}
-                  >
-                  <Typography variant="h6" sx={{ fontWeight: "bold", color: "#ffa500" }}>
-                    {`REQ-${new Date(row.createdAt).getFullYear()}-${String(row.id).padStart(4, "0")}`}
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: "#fff" }}>
-                    {gettype(row.type)}
-                  </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                    <LocationOnIcon sx={{ color: "gray", marginRight: "8px" }} />
-                    <Typography sx={{ color: "lightgray" }}>
+                        </span>
+                      ),
+                    },
+                    {
+                      header: "Statut",
+                      cell: (row) => <Badge status={row.status} />,
+                    },
+                  ]}
+                />
+              </div>
+
+              <div className="md:hidden space-y-3">
+                {rows.map((row) => (
+                  <Card key={row.id} className="p-5">
+                    <div className="text-sm font-extrabold text-(--naftal-brand)">
+                      {reqNumber(row)}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-(--naftal-text-primary)">
+                      {gettype(row.type)}
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-2 text-sm text-(--naftal-text-secondary)">
+                      <LocationOnIcon
+                        className="text-(--naftal-text-muted)"
+                        fontSize="small"
+                      />
                       {row.missionOrder?.destination ||
                         row.absenceAuth?.reason ||
                         "/"}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                    <CalendarTodayIcon
-                      sx={{ color: "gray", marginRight: "8px" }}
-                    />
-                    <Typography sx={{ color: "lightgray" }}>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2 text-sm text-(--naftal-text-secondary)">
+                      <CalendarTodayIcon
+                        className="text-(--naftal-text-muted)"
+                        fontSize="small"
+                      />
                       {formatAlgeriaDate(row.createdAt)}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ mt: 2 }}>{getStatusChip(row.status)}</Box>
-                </Card>
-              </Grid>
-            ))}
-            </Grid>) }
-            <Box sx={{
-                      position: "fixed",
-                      bottom: "40px", 
-                      right: "40px", 
-                      zIndex: 1000, 
-                  }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "orange",
-                  color: "black",
-                  textTransform: "none",
-                  borderRadius: 10,
-                  padding: "12px 25px",
-                  fontWeight: "bold",
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transition: "transform 0.3s ease",
-                    transform: "scale(1.05)",
-                    backgroundColor: "darkorange",
-                  },
-                }}
+                    </div>
 
-                onClick={() => {
-                  router.push(getSeeAllPath());
-                }}
-              >
-                <Typography sx={{mr:"15px"}}>
-                  +
-                </Typography>
-                <Typography>
-                  Nouvelle demande
+                    <div className="mt-4">
+                      <Badge status={row.status} />
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
-                </Typography>                
-              </Button>
-            </Box>
-
-
-          </Box>
-        </Box>
+      <div className="fixed bottom-10 right-6 sm:right-10 z-30">
+        <Link href="/worker/fill-request">
+          <Button
+            variant="primary"
+            className="rounded-full px-6 py-3 shadow-(--naftal-shadow-strong)"
+          >
+            + New request
+          </Button>
+        </Link>
+      </div>
+    </div>
   );
 }
