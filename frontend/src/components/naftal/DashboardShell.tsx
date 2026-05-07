@@ -6,7 +6,6 @@ import Sidebar, { type SidebarItem } from "@/components/naftal/Sidebar";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import NotificationPanel from "@/components/NotificationPanel";
 import { useLogout } from "@/hooks/useLogout";
-import { useThemeMode } from "@/components/theme/ThemeModeProvider";
 
 const drawerWidthPx = 260;
 
@@ -50,8 +49,6 @@ export default function DashboardShell({
 }: DashboardShellProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { logout, isLoggingOut } = useLogout();
-  const { mode } = useThemeMode();
-  const isDark = mode === "dark";
 
   const user: DashboardUser =
     userProp ?? ({ initials: "ED", name: "Employe Dupont", role: "Employé" } as const);
@@ -59,14 +56,7 @@ export default function DashboardShell({
   const footer = (
     <div className="p-4">
       <div className="flex items-center gap-3">
-        <div
-          className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-xl font-extrabold",
-           isDark
-            ? "border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)"
-            : "bg-(--naftal-brand) text-(--naftal-on-brand)"
-          )}
-        >
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl font-extrabold border border-(--naftal-brand-border) bg-transparent text-(--naftal-brand)">
           {user.initials}
         </div>
         <div className="min-w-0">

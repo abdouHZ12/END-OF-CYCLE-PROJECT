@@ -326,7 +326,7 @@ useEffect(() => {
                   type="submit"
                   sx={{
                     backgroundColor: "var(--naftal-brand)",
-                    color: "black",
+                    color: "var(--naftal-on-brand)",
                     fontWeight: "bold",
                     padding: "12px 24px",
                     borderRadius: "8px",
@@ -351,16 +351,16 @@ useEffect(() => {
                   onClick={handleCancel}
                   sx={{
                     backgroundColor: "transparent",
-                    color: "white",
+                    color: "var(--naftal-text-secondary)",
                     fontWeight: "bold",
                     padding: "12px 24px",
-                    border: "1px solid white",
+                    border: "1px solid var(--naftal-border)",
                     borderRadius: "8px",
                     width: "100%",
                     textTransform: "none",
                     fontSize: "15px",
                     "&:hover": {
-                      backgroundColor: "var(--naftal-border-subtle)",
+                      backgroundColor: "var(--naftal-hover)",
                     },
                   }}
                 >
