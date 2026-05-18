@@ -159,10 +159,10 @@ export default function RegisterEmployeePage() {
 
 
       <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-        Register Employee
+        Enregistrer un Employee
       </Typography>
       <Typography sx={{ color: "var(--naftal-text-muted)", fontWeight: "bold", mb: 4 }}>
-        Create a new employee account
+        Creer un compte pour un employee
       </Typography>
 
       {/* Alerts */}
@@ -204,7 +204,7 @@ export default function RegisterEmployeePage() {
         }}
       >
         <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
-          Personal Information
+          Information personnelle
         </Typography>
 
         <Grid container spacing={3}>

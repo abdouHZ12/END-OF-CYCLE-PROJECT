@@ -15,7 +15,7 @@ import {
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import { apiGet, type ApiError } from "@/lib/api";
 import { getStatusChip } from "@/features/documents/ui";
-import { getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDateTime} from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 type MissionOrder = {
@@ -124,7 +124,7 @@ export default function MyMissionsPage() {
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 
                 <Typography variant="h6" sx={{ color: "var(--naftal-text-secondary)", fontSize: "20px" }}>
-                  No mission orders assigned to you yet
+                  aucun ordre de mssion n&apos;est assigné à vous pour le moment.
                 </Typography>
               </Box>
             </Box>
@@ -193,7 +193,7 @@ export default function MyMissionsPage() {
                       <TableCell sx={{ border: "none" }}>
 
                         <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
-                          {getFullDate(mission.createdAt)}
+                          {formatAlgeriaDateTime(mission.createdAt)}
                         </Typography>
                       </TableCell>
 

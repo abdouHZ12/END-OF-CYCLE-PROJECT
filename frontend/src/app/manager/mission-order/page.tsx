@@ -165,7 +165,7 @@ useEffect(() => {
         {/* Header */}
 
         <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)", margin: 0 }}>
-          Mission Order
+          Ordre de Mission
         </h1>
         <p
           style={{
@@ -193,7 +193,7 @@ useEffect(() => {
         >
 
           <span style={{ color: "var(--naftal-text-primary)", fontWeight: 600, fontSize: "15px" }}>
-            New Mission Order
+            Nouveau Ordre de Mission
           </span>
         </Box>
 

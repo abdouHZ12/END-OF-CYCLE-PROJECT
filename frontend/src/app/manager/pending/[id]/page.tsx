@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import type { Document } from "@/features/documents/types";
 import { useParams } from "next/navigation";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-import { getFullDate } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 import {  apiPut } from "@/lib/api";
 import {
@@ -239,7 +238,7 @@ return (
 
 
                       <Typography sx={{ fontSize: "13px", color: "var(--naftal-text-muted)", mb: 2.5 }}>
-                        Soumise le {getFullDate(document.createdAt)}
+                        Soumise le {formatAlgeriaDateTime(document.createdAt)}
                       </Typography>
 
                       <Divider sx={{ backgroundColor: "var(--naftal-border-subtle)", mb: 2.5 }} />
@@ -494,7 +493,7 @@ return (
                                   </Stack>
 
                                   <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
-                                    Soumis: {getFullDate(doc.createdAt)}
+                                    Soumis: {formatAlgeriaDateTime(doc.createdAt)}
                                   </Typography>
                                 </Box>
                               ))}
@@ -561,7 +560,7 @@ return (
                                   </Stack>
 
                                   <Typography sx={{ fontSize: "12px", color: "var(--naftal-text-muted)", mt: 0.5 }}>
-                                    Soumis: {getFullDate(doc.createdAt)}
+                                    Soumis: {formatAlgeriaDateTime(doc.createdAt)}
                                   </Typography>
                                 </Box>
                               ))}

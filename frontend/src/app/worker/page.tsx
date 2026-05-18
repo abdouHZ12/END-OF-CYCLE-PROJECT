@@ -178,10 +178,10 @@ export default function Page() {
     <div className="min-h-dvh bg-(--naftal-bg) pt-17.5 px-4 sm:px-8 lg:px-10 pb-12">
       <div className="mx-auto w-full">
         <h1 className="mt-6 text-3xl sm:text-4xl font-extrabold text-(--naftal-text-primary)">
-          Dashboard
+          Tableu de bord
         </h1>
         <p className="mt-1 text-base sm:text-lg font-semibold text-(--naftal-text-muted)">
-          Welcome to your dashboard
+            Bienvenue sur votre tableau de bord
         </p>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -199,7 +199,7 @@ export default function Page() {
               {rows.length}
             </div>
             <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
-              Total demandes
+              Total documents in last 10 days
             </div>
           </Card>
 
@@ -217,7 +217,7 @@ export default function Page() {
               {pendingCount}
             </div>
             <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
-              Pending
+              En attente
             </div>
           </Card>
 
@@ -235,7 +235,7 @@ export default function Page() {
               {approvedCount}
             </div>
             <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
-              Approved
+              Approuve
             </div>
           </Card>
 
@@ -254,21 +254,21 @@ export default function Page() {
               {rejectedCount}
             </div>
             <div className="mt-1 text-sm font-semibold text-(--naftal-text-muted)">
-              Rejected
+              Rejete
             </div>
           </Card>
         </div>
 
         <div className="mt-10 flex items-center justify-between gap-4">
           <h2 className="text-xl sm:text-2xl font-extrabold text-(--naftal-text-primary)">
-            Recent Requests
+            Les demandes récentes
           </h2>
           <Link href="/worker/my-requests">
           <Button
             variant="outline"
             className="hover:bg-(--naftal-brand) hover:text-(--naftal-on-brand) hover:border-(--naftal-brand)"
           >
-            See all
+            Tout voir
           </Button>
           </Link>
         </div>
@@ -393,7 +393,7 @@ export default function Page() {
             variant="primary"
             className="rounded-full px-6 py-3 shadow-(--naftal-shadow-strong)"
           >
-            + New request
+            + Nouvelle demande
           </Button>
         </Link>
       </div>

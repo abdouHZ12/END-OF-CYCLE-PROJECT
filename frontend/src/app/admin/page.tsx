@@ -179,10 +179,10 @@ export default function AdminPage() {
     >
 
       <Typography variant="h4" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-        Admin Dashboard
+        Admin Tableau de bord
       </Typography>
       <Typography sx={{ fontSize: "20px", color: "var(--naftal-text-muted)", fontWeight: "bold", mb: 3 }}>
-        Manage employees, roles and departments
+        Gere employees, departements, et roles
       </Typography>
 
 
@@ -233,7 +233,7 @@ export default function AdminPage() {
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4, mb: 3 }}>
 
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-          Recent Employees
+          Les employees recents
         </Typography>
               <Button
                 variant="outlined"

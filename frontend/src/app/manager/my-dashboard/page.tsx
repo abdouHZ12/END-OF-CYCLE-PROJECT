@@ -55,11 +55,11 @@ export type DocumentResponse = {
 export const getStatusChip = (status: string) => {
   switch (status) {
     case "PENDING":
-      return <Chip label={"Pending"} sx={{ backgroundColor: "var(--naftal-brand-muted)", color: "var(--naftal-brand)" ,fontWeight: "bold", border: "1px solid var(--naftal-brand)" , borderRadius: "8px" }} />;
+      return <Chip label={"En attente"} sx={{ backgroundColor: "var(--naftal-brand-muted)", color: "var(--naftal-brand)" ,fontWeight: "bold", border: "1px solid var(--naftal-brand)" , borderRadius: "8px" }} />;
     case "APPROVED":
-      return <Chip label={"Approved"} sx={{ backgroundColor: "var(--naftal-success-muted)", color: "var(--naftal-success)"  , fontWeight: "bold", border: "1px solid var(--naftal-success)" , borderRadius: "8px" }} />;
+      return <Chip label={"Approuvé"} sx={{ backgroundColor: "var(--naftal-success-muted)", color: "var(--naftal-success)"  , fontWeight: "bold", border: "1px solid var(--naftal-success)" , borderRadius: "8px" }} />;
     case "REJECTED":
-      return <Chip label={"Rejected"} sx={{ backgroundColor: "var(--naftal-error-muted)", color: "var(--naftal-error)" , fontWeight: "bold", border: "1px solid var(--naftal-error)" , borderRadius: "8px" }} />;
+      return <Chip label={"Rejeté"} sx={{ backgroundColor: "var(--naftal-error-muted)", color: "var(--naftal-error)" , fontWeight: "bold", border: "1px solid var(--naftal-error)" , borderRadius: "8px" }} />;
     default:
       return <Chip label={status} />;
   }
@@ -141,7 +141,7 @@ const router = useRouter() ;
         >
           <Box sx={{width:"100% ", height: "100%"}}>
             <h1 style={{ fontSize: "35px", fontWeight: "bold" , color:"var(--naftal-text-primary)" }}>
-              Dashboard
+              Tableau de bord
             </h1>
             <p
               style={{
@@ -151,7 +151,7 @@ const router = useRouter() ;
                 marginBottom: "20px",
               }}
             >
-              Welcome to your dashboard
+              Bienvenue sur votre tableau de bord
             </p>
             <Grid container spacing={{ sm :3 ,md: 3, lg: 3 }} columns={{ sm : 8 , md:12, lg: 16 }}>
               <Grid size={{  sm : 4 , md: 6, lg: 4 }} >
@@ -192,7 +192,7 @@ const router = useRouter() ;
                     {Rows.length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Total demandes
+                    Tout les demanes
                   </Typography>
                 </CardContent>
                 </Card>
@@ -236,7 +236,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "PENDING").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
                 </Card>
@@ -282,7 +282,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "APPROVED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Approved
+                    Approuve
                   </Typography>
                 </CardContent>
                 </Card>
@@ -326,7 +326,7 @@ const router = useRouter() ;
                     {Rows.filter(row => row.status === "REJECTED").length}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Rejected
+                    Rejete
                   </Typography>
                 </CardContent>
                 </Card>
@@ -349,7 +349,7 @@ const router = useRouter() ;
                   color: "var(--naftal-text-primary)",
                 }}
               >
-                Recent Requests
+                Les demandes récentes
               </Typography>
               <Button
                 variant="contained"
@@ -367,7 +367,7 @@ const router = useRouter() ;
                   },
                 }}
               >
-                See all
+                Voir tout
               </Button>
             </Box>
             {isLoading ? (
@@ -520,7 +520,7 @@ const router = useRouter() ;
                   +
                 </Typography>
                 <Typography>
-                  New request
+                  Nouvelle Demande
 
                 </Typography>                
               </Button>

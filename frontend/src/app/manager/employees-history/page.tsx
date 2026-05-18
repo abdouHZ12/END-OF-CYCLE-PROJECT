@@ -56,7 +56,7 @@ const getStatusChip = (status: string) => {
     case "PENDING":
       return (
         <Chip
-          label={"EN ATTENTE"}
+          label={"En attente"}
           size="small"
           sx={{
             backgroundColor: "var(--naftal-brand-muted)",

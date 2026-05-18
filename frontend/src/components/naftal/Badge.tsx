@@ -12,15 +12,15 @@ export default function Badge({
 }) {
   const map: Record<string, { label: string; cls: string }> = {
     APPROVED: {
-      label: "Approved",
+      label: "Approuve",
       cls: "bg-[var(--naftal-success-muted)] text-[var(--naftal-success)] border-[var(--naftal-success)]",
     },
     PENDING: {
-      label: "Pending",
+      label: "En attente",
       cls: "bg-[var(--naftal-warning-muted)] text-[var(--naftal-warning)] border-[var(--naftal-warning)]",
     },
     REJECTED: {
-      label: "Rejected",
+      label: "Rejeté",
       cls: "bg-[var(--naftal-error-muted)] text-[var(--naftal-error)] border-[var(--naftal-error)]",
     },
   };

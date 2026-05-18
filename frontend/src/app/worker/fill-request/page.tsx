@@ -69,7 +69,7 @@ export default function Page() {
         returnTime: returnDateTime,
         gate,
       });
-      showToast("Exit Slip created successfully", 2500);
+      showToast("Bon de sortie cree avec succes", 2500);
       setExitTime("");
       setReturnTime("");
       setGate("");
@@ -178,7 +178,7 @@ export default function Page() {
         "&:hover": { backgroundColor: "var(--naftal-brand-hover)" },
       }}
     >
-      {isLoading ? "Submitting..." : "Submit Request"}
+      {isLoading ? "Submitting..." : "Soumettre la demande"}
     </Button>
   );
 
@@ -197,7 +197,7 @@ export default function Page() {
         "&:hover": { backgroundColor: "var(--naftal-hover)" },
       }}
     >
-      Cancel
+      Annuler
     </Button>
   );
 
@@ -217,10 +217,10 @@ export default function Page() {
     >
       <Box sx={{ width: "100%" }}>
         <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-          New Request
+          Nouvelle demande
         </h1>
         <p style={{ fontSize: "20px", color: "var(--naftal-text-muted)", fontWeight: "bold", marginBottom: "20px" }}>
-          Submit a new authorization request
+          Soummetttre une nouvelle demande d&apos;autorisation de sortie
         </p>
 
 
@@ -239,7 +239,7 @@ export default function Page() {
                 padding: "12px 16px",
               }}
             >
-              Exit Slip
+              Bon de sortie
             </Button>
           </Grid>
           <Grid key={2} size={{ md: 6, lg: 8 }}>
@@ -256,7 +256,7 @@ export default function Page() {
                 padding: "12px 16px",
               }}
             >
-              Absence Authorization
+              Autorisation d&apos;absence
             </Button>
           </Grid>
         </Grid>
@@ -287,7 +287,7 @@ export default function Page() {
 
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <label style={{ color: "var(--naftal-text-primary)" }}>Leave Hour *</label>
+                    <label style={{ color: "var(--naftal-text-primary)" }}>L&apos;heure de sortie*</label>
                     <input
                       type="time"
                       step={60}
@@ -299,7 +299,7 @@ export default function Page() {
 
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <label style={{ color: "var(--naftal-text-primary)" }}>Return Hour *</label>
+                    <label style={{ color: "var(--naftal-text-primary)" }}>L&apos;heure de retour*</label>
                     <input
                       type="time"
                       step={60}
@@ -312,10 +312,10 @@ export default function Page() {
                 </Grid>
 
 
-                <label style={{ color: "var(--naftal-text-primary)" }}>Gate of leave *</label>
+                <label style={{ color: "var(--naftal-text-primary)" }}>La raison et La porte de sortie *</label>
                 <input
                   type="text"
-                  placeholder="Gate"
+                  placeholder="La porte et la raison "
                   required
                   value={gate}
                   onChange={(e) => setGate(e.target.value)}
@@ -356,7 +356,7 @@ export default function Page() {
 
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <label style={{ color: "var(--naftal-text-primary)" }}>Start Date *</label>
+                    <label style={{ color: "var(--naftal-text-primary)" }}>Date de debut *</label>
                     <input
                       type="date"
                       required
@@ -366,7 +366,7 @@ export default function Page() {
                     />
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <label style={{ color: "var(--naftal-text-primary)" }}>End Date *</label>
+                    <label style={{ color: "var(--naftal-text-primary)" }}>Date de fin *</label>
                     <input
                       type="date"
                       required
@@ -377,9 +377,9 @@ export default function Page() {
                   </Grid>
                 </Grid>
 
-                <label style={{ color: "var(--naftal-text-primary)" }}>Absence Reason *</label>
+                <label style={{ color: "var(--naftal-text-primary)" }}>La raison d&apos;absence *</label>
                 <textarea
-                  placeholder="Please describe the Absence Reason"
+                  placeholder="veuillez fournir une raison pour votre absence"
                   required
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}

@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDateTime } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
@@ -68,6 +68,27 @@ export default function Page() {
 
   const toastTimerRef = useRef<number | null>(null) ;
 
+  const sortedRows = useMemo(() => {
+    const rowsCopy = [...Rows];
+    rowsCopy.sort((a, b) => {
+      const aTime = new Date(a.createdAt).getTime();
+      const bTime = new Date(b.createdAt).getTime();
+
+      // If parsing fails, keep original relative order.
+      if (!Number.isFinite(aTime) || !Number.isFinite(bTime)) return 0;
+
+      if (sort === "oldest") {
+        if (aTime === bTime) return a.id - b.id;
+        return aTime - bTime;
+      }
+
+      // Default (and "Recent"): newest first
+      if (aTime === bTime) return b.id - a.id;
+      return bTime - aTime;
+    });
+    return rowsCopy;
+  }, [Rows, sort]);
+
   const pad2 = (n: number) => String(n).padStart(2, "0");
   const toLocalDateTimeInput = (iso: string) => {
     const d = new Date(iso);
@@ -100,8 +121,8 @@ export default function Page() {
     setError(null);
 
     if (doc.type === "EXIT_SLIP") {
-      setEditExitTime(doc.exitSlip?.exitTime ? toLocalDateTimeInput(doc.exitSlip.exitTime) : "");
-      setEditReturnTime(doc.exitSlip?.returnTime ? toLocalDateTimeInput(doc.exitSlip.returnTime) : "");
+      setEditExitTime(doc.exitSlip?.exitTime ? (toLocalDateTimeInput(doc.exitSlip.exitTime).split("T")[1] ?? "") : "");
+      setEditReturnTime(doc.exitSlip?.returnTime ? (toLocalDateTimeInput(doc.exitSlip.returnTime).split("T")[1] ?? "") : "");
       setEditGate(doc.exitSlip?.gate ?? "");
     }
 
@@ -135,10 +156,22 @@ export default function Page() {
           return;
         }
 
+        const exitDatePart = editingDoc.exitSlip?.exitTime
+          ? toLocalDateTimeInput(editingDoc.exitSlip.exitTime).split("T")[0]
+          : "";
+        const returnDatePart = editingDoc.exitSlip?.returnTime
+          ? toLocalDateTimeInput(editingDoc.exitSlip.returnTime).split("T")[0]
+          : "";
+
+        if (!exitDatePart || !returnDatePart) {
+          setError("This request is missing date information.");
+          return;
+        }
+
         await apiPut(`/api/document/ExitSlip/${editingDoc.id}`, {
           Type: "EXIT_SLIP",
-          exitTime: new Date(editExitTime),
-          returnTime: new Date(editReturnTime),
+          exitTime: new Date(`${exitDatePart}T${editExitTime}`),
+          returnTime: new Date(`${returnDatePart}T${editReturnTime}`),
           gate: editGate,
         });
       } else if (editingDoc.type === "ABSENCE_AUTH") {
@@ -447,13 +480,13 @@ export default function Page() {
 
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Type</TableCell>
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Informations</TableCell>
-                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Submission Date</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Date de soumission</TableCell>
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Statut</TableCell>
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Actions</TableCell>
                                       </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                      {Rows.map((row) => (
+                                      {sortedRows.map((row) => (
                                         <TableRow key={row.id} sx={{ boxShadow:"0px 0px 1px 0px gray" , "&:hover": { backgroundColor: "var(--naftal-surface-2-hover)" } }}>
                                           <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -466,8 +499,8 @@ export default function Page() {
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
 
                                               <Typography sx={{color:"var(--naftal-text-secondary)"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+ row.exitSlip.returnTime.substring(11,16) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+ formatAlgeriaDateTime(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDateTime(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDateTime(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
@@ -477,7 +510,7 @@ export default function Page() {
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
 
                                               <Typography sx={{color:"var(--naftal-text-secondary)"}}>
-                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
+                                              {formatAlgeriaDateTime(row.createdAt)}  {/* Display only the date part */}
                                               </Typography>
                                             </Box>
                                           </TableCell>
@@ -572,8 +605,8 @@ export default function Page() {
                 {editingDoc?.type === "EXIT_SLIP" ? (
                   <Stack spacing={2} sx={{ mt: 1 }}>
                     <TextField
-                      label="Leave time"
-                      type="datetime-local"
+                      label="Leave hour"
+                      type="time"
                       value={editExitTime}
                       onChange={(e) => setEditExitTime(e.target.value)}
                       slotProps={{ inputLabel: { shrink: true } }}
@@ -595,8 +628,8 @@ export default function Page() {
                       }}
                     />
                     <TextField
-                      label="Return time"
-                      type="datetime-local"
+                      label="Return hour"
+                      type="time"
                       value={editReturnTime}
                       onChange={(e) => setEditReturnTime(e.target.value)}
                       slotProps={{ inputLabel: { shrink: true } }}
@@ -737,7 +770,7 @@ export default function Page() {
                     "&:hover": { backgroundColor: "var(--naftal-hover)", borderColor: "var(--naftal-text-muted)" },
                   }}
                 >
-                  Cancel
+                  Annuler
                 </Button>
                 <Button
                   onClick={handleSaveEdit}

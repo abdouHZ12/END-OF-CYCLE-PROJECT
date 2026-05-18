@@ -315,7 +315,7 @@ export default function ManageEmployeePage() {
         }}
       >
         <Typography variant="h6" sx={{ color: "var(--naftal-text-primary)", fontWeight: "bold", mb: 3 }}>
-          Personal Information
+          Information personnelle
         </Typography>
 
         <Grid container spacing={3}>
@@ -436,7 +436,7 @@ export default function ManageEmployeePage() {
             onClick={() => router.push("/admin/employees")}
             sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
-            Cancel
+            Annuler
           </Button>
           <Button
             variant="contained"

@@ -126,7 +126,7 @@ const scan = useCallback(async () => {
                       <Stack spacing={1}>
                         <Stack direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
                           <Typography variant="body2" color="text.secondary">
-                            Leave time
+                            Temp de sortie
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {formatAlgeriaDateTime(leaveSession?.leaveTime)}
@@ -137,7 +137,7 @@ const scan = useCallback(async () => {
 
                         <Stack direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
                           <Typography variant="body2" color="text.secondary">
-                            Return time
+                            Temp de retour
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {formatAlgeriaDateTime(leaveSession?.returnTime)}

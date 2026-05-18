@@ -15,7 +15,7 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { apiGet , type ApiError} from "@/lib/api";
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype, getStatusChip } from "@/features/documents/ui";
-import { getDate, getFullDate } from "@/lib/datetime";
+import { getDate,formatAlgeriaDateTime,formatAlgeriaDate, formatAlgeriaTime } from "@/lib/datetime";
 import { getStoredEmployeeId } from "@/lib/authStorage";
 
 
@@ -203,7 +203,7 @@ export default function Page() {
                   </Typography>
 
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Rejected
+                    Rejete
                   </Typography>
                 </CardContent>
                 </Card>
@@ -249,7 +249,7 @@ export default function Page() {
                   </Typography>
 
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
                 </Card>
@@ -491,10 +491,10 @@ export default function Page() {
 
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Type</TableCell>
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Informations</TableCell>
-                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Submission Date</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Date de soumission</TableCell>
                                         <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Statut</TableCell>
-                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Decision Made By</TableCell>
-                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Decision Date</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Decision fait par</TableCell>
+                                        <TableCell sx={{ color: "var(--naftal-text-secondary)" , border:"none" }}>Date de decision</TableCell>
 
                                       </TableRow>
                                     </TableHead>
@@ -512,8 +512,8 @@ export default function Page() {
                                             <Box sx={{ display: "flex", alignItems: "center" }}>
 
                                               <Typography sx={{color:"var(--naftal-text-secondary)"}}>
-                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? getFullDate(row.exitSlip.exitTime)+" "+" -> "+row.exitSlip.returnTime.substring(11,16) : 
-                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? getFullDate(row.absenceAuth.startDate)+" "+" -> "+getFullDate(row.absenceAuth.endDate) : 
+                                                {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime ? formatAlgeriaDateTime(row.exitSlip.exitTime)+" "+" -> "+formatAlgeriaTime(row.exitSlip.returnTime) : 
+                                                 row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate ? formatAlgeriaDate(row.absenceAuth.startDate)+" "+" -> "+formatAlgeriaDate(row.absenceAuth.endDate) : 
                                                  row.type ==="MISSION_ORDER" && row.missionOrder?.destination ? row.missionOrder.destination : "N/A"}
                                               </Typography>
                                             </Box>
@@ -523,7 +523,7 @@ export default function Page() {
                                             <Box sx={{ display: "flex", alignItems: "center"  }}>
 
                                               <Typography sx={{color:"var(--naftal-text-secondary)"}}>
-                                              {getFullDate(row.createdAt)}  {/* Display only the date part */}
+                                              {formatAlgeriaDateTime(row.createdAt)}  {/* Display only the date part */}
                                               </Typography>
                                             </Box>
                                           </TableCell>
@@ -536,7 +536,7 @@ export default function Page() {
 
 
                                           <TableCell sx={{ color: "var(--naftal-text-primary)" , border:"none"}}>
-                                            <Typography>{getDate(row.authIssuedAt) || "N/A"}</Typography>
+                                            <Typography>{formatAlgeriaDateTime(row.authIssuedAt) || "N/A"}</Typography>
                                           </TableCell>
 
                                         </TableRow>

@@ -77,7 +77,7 @@ const getStatusChip = (status: string) => {
     case "PENDING":
       return (
         <Chip
-          label={"Pending"}
+          label={"En attente"}
           sx={{
             backgroundColor: "var(--naftal-brand-muted)",
             color: "var(--naftal-brand)",
@@ -90,7 +90,7 @@ const getStatusChip = (status: string) => {
     case "APPROVED":
       return (
         <Chip
-          label={"Approved"}
+          label={"Approuvé"}
           sx={{
             backgroundColor: "var(--naftal-success-muted)",
             color: "var(--naftal-success)",
@@ -103,7 +103,7 @@ const getStatusChip = (status: string) => {
     case "REJECTED":
       return (
         <Chip
-          label={"Rejected"}
+          label={"Rejeté"}
           sx={{
             backgroundColor: "var(--naftal-error-muted)",
             color: "var(--naftal-error)",
@@ -264,7 +264,7 @@ export default function ManagerHomePage() {
                   </Typography>
 
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Pending
+                    En attente
                   </Typography>
                 </CardContent>
               </Card>
@@ -309,7 +309,7 @@ export default function ManagerHomePage() {
                   </Typography>
 
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Approved
+                    Approuve
                   </Typography>
                 </CardContent>
               </Card>
@@ -354,7 +354,7 @@ export default function ManagerHomePage() {
                   </Typography>
 
                   <Typography variant="body2" sx={{ color: "var(--naftal-text-muted)" }}>
-                    Rejected
+                    Rejete
                   </Typography>
                 </CardContent>
               </Card>
@@ -372,7 +372,7 @@ export default function ManagerHomePage() {
           >
 
             <Typography variant="h5" sx={{ fontSize: "25px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-              Recent Requests
+              Les demandes récentes
             </Typography>
               <Button
                 variant="outlined"

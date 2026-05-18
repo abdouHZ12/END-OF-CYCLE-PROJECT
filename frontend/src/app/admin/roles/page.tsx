@@ -575,7 +575,7 @@ export default function RolesPage() {
         <DialogActions sx={{ p: 2, gap: 1 }}>
 
           <Button onClick={() => setCreateOpen(false)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
-            Cancel
+            Annuler
           </Button>
           <Button
             variant="contained"
@@ -628,7 +628,7 @@ export default function RolesPage() {
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
           <Button onClick={() => setEditTarget(null)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
-            Cancel
+            Annuler
           </Button>
           <Button
             variant="contained"
@@ -667,7 +667,7 @@ export default function RolesPage() {
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setDeleteTarget(null)} sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}>
-            Cancel
+            Annuler
           </Button>
           <Button
             onClick={handleDelete}

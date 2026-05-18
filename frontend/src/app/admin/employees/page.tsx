@@ -416,7 +416,7 @@ export default function EmployeesPage() {
             onClick={() => setDeleteTarget(null)}
             sx={{ color: "var(--naftal-text-secondary)", textTransform: "none" }}
           >
-            Cancel
+            Annuler
           </Button>
           <Button
             onClick={handleDelete}

@@ -7,7 +7,7 @@ import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { apiGet ,apiGetBinary ,type ApiError} from "@/lib/api";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { getDate, getFullDate } from "@/lib/datetime";
+import { formatAlgeriaDateTime,formatAlgeriaTime,formatAlgeriaDate } from "@/lib/datetime";
 import type { DocumentResponse, Document } from "@/features/documents/types";
 import { gettype } from "@/features/documents/ui";
 import { getStoredEmployeeId } from "@/lib/authStorage";
@@ -102,10 +102,10 @@ export default function Page() {
     >
       <Box sx={{ width: "100%", height: "100%" }}>
         <h1 style={{ fontSize: "35px", fontWeight: "bold", color: "var(--naftal-text-primary)" }}>
-          Download Authorization
+          Telecharger Autorisation
         </h1>
         <p style={{ fontSize: "20px", color: "var(--naftal-text-muted)", fontWeight: "bold", marginBottom: "20px" }}>
-          You can download authorization of all your documents
+          Vous pouver telecharger vos autorisations approuvées ici
         </p>
 
         <Box
@@ -129,7 +129,7 @@ export default function Page() {
           <Grid container spacing={{ sm: 3, md: 2, lg: 3 }} columns={{ sm: 8, md: 12, lg: 12 }}>
             <Grid key={1} size={{ md: 12, lg: 12 }}>
               <label htmlFor="sort" style={{ color: "var(--naftal-text-secondary)" }}>
-                Sort By Type
+                Filtrer par type de document
               </label>
               <select
                 id="sort"
@@ -147,16 +147,16 @@ export default function Page() {
                 }}
               >
                 <option value="" style={{ backgroundColor: "var(--naftal-bg)", color: "var(--naftal-text-primary)" }}>
-                  All Types
+                  Tout les types
                 </option>
                 <option value="EXIT_SLIP" style={{ backgroundColor: "var(--naftal-bg)", color: "var(--naftal-text-primary)" }}>
-                  Exit Slip
+                  Bon de sortie
                 </option>
                 <option value="ABSENCE_AUTH" style={{ backgroundColor: "var(--naftal-bg)", color: "var(--naftal-text-primary)" }}>
-                  Absence Authorization
+                  Autorisation d&apos;absence
                 </option>
                 <option value="MISSION_ORDER" style={{ backgroundColor: "var(--naftal-bg)", color: "var(--naftal-text-primary)" }}>
-                  Mission Order
+                  Ordre de mission
                 </option>
               </select>
             </Grid>
@@ -196,7 +196,7 @@ export default function Page() {
                   <TableRow>
                     <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Type</TableCell>
                     <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Informations</TableCell>
-                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Submission Date</TableCell>
+                    <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Date de soumission</TableCell>
                     <TableCell sx={{ color: "var(--naftal-text-secondary)", border: "none" }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -217,9 +217,9 @@ export default function Page() {
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
                             {row.type === "EXIT_SLIP" && row.exitSlip?.exitTime
-                              ? getFullDate(row.exitSlip.exitTime) + " -> " + getDate(row.exitSlip.returnTime)
+                              ? formatAlgeriaDateTime(row.exitSlip.exitTime) + " -> " + formatAlgeriaTime(row.exitSlip.returnTime)
                               : row.type === "ABSENCE_AUTH" && row.absenceAuth?.startDate
-                              ? getFullDate(row.absenceAuth.startDate) + " -> " + getFullDate(row.absenceAuth.endDate)
+                              ? formatAlgeriaDate(row.absenceAuth.startDate) + " -> " + formatAlgeriaDate(row.absenceAuth.endDate)
                               : row.type === "MISSION_ORDER" && row.missionOrder?.destination
                               ? row.missionOrder.destination
                               : "N/A"}
@@ -230,7 +230,7 @@ export default function Page() {
                       <TableCell sx={{ color: "var(--naftal-text-primary)", border: "none" }}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Typography sx={{ color: "var(--naftal-text-secondary)" }}>
-                            {getDate(row.createdAt)}
+                            {formatAlgeriaDateTime(row.createdAt)}
                           </Typography>
                         </Box>
                       </TableCell>
