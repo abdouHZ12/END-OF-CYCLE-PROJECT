@@ -1,210 +1,416 @@
 // This is your Prisma schema file,
+
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+  
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
+  
+
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+
+provider = "prisma-client"
+
+output = "../generated/prisma"
+
 }
+
+  
 
 datasource db {
-  provider = "postgresql"
+
+provider = "postgresql"
+
 }
+
+  
 
 enum TravelMethodType {
-  PERSONAL 
-  COMPANY 
-  AIRPLANE
+
+PERSONAL
+
+COMPANY
+
+AIRPLANE
+
 }
+
+  
 
 enum RoleType {
-  ADMIN
-  MANAGER
-  WORKER
-  AGENT
+
+ADMIN
+
+MANAGER
+
+WORKER
+
+AGENT
+
 }
+
+  
 
 enum DocumentType {
-  MISSION_ORDER
-  ABSENCE_AUTH
-  EXIT_SLIP
+
+MISSION_ORDER
+
+ABSENCE_AUTH
+
+EXIT_SLIP
+
 }
+
+  
 
 enum Status {
-  PENDING
-  APPROVED
-  REJECTED
+
+PENDING
+
+APPROVED
+
+REJECTED
+
 }
+
+  
 
 enum StatusLeave {
-  OUT 
-  RETURNED
-  NOT_RETURNED
+
+OUT
+
+RETURNED
+
+NOT_RETURNED
+
 }
+
+  
 
 enum NotifType {
-  NEW_PENDING_DOCUMENT
-  DOCUMENT_APPROVED
-  DOCUMENT_REJECTED
-  DOCUMENT_EXPIRING
+
+NEW_PENDING_DOCUMENT
+
+DOCUMENT_APPROVED
+
+DOCUMENT_REJECTED
+
+DOCUMENT_EXPIRING
+
 }
+
+  
 
 model Employee {
-  id               Int        @id @default(autoincrement()) 
-  name             String
-  username         String     @unique
-  email            String     @unique
-  password         String
 
-  roles             EmployeeRole[]
+id Int @id @default(autoincrement())
 
-  structureId      Int?
-  structure        Structure?  @relation(fields: [structureId], references: [id])
+name String
 
-  managedStructure Structure? @relation("StructureManager")
+username String @unique
 
-  issuedDocuments  Document[] @relation("IssuedDocuments")
-  decidedDocuments Document[] @relation("DecidedDocuments")
+email String @unique
 
-  notifications    Notification[]
+password String
 
-  refreshToken     String?
-  passwordResets   PasswordReset[]
+  
+
+roles EmployeeRole[]
+
+  
+
+structureId Int?
+
+structure Structure? @relation(fields: [structureId], references: [id])
+
+  
+
+managedStructure Structure? @relation("StructureManager")
+
+  
+
+issuedDocuments Document[] @relation("IssuedDocuments")
+
+decidedDocuments Document[] @relation("DecidedDocuments")
+
+  
+
+notifications Notification[]
+
+  
+
+refreshToken String?
+
+passwordResets PasswordReset[]
+
 }
+
+  
 
 model Role {
-  id          Int       @id @default(autoincrement())
-  name        String
-  type        RoleType  
-  permissions String
 
-  employees   EmployeeRole[]
+id Int @id @default(autoincrement())
+
+name String
+
+type RoleType @unique
+
+permissions String
+
+  
+
+employees EmployeeRole[]
+
 }
+
+  
 
 model EmployeeRole {
-  employeeId Int
-  roleId     Int
-  employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  
-  assignedAt DateTime @default(now())
 
-  @@id([employeeId, roleId])
-  @@index([employeeId])
-  @@index([roleId])
+employeeId Int
+
+roleId Int
+
+employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+assignedAt DateTime @default(now())
+
+  
+
+@@id([employeeId, roleId])
+
+@@index([employeeId])
+
+@@index([roleId])
+
 }
+
+  
 
 model PasswordReset {
-  id          Int         @id @default(autoincrement())
 
-  token       String    
-  expiresAt   DateTime
+id Int @id @default(autoincrement())
 
-  employeeId  Int
-  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
 
-  createdAt   DateTime  @default(now()) 
+token String
 
-  @@index([employeeId])
+expiresAt DateTime
+
+  
+
+employeeId Int
+
+employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  
+
+createdAt DateTime @default(now())
+
+  
+
+@@index([employeeId])
+
 }
+
+  
 
 model Structure {
-  id        Int         @id @default(autoincrement())
-  name      String
 
-  managerId Int?        @unique
-  manager   Employee?   @relation("StructureManager", fields: [managerId], references: [id])
+id Int @id @default(autoincrement())
 
-  parentId  Int?
-  parent    Structure?  @relation("StructureHierarchy", fields: [parentId], references: [id])
-  children  Structure[] @relation("StructureHierarchy")
+name String @unique
 
-  employees Employee[]
+  
+
+managerId Int? @unique
+
+manager Employee? @relation("StructureManager", fields: [managerId], references: [id])
+
+  
+
+parentId Int?
+
+parent Structure? @relation("StructureHierarchy", fields: [parentId], references: [id])
+
+children Structure[] @relation("StructureHierarchy")
+
+  
+
+employees Employee[]
+
 }
 
+  
+  
 
 model LeaveSession {
-  id          Int       @id @default(autoincrement())
-  employeeId  Int          
-  status      StatusLeave?
-  leaveTime   DateTime?
-  returnTime  DateTime?
-  createdAt   DateTime  @default(now())
 
-  agentDeviceId String?
+id Int @id @default(autoincrement())
 
-  documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+employeeId Int
+
+status StatusLeave?
+
+leaveTime DateTime?
+
+returnTime DateTime?
+
+createdAt DateTime @default(now())
+
+  
+
+agentDeviceId String?
+
+  
+
+documentId Int @unique
+
+document Document @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+
+  
 
 }
+
+  
 
 model Document {
-  id               Int          @id @default(autoincrement())
-  status           Status       @default(PENDING)
-  createdAt        DateTime     @default(now())
-  qrCode           String?      @unique
-  authIssuedAt     DateTime?
-  type             DocumentType
 
-  managerComment   String?
+id Int @id @default(autoincrement())
 
-  issuedById       Int?
-  employee         Employee?    @relation("IssuedDocuments", fields: [issuedById], references: [id], onDelete: SetNull)
+status Status @default(PENDING)
 
-  decisionMadeById Int?
-  decisionMadeBy   Employee?    @relation("DecidedDocuments", fields: [decisionMadeById], references: [id], onDelete: SetNull)
+createdAt DateTime @default(now())
 
-  missionOrder     MissionOrder?
-  absenceAuth      AbsenceAuth?
-  exitSlip         ExitSlip?
+qrCode String? @unique
 
-  leaveSession     LeaveSession?
+authIssuedAt DateTime?
+
+type DocumentType
+
+  
+
+managerComment String?
+
+  
+
+issuedById Int?
+
+employee Employee? @relation("IssuedDocuments", fields: [issuedById], references: [id], onDelete: SetNull)
+
+  
+
+decisionMadeById Int?
+
+decisionMadeBy Employee? @relation("DecidedDocuments", fields: [decisionMadeById], references: [id], onDelete: SetNull)
+
+  
+
+missionOrder MissionOrder?
+
+absenceAuth AbsenceAuth?
+
+exitSlip ExitSlip?
+
+  
+
+leaveSession LeaveSession?
+
 }
+
+  
 
 model MissionOrder {
-  id               Int       @id @default(autoincrement())
-  destination      String
-  duration         Int
-  purpose          String
-  travelMethod  TravelMethodType @default(PERSONAL)
 
-  documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+id Int @id @default(autoincrement())
+
+destination String
+
+duration Int
+
+purpose String
+
+travelMethod TravelMethodType @default(PERSONAL)
+
+  
+
+documentId Int @unique
+
+document Document @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+
 }
+
+  
 
 model AbsenceAuth {
-  id          Int       @id @default(autoincrement())
-  startDate   DateTime
-  endDate     DateTime
-  reason      String
 
-  documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+id Int @id @default(autoincrement())
+
+startDate DateTime
+
+endDate DateTime
+
+reason String
+
+  
+
+documentId Int @unique
+
+document Document @relation(fields: [documentId], references: [id] , onDelete: Cascade)
+
 }
+
+  
 
 model ExitSlip {
-  id          Int       @id @default(autoincrement())
-  exitTime    DateTime
-  returnTime  DateTime
-  gate        String
 
-  documentId  Int       @unique
-  document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+id Int @id @default(autoincrement())
+
+exitTime DateTime
+
+returnTime DateTime
+
+gate String
+
+  
+
+documentId Int @unique
+
+document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
 }
 
+  
+
 model Notification {
-  id          Int       @id @default(autoincrement())
 
-  recipientId Int
-  recipient   Employee  @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+id Int @id @default(autoincrement())
 
-  type        NotifType
-  message     String
-  read        Boolean   @default(false)
-  metadata    Json?
+  
 
-  createdAt   DateTime  @default(now())
+recipientId Int
 
-  @@index([recipientId])
+recipient Employee @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  
+
+type NotifType
+
+message String
+
+read Boolean @default(false)
+
+metadata Json?
+
+  
+
+createdAt DateTime @default(now())
+
+  
+
+@@index([recipientId])
+
 }
